@@ -223,11 +223,9 @@
               </button>
 
               <div class="commanderer-tactic-actions">
-                {{#unless ../dailiesManaged}}
-                  <button type="button" class="commanderer-icon-button" data-action="prepare" data-item-id="{{id}}" data-tooltip="{{#if prepared}}Unprepare{{else}}Prepare{{/if}} {{name}}" aria-label="Toggle prepared">
-                    <i class="fa-solid {{#if prepared}}fa-bookmark{{else}}fa-book-open{{/if}}"></i>
-                  </button>
-                {{/unless}}
+                <button type="button" class="commanderer-icon-button" data-action="prepare" data-item-id="{{id}}" data-tooltip="{{#if prepared}}Unprepare{{else}}Prepare{{/if}} {{name}}{{#if ../dailiesManaged}} manually (updates PF2e Dailies){{/if}}" aria-label="Toggle prepared">
+                  <i class="fa-solid {{#if prepared}}fa-bookmark{{else}}fa-book-open{{/if}}"></i>
+                </button>
                 <button type="button" class="commanderer-button issue" data-action="issue" data-item-id="{{id}}" {{#unless canIssue}}disabled{{/unless}} data-tooltip="{{issueTitle}}">
                   <i class="fa-solid fa-bullhorn"></i><span>Issue</span>
                 </button>

@@ -2,6 +2,7 @@ import { MODULE_ID } from "../constants.js";
 import {
   bannerActive,
   bannerToggle,
+  dailiesPreparationActor,
   getDailiesApi,
   notify,
   ownedTactics,
@@ -243,7 +244,9 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
 
   static openDailies() {
     const api = getDailiesApi();
-    if (typeof api?.openDailiesInterface === "function") api.openDailiesInterface(this.actor);
+    if (typeof api?.openDailiesInterface === "function") {
+      api.openDailiesInterface(dailiesPreparationActor(this.actor));
+    }
   }
 }
 
@@ -254,7 +257,9 @@ function openCommanderPanels() {
 
 function actorAffectsPanel(panel, actor) {
   if (!actor?.uuid) return false;
-  if (panel.actor?.uuid === actor.uuid) return true;
+  const panelActorUuid = dailiesPreparationActor(panel.actor)?.uuid;
+  const updatedActorUuid = dailiesPreparationActor(actor)?.uuid;
+  if (panelActorUuid && panelActorUuid === updatedActorUuid) return true;
   return storedSquad(panel.actor).some((member) => member.actorUuid === actor.uuid);
 }
 

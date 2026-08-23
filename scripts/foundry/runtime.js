@@ -60,14 +60,29 @@ export function ownedTactics(actor) {
 
 export function getDailiesApi() {
   const module = game.modules.get("pf2e-dailies");
-  return module?.active ? module.api : null;
+  return module?.active ? (module.api ?? {}) : null;
+}
+
+export function dailiesPreparationActor(actor) {
+  return actor?.token?.baseActor ?? actor;
+}
+
+function storedDailiesTacticIds(actor) {
+  const selections = actor?.getFlag?.("pf2e-dailies", "dailies.commander-tactics")
+    ?? actor?.flags?.["pf2e-dailies"]?.dailies?.["commander-tactics"];
+  const values = Array.isArray(selections)
+    ? selections
+    : Object.values(selections ?? {});
+  return values.filter((id) => typeof id === "string" && id.length > 0);
 }
 
 export function preparedTacticIds(actor) {
   const dailies = getDailiesApi();
+  const preparationActor = dailiesPreparationActor(actor);
   if (typeof dailies?.getCommanderTactics === "function") {
-    return new Set(dailies.getCommanderTactics(actor) ?? []);
+    return new Set(dailies.getCommanderTactics(preparationActor) ?? []);
   }
+  if (dailies) return new Set(storedDailiesTacticIds(preparationActor));
   return new Set(actor.getFlag(FLAG_SCOPE, "preparedTactics") ?? []);
 }
 
@@ -84,20 +99,26 @@ export function preparationLimit(actor) {
 }
 
 export async function togglePreparedTactic(actor, itemId) {
-  if (getDailiesApi()) {
-    notify("info", "Prepared tactics are managed by PF2e Dailies for this actor.");
-    return false;
-  }
+  const dailies = getDailiesApi();
+  const preparationActor = dailies ? dailiesPreparationActor(actor) : actor;
   const ids = preparedTacticIds(actor);
   if (ids.has(itemId)) ids.delete(itemId);
   else {
-    if (ids.size >= preparationLimit(actor)) {
-      notify("warn", `This actor can prepare ${preparationLimit(actor)} tactics.`);
+    const limit = preparationLimit(preparationActor);
+    if (ids.size >= limit) {
+      notify("warn", `This actor can prepare ${limit} tactics.`);
       return false;
     }
     ids.add(itemId);
   }
-  await actor.setFlag(FLAG_SCOPE, "preparedTactics", [...ids]);
+  if (dailies) {
+    const selections = Object.fromEntries(
+      [...ids].map((id, index) => [`ability${index + 1}`, id])
+    );
+    await preparationActor.setFlag("pf2e-dailies", "dailies.commander-tactics", selections);
+  } else {
+    await actor.setFlag(FLAG_SCOPE, "preparedTactics", [...ids]);
+  }
   return true;
 }
 

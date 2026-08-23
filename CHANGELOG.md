@@ -40,5 +40,5 @@
 - Add owner-side manual response completion that skips automation while preserving response-round tracking.
 - Add Commander-side manual resolution handoff with no automated rolls or effects.
 - Add a recorded GM-only geometry override that keeps target-count, relationship, save, and effect automation intact.
-- Integrate optional PF2e Dailies Commander preparation.
-- Add GitHub Actions validation, packaged release assets, and optional Foundry VTT publishing.
+- Synchronize prepared tactics with PF2e Dailies while retaining direct manual preparation controls.
+- Add ESLint, Husky commit/push gates, GitHub Actions validation, packaged release assets, and optional Foundry VTT publishing.

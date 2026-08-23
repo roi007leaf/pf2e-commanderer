@@ -19,6 +19,13 @@ test("collapsed tactics keep hidden details ready for DOM-only expansion", async
   assert.match(template, /class="commanderer-tactic-details" \{\{#unless expanded\}\}hidden\{\{\/unless\}\}/);
 });
 
+test("manual tactic preparation remains available with PF2e Dailies", async () => {
+  const template = await readFile(new URL("../templates/panel.hbs", import.meta.url), "utf8");
+  assert.match(template, /data-action="openDailies"/);
+  assert.match(template, /data-action="prepare"/);
+  assert.doesNotMatch(template, /\{\{#unless \.\.\/dailiesManaged\}\}[\s\S]*data-action="prepare"/);
+});
+
 test("tactic detail expansion updates existing DOM without rendering panel", () => {
   const expandedTactics = new Set();
   const classes = new Set(["commanderer-tactic"]);
@@ -59,6 +66,29 @@ test("full panel refresh preserves commander panel scroll position", () => {
   CommanderPanel.prototype._replaceHTML.call({}, "<div></div>", content);
 
   assert.equal(newPanel.scrollTop, 275);
+});
+
+test("opening PF2e Dailies from a token panel uses its world actor", () => {
+  const baseActor = { uuid: "Actor.commander" };
+  const syntheticActor = {
+    uuid: "Scene.scene.Token.token.Actor.commander",
+    token: { baseActor },
+  };
+  const previousGame = globalThis.game;
+  let openedActor = null;
+  globalThis.game = {
+    modules: new Map([["pf2e-dailies", {
+      active: true,
+      api: { openDailiesInterface: (actor) => { openedActor = actor; } },
+    }]]),
+  };
+
+  try {
+    CommanderPanel.openDailies.call({ actor: syntheticActor });
+    assert.equal(openedActor, baseActor);
+  } finally {
+    globalThis.game = previousGame;
+  }
 });
 
 test("bursty live updates coalesce into one panel render", () => {
@@ -102,8 +132,10 @@ test("bursty live updates coalesce into one panel render", () => {
 test("live update hooks refresh an open panel for squad token movement", () => {
   assert.equal(typeof registerCommanderPanelLiveUpdates, "function");
   const callbacks = new Map();
+  const baseCommander = { uuid: "Actor.commander" };
   const commander = {
-    uuid: "Actor.commander",
+    uuid: "Scene.scene.Token.commander.Actor.commander",
+    token: { baseActor: baseCommander },
     getFlag: () => [{ actorUuid: "Actor.squadmate" }],
   };
   const panel = Object.assign(Object.create(CommanderPanel.prototype), {
@@ -124,8 +156,10 @@ test("live update hooks refresh an open panel for squad token movement", () => {
 
   try {
     registerCommanderPanelLiveUpdates();
+    callbacks.get("updateActor")(baseCommander);
+    assert.equal(panel.refreshes, 1, "world actor preparation updates its open synthetic token panel");
     callbacks.get("updateToken")({ actor: { uuid: "Actor.squadmate" } });
-    assert.equal(panel.refreshes, 1);
+    assert.equal(panel.refreshes, 2);
   } finally {
     globalThis.foundry = originalFoundry;
     globalThis.Hooks = originalHooks;

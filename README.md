@@ -226,10 +226,12 @@ api.execute(commander.items.get("TACTIC_ITEM_ID"), commander);
 ## Development
 
 ```bash
+npm ci
+npm run lint
 npm test
 npm run check
 ```
 
-Pushes and pull requests run manifest validation, syntax checks, and tests. Publishing a GitHub release whose tag matches `module.json` attaches an installable `module.json` and `module.zip`. Stable releases can also publish to Foundry's package API when `FVTT_API_TOKEN` is configured.
+Husky runs ESLint before commits and the full test suite before pushes. Pushes and pull requests run dependency installation, manifest validation, syntax checks, ESLint, and tests. Publishing a GitHub release whose tag matches `module.json` attaches an installable `module.json` and `module.zip`. Stable releases can also publish to Foundry's package API when `FVTT_API_TOKEN` is configured.
 
 Bug reports and feature requests: [GitHub issues](https://github.com/roi007leaf/pf2e-commanderer/issues).

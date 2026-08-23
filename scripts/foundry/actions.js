@@ -1,6 +1,6 @@
 import { grantCompendiumEffect, grantPiranhaAssault, grantShadowsInMoonlight, grantWaitForIt } from "./effects.js";
 import { formFromDialogSubmit } from "./dialog.js";
-import { activeTokenFor } from "./runtime.js";
+import { activeTokenFor, notify } from "./runtime.js";
 import { performGatherMovement } from "./gather-movement.js";
 import { performTacticMovement, requireTacticTarget } from "./tactic-movement.js";
 import { requestOperation } from "./socket.js";

@@ -5,6 +5,16 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check scripts/main.js && node --check scripts/engine.js"
+    "check": "node --check scripts/main.js && node --check scripts/engine.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run check && npm test && npm run lint",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0",
+    "globals": "^17.11.0",
+    "husky": "^9.1.7"
   }
 }
