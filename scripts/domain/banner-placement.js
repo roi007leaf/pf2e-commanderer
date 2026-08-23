@@ -9,6 +9,11 @@ export function plantedBannerRadius() {
   return PLANTED_RADIUS;
 }
 
+export function plantBannerTemporaryHitPoints(level) {
+  const commanderLevel = Math.max(1, Math.trunc(Number(level) || 1));
+  return 4 * (1 + Math.floor(commanderLevel / 4));
+}
+
 export function bannerCorner(bounds, corner) {
   if (!CORNERS.has(corner)) throw new Error("Choose a valid corner for Plant Banner.");
   const x = Number(bounds?.x);

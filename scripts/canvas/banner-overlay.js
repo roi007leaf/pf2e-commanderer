@@ -1,5 +1,9 @@
 import { MODULE_ID } from "../constants.js";
-import { sceneBannerPlacements } from "../foundry/banner.js";
+import {
+  bannerCarrierToken,
+  bannerDisplayPoint,
+  sceneBannerPlacements,
+} from "../foundry/banner.js";
 import { bannerActive } from "../foundry/runtime.js";
 
 const BANNER_SLUG = "commanders-banner";
@@ -95,6 +99,9 @@ function addPlantedBanner(container, placement, active) {
   const zoom = canvasZoom();
   const marker = new Container();
   const standard = new Graphics();
+  const removed = placement.removed === true;
+  const carried = removed && placement.removalMode === "carried";
+  const color = active ? GOLD : 0x8a887f;
 
   standard.beginFill(DARK, 0.45);
   standard.drawCircle(0, 3, 13);
@@ -102,21 +109,39 @@ function addPlantedBanner(container, placement, active) {
   standard.lineStyle(3.5, DARK, 0.92);
   standard.moveTo(0, 11);
   standard.lineTo(0, -18);
-  standard.lineStyle(2, active ? GOLD : 0x8a887f, 1);
+  standard.lineStyle(2, color, 1);
   standard.moveTo(0, 11);
   standard.lineTo(0, -18);
-  standard.beginFill(active ? GOLD : 0x8a887f, active ? 0.96 : 0.75);
+  standard.beginFill(color, active ? 0.96 : 0.75);
   standard.moveTo(1, -17);
   standard.lineTo(16, -12);
   standard.lineTo(1, -6);
   standard.closePath();
   standard.endFill();
   standard.beginFill(DARK, 0.96);
-  standard.lineStyle(1.5, active ? GOLD : 0x8a887f, 0.9);
+  standard.lineStyle(1.5, color, 0.9);
   standard.drawCircle(0, 0, 5);
   standard.endFill();
 
-  marker.addChild(standard);
+  if (removed && !carried) {
+    standard.rotation = -Math.PI / 3;
+    const disabled = new Graphics();
+    disabled.beginFill(DARK, 0.94);
+    disabled.lineStyle(1.5, 0xa14945, 0.95);
+    disabled.drawCircle(8, 8, 7);
+    disabled.endFill();
+    disabled.lineStyle(2, 0xd77a72, 1);
+    disabled.moveTo(4, 4);
+    disabled.lineTo(12, 12);
+    disabled.moveTo(12, 4);
+    disabled.lineTo(4, 12);
+    marker.addChild(standard, disabled);
+  } else {
+    marker.addChild(standard);
+  }
+  marker.name = carried
+    ? `${MODULE_ID}-carried-banner`
+    : removed ? `${MODULE_ID}-fallen-banner` : `${MODULE_ID}-planted-banner`;
   marker.position.set(Number(placement.x), Number(placement.y));
   marker.scale.set(1 / zoom);
   container.addChild(marker);
@@ -160,6 +185,7 @@ function placementActor(placement) {
 }
 
 function placementActive(placement) {
+  if (placement.removed === true) return false;
   const actor = placementActor(placement);
   return actor ? bannerActive(actor) : true;
 }
@@ -220,7 +246,9 @@ export function renderBannerOverlay() {
     const active = placementActive(placement);
     const gathering = guidance?.commanderActorId === placement.actorId;
     if (active) addBoundaryAt(container, placement, rangeRadiusPixels(placement.radius ?? 40), gathering);
-    addPlantedBanner(container, placement, active);
+    const carrier = bannerCarrierToken(placement);
+    if (placement.removalMode === "carried" && (!carrier || carrier.isVisible === false)) continue;
+    addPlantedBanner(container, { ...placement, ...bannerDisplayPoint(placement) }, active);
   }
 
   if (guidance?.movingTokenId) {

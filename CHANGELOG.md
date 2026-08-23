@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.1
+
+- Grant and renew Plant Banner's temporary Hit Points for eligible allies, including turn-start renewal and immediate cleanup when the banner falls.
+- Let adjacent owned enemies pull a planted banner down or take it with them, disabling every banner benefit until retrieval.
+- Track taken banners on their carrier token, center the canvas marker above the carrier, and drop the banner at the carrier's last position when its token is deleted.
+- Add GM-ruled carried-banner recovery with Disarm, Grapple, Athletics, custom PF2e checks, and explicit manual success.
+- Route recovery rolls to the selected active Commander owner instead of the adjudicating GM, with stale-state and adjacency validation before retrieval.
+- Fix PF2e Dailies 4.x tactic preparation by using its global API and current Commander tactic flag path while retaining manual preparation.
+
 ## 1.0.0
 
 - Add Commander squad and prepared-tactic panel.

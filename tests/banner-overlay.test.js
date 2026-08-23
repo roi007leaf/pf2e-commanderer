@@ -8,7 +8,7 @@ test("banner overlay renders identity without canvas text labels", () => {
   class Container {
     constructor() {
       this.children = [];
-      this.position = { set() {} };
+      this.position = { set: (x, y) => { this.position.x = x; this.position.y = y; } };
       this.scale = { set() {} };
     }
 
@@ -87,7 +87,7 @@ test("planted banner replaces carried origin with burst and standard graphics", 
   class Container {
     constructor() {
       this.children = [];
-      this.position = { set() {} };
+      this.position = { set: (x, y) => { this.position.x = x; this.position.y = y; } };
       this.scale = { set() {} };
     }
     addChild(...children) {
@@ -128,6 +128,15 @@ test("planted banner replaces carried origin with burst and standard graphics", 
     y: 125,
     radius: 40,
   };
+  const carrier = {
+    id: "carrier-token",
+    actor: { id: "enemy-id" },
+    isVisible: true,
+    document: {
+      uuid: "Scene.scene.Token.carrier-token",
+      mechanicalBounds: { x: 500, y: 200, width: 100, height: 100 },
+    },
+  };
   let scenePlacements = { [actor.id]: placement };
 
   const previousCanvas = globalThis.canvas;
@@ -143,7 +152,7 @@ test("planted banner replaces carried origin with burst and standard graphics", 
       grid: { distance: 5 },
       getFlag: () => scenePlacements,
     },
-    tokens: { placeables: [token] },
+    tokens: { placeables: [token, carrier] },
   };
 
   try {
@@ -153,6 +162,22 @@ test("planted banner replaces carried origin with burst and standard graphics", 
     assert.ok(canvasOverlay.children[0] instanceof Graphics, "40-foot burst boundary rendered");
     assert.ok(canvasOverlay.children[1] instanceof Container, "planted standard marker rendered");
     assert.equal(token.auras.get("commanders-banner").visible, false, "carried native aura hidden while planted");
+
+    placement.removed = true;
+    placement.removalMode = "carried";
+    placement.carrierTokenUuid = carrier.document.uuid;
+    renderBannerOverlay();
+    assert.equal(canvasOverlay.children.length, 1, "taken banner retains marker but loses active burst");
+    assert.equal(canvasOverlay.children[0].name, "pf2e-commanderer-carried-banner");
+    assert.deepEqual(
+      { x: canvasOverlay.children[0].position.x, y: canvasOverlay.children[0].position.y },
+      { x: 550, y: 200 },
+      "taken banner marker attaches to carrier top-center"
+    );
+    carrier.document.mechanicalBounds.x = 700;
+    renderBannerOverlay();
+    assert.equal(canvasOverlay.children[0].position.x, 750, "centered marker follows carrier movement live");
+    assert.equal(token.auras.get("commanders-banner").visible, false, "carried aura stays disabled until retrieval");
 
     scenePlacements = {};
     renderBannerOverlay();

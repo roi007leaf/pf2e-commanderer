@@ -10,23 +10,27 @@
     </div>
 
     <div class="commanderer-banner-control">
-      <div class="commanderer-banner {{#if bannerActive}}active{{else}}inactive{{/if}}">
+      <div class="commanderer-banner {{#if bannerRemoved}}removed{{else}}{{#if bannerActive}}active{{else}}inactive{{/if}}{{/if}}">
         <span class="commanderer-status-dot"></span>
         <div>
-          <small>{{#if bannerPlanted}}Planted banner{{else}}Carried banner{{/if}}</small>
+          <small>{{#if bannerRemoved}}{{#if bannerTaken}}Taken banner{{else}}Pulled-down banner{{/if}}{{else}}{{#if bannerPlanted}}Planted banner{{else}}Carried banner{{/if}}{{/if}}</small>
           <strong>
-            {{#if bannerPlanted}}
-              {{bannerRadius}}-foot burst · Auditory tactics
+            {{#if bannerRemoved}}
+              {{#if bannerTaken}}Taken by {{bannerCarrierName}} · {{/if}}Benefits inactive
             {{else}}
-              {{#if bannerActive}}Displayed · Aura active{{else}}Stowed · Aura inactive{{/if}}
+              {{#if bannerPlanted}}
+                {{bannerRadius}}-foot burst · Auditory tactics
+              {{else}}
+                {{#if bannerActive}}Displayed · Aura active{{else}}Stowed · Aura inactive{{/if}}
+              {{/if}}
             {{/if}}
           </strong>
         </div>
       </div>
       <div class="commanderer-banner-actions">
         {{#if bannerPlanted}}
-          <button type="button" class="commanderer-button commander-banner-retrieve" data-action="retrieveBanner" {{#unless bannerRetrievable}}disabled{{/unless}} data-tooltip="{{#if bannerRetrievable}}Retrieve the planted banner{{else}}Move adjacent to the planted banner to retrieve it{{/if}}">
-            <i class="fa-solid fa-hand"></i><span>Retrieve</span>
+          <button type="button" class="commanderer-button commander-banner-retrieve" data-action="retrieveBanner" {{#unless bannerRetrievable}}disabled{{/unless}} data-tooltip="{{#if bannerRetrievable}}{{#if bannerTaken}}Ask the GM to rule a recovery check{{else}}{{#if bannerRemoved}}Recover the removed banner and restore its benefits{{else}}Retrieve the planted banner{{/if}}{{/if}}{{else}}{{#if bannerTaken}}Move adjacent to {{bannerCarrierName}} to attempt recovery{{else}}Move adjacent to the planted banner to retrieve it{{/if}}{{/if}}">
+            <i class="fa-solid {{#if bannerTaken}}fa-dice-d20{{else}}fa-hand{{/if}}"></i><span>{{#if bannerTaken}}Recover{{else}}Retrieve{{/if}}</span>
           </button>
         {{else}}
           {{#if bannerToggleAvailable}}

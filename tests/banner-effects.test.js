@@ -106,6 +106,11 @@ test("planted banner base effect follows planted burst instead of Commander toke
     assert.equal(near.created, 1, "ally inside planted burst receives banner effect");
     assert.equal(far.created, 0, "ally outside planted burst receives no effect");
 
+    placement.removed = true;
+    await syncPlantedBannerEffects(scene);
+    assert.equal(near.items.some((item) => item.flags?.["pf2e-commanderer"]?.plantedBannerOrigin), false,
+      "enemy removal immediately clears planted banner benefits");
+
     nearToken.document.x = 1000;
     nearToken.document.mechanicalBounds.x = 1000;
     await syncPlantedBannerEffects(scene);

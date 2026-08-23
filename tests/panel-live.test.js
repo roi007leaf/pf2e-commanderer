@@ -91,6 +91,27 @@ test("opening PF2e Dailies from a token panel uses its world actor", () => {
   }
 });
 
+test("opening PF2e Dailies uses its v4 global API", async () => {
+  const actor = { uuid: "Actor.commander" };
+  const previousGame = globalThis.game;
+  let openedActor = null;
+  globalThis.game = {
+    modules: new Map([["pf2e-dailies", { active: true }]]),
+    dailies: {
+      api: {
+        async openDailiesInterface(requestedActor) { openedActor = requestedActor; },
+      },
+    },
+  };
+
+  try {
+    await CommanderPanel.openDailies.call({ actor });
+    assert.equal(openedActor, actor);
+  } finally {
+    globalThis.game = previousGame;
+  }
+});
+
 test("bursty live updates coalesce into one panel render", () => {
   const originalFoundry = globalThis.foundry;
   const originalSetTimeout = globalThis.setTimeout;

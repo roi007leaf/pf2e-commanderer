@@ -7,8 +7,9 @@ function activeGM() {
   return game.users?.activeGM ?? game.users?.find((user) => user.active && user.isGM) ?? null;
 }
 
-function isAuthority(authorityUserId, gmRequired) {
+function isAuthority(authorityUserId, gmRequired, directed = false) {
   if (gmRequired) return activeGM()?.id === game.user.id;
+  if (directed) return authorityUserId === game.user.id;
   return (activeGM()?.id ?? authorityUserId) === game.user.id;
 }
 
@@ -21,7 +22,7 @@ async function receive(packet) {
     packet.ok ? request.resolve(packet.result) : request.reject(new Error(packet.error));
     return;
   }
-  if (packet.type !== "request" || !isAuthority(packet.authorityUserId, packet.gmRequired)) return;
+  if (packet.type !== "request" || !isAuthority(packet.authorityUserId, packet.gmRequired, packet.directed)) return;
   const handler = handlers.get(packet.operation);
   if (!handler) return;
   try {
@@ -41,7 +42,12 @@ export function registerOperation(name, handler) {
   handlers.set(name, handler);
 }
 
-export async function requestOperation(operation, payload, { authorityUserId = game.user.id, gmRequired = false } = {}) {
+export async function requestOperation(operation, payload, {
+  authorityUserId = game.user.id,
+  gmRequired = false,
+  directed = false,
+  timeoutMs = 12_000,
+} = {}) {
   const packet = {
     type: "request",
     requestId: foundry.utils.randomID(),
@@ -49,9 +55,10 @@ export async function requestOperation(operation, payload, { authorityUserId = g
     payload,
     authorityUserId,
     gmRequired,
+    directed,
     userId: game.user.id,
   };
-  if (isAuthority(authorityUserId, gmRequired)) {
+  if (isAuthority(authorityUserId, gmRequired, directed)) {
     const handler = handlers.get(operation);
     if (!handler) throw new Error(`No handler registered for ${operation}.`);
     return handler(payload, game.user.id);
@@ -60,7 +67,7 @@ export async function requestOperation(operation, payload, { authorityUserId = g
     const timeout = setTimeout(() => {
       pending.delete(packet.requestId);
       reject(new Error("Commander automation request timed out. Is a GM connected?"));
-    }, 12_000);
+    }, timeoutMs);
     pending.set(packet.requestId, { resolve, reject, timeout });
     game.socket.emit(SOCKET_NAME, packet);
   });

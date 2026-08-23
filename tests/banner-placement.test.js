@@ -8,13 +8,32 @@ import {
   hasPlantBanner,
   plantedBannerRadius,
 } from "../scripts/domain/banner-placement.js";
-import { plantBanner, plantedBanner, retrieveBanner } from "../scripts/foundry/banner.js";
+import {
+  bannerDisplayPoint,
+  bannerOrigin,
+  canRetrieveBanner,
+  dropCarriedBannersForToken,
+  plantBanner,
+  plantedBanner,
+  removableEnemyBanners,
+  removePlantedBannerAsEnemy,
+  retrieveBanner,
+} from "../scripts/foundry/banner.js";
 
 test("Commander panel exposes Plant Banner and Retrieve actions", async () => {
   const template = await readFile(new URL("../templates/panel.hbs", import.meta.url), "utf8");
+  const tokenHud = await readFile(new URL("../scripts/ui/token-hud.js", import.meta.url), "utf8");
+  const css = await readFile(new URL("../styles/commanderer.css", import.meta.url), "utf8");
   assert.match(template, /data-action="toggleBannerPlacement"/);
   assert.match(template, /data-action="plantBannerAtCorner"/);
   assert.match(template, /data-action="retrieveBanner"/);
+  assert.match(template, /bannerRemoved/);
+  assert.match(tokenHud, /requestEnemyBannerRemoval/);
+  assert.match(tokenHud, /<strong>Interact<\/strong>/);
+  assert.match(tokenHud, /Pull Down/);
+  assert.match(tokenHud, /Take Banner/);
+  assert.doesNotMatch(tokenHud, /commander-remove-banner-icon/);
+  assert.doesNotMatch(css, /commander-remove-banner-icon/);
 });
 
 test("banner corner picker renders below the compact Commander hero", async () => {
@@ -162,5 +181,198 @@ test("Plant and Retrieve publish banner placement only after native aura transit
     assert.deepEqual(operations, ["placement:unset", "banner:true"]);
   } finally {
     globalThis.canvas = previousCanvas;
+  }
+});
+
+test("adjacent enemy can remove planted benefits until Commander retrieves banner", async () => {
+  let flags = {};
+  const scene = {
+    id: "scene-id",
+    grid: { distance: 5 },
+    getFlag: (_scope, key) => flags[key],
+    async setFlag(_scope, key, value) { flags[key] = value; },
+    async unsetFlag(_scope, key) { delete flags[key]; },
+  };
+  const commander = {
+    id: "commander-id",
+    uuid: "Actor.commander-id",
+    name: "Commander",
+    alliance: "party",
+    items: [{
+      id: "banner-item",
+      system: { rules: [{ key: "RollOption", domain: "all", option: "commanders-banner", toggleable: true }] },
+    }],
+    rollOptions: { all: { "commanders-banner": false } },
+    async toggleRollOption(_domain, _option, _itemId, active) {
+      this.rollOptions.all["commanders-banner"] = active;
+    },
+  };
+  const commanderToken = {
+    id: "commander-token",
+    actor: commander,
+    mechanicalBounds: { x: 0, y: 0, width: 100, height: 100 },
+  };
+  commander.getActiveTokens = () => [commanderToken];
+  const player = { id: "player", isGM: false };
+  const enemy = {
+    id: "enemy-id",
+    uuid: "Actor.enemy-id",
+    name: "Enemy",
+    alliance: "opposition",
+    testUserPermission: (user, level) => user.id === player.id && level === "OWNER",
+  };
+  const enemyToken = {
+    id: "enemy-token",
+    actor: enemy,
+    document: {
+      uuid: "Scene.scene-id.Token.enemy-token",
+      mechanicalBounds: { x: 100, y: 0, width: 100, height: 100 },
+    },
+  };
+  const placement = {
+    actorId: commander.id,
+    actorUuid: commander.uuid,
+    x: 100,
+    y: 100,
+    radius: 40,
+    corner: "se",
+  };
+  flags.plantedBanners = { [commander.id]: placement };
+
+  const previousCanvas = globalThis.canvas;
+  const previousGame = globalThis.game;
+  globalThis.canvas = {
+    ready: true,
+    scene,
+    grid: { size: 100 },
+    tokens: { placeables: [commanderToken, enemyToken] },
+  };
+  globalThis.game = {
+    user: player,
+    users: { get: (id) => id === player.id ? player : null },
+    actors: { get: (id) => id === commander.id ? commander : null },
+    time: { worldTime: 321 },
+  };
+
+  try {
+    assert.equal(removableEnemyBanners(enemyToken, scene, player).length, 1);
+    const removed = await removePlantedBannerAsEnemy({
+      scene,
+      commanderActorId: commander.id,
+      enemyToken,
+      user: player,
+      mode: "carried",
+    });
+    assert.equal(removed.removed, true);
+    assert.equal(removed.removalMode, "carried");
+    assert.equal(removed.carrierTokenUuid, enemyToken.document.uuid);
+    assert.equal(removed.removedBy.actorUuid, enemy.uuid);
+    assert.equal((await import("../scripts/foundry/runtime.js")).bannerActive(commander), false);
+    commander.rollOptions.all["commanders-banner"] = true;
+    assert.equal((await import("../scripts/foundry/runtime.js")).bannerActive(commander), false,
+      "fallen placement overrides any stale native roll option");
+    commander.rollOptions.all["commanders-banner"] = false;
+    assert.equal(bannerOrigin(commander), null, "removed banner supplies no tactic or aura origin");
+    assert.equal(removableEnemyBanners(enemyToken, scene, player).length, 0, "banner cannot be removed twice");
+
+    enemyToken.document.mechanicalBounds.x = 500;
+    assert.deepEqual(bannerDisplayPoint(removed, scene), { x: 550, y: 0 }, "taken banner follows carrier top-center");
+    assert.equal(canRetrieveBanner(commander, scene), false, "Commander cannot retrieve from old planted point");
+    commanderToken.mechanicalBounds.x = 400;
+    await assert.rejects(() => retrieveBanner(commander, scene), /GM must rule/);
+    assert.equal(await retrieveBanner(commander, scene, { allowCarried: true }), true);
+    assert.equal(plantedBanner(commander, scene), null);
+    assert.equal(commander.rollOptions.all["commanders-banner"], true);
+
+    const secondPlacement = { ...placement, x: 500, y: 0 };
+    flags.plantedBanners = { [commander.id]: secondPlacement };
+    commander.rollOptions.all["commanders-banner"] = false;
+    enemyToken.document.mechanicalBounds.x = 500;
+    const dropped = await removePlantedBannerAsEnemy({
+      scene,
+      commanderActorId: commander.id,
+      enemyToken,
+      user: player,
+      mode: "dropped",
+    });
+    assert.equal(dropped.removalMode, "dropped");
+    assert.equal(dropped.carrierTokenUuid, null);
+    enemyToken.document.mechanicalBounds.x = 800;
+    assert.deepEqual(bannerDisplayPoint(dropped, scene), { x: 500, y: 0 }, "pulled-down banner stays planted");
+  } finally {
+    globalThis.canvas = previousCanvas;
+    globalThis.game = previousGame;
+  }
+});
+
+test("deleting a banner carrier drops it at the carrier's last location", async () => {
+  let placements = {
+    commander: {
+      actorId: "commander",
+      actorUuid: "Actor.commander",
+      x: 100,
+      y: 100,
+      radius: 40,
+      removed: true,
+      removalMode: "carried",
+      carrierTokenUuid: "Scene.scene.Token.carrier",
+      removedBy: { actorUuid: "Actor.enemy", actorName: "Enemy" },
+    },
+  };
+  const scene = {
+    id: "scene",
+    getFlag: () => placements,
+    async setFlag(_scope, _key, value) { placements = value; },
+  };
+  const tokenDocument = {
+    uuid: "Scene.scene.Token.carrier",
+    parent: scene,
+    mechanicalBounds: { x: 300, y: 200, width: 100, height: 100 },
+  };
+  const previousGame = globalThis.game;
+  globalThis.game = { time: { worldTime: 456 } };
+  try {
+    assert.equal(await dropCarriedBannersForToken(tokenDocument, scene), 1);
+    assert.equal(placements.commander.removalMode, "dropped");
+    assert.equal(placements.commander.carrierTokenUuid, null);
+    assert.deepEqual({ x: placements.commander.x, y: placements.commander.y }, { x: 350, y: 200 });
+  } finally {
+    globalThis.game = previousGame;
+  }
+});
+
+test("allies, distant enemies, and non-owners cannot remove a planted banner", () => {
+  const commander = { id: "commander", uuid: "Actor.commander", alliance: "party" };
+  const placement = { actorId: commander.id, actorUuid: commander.uuid, x: 0, y: 0, radius: 40 };
+  const scene = {
+    id: "scene",
+    grid: { distance: 5 },
+    getFlag: () => ({ [commander.id]: placement }),
+  };
+  const user = { id: "player", isGM: false };
+  const actor = {
+    uuid: "Actor.creature",
+    alliance: "party",
+    testUserPermission: () => true,
+  };
+  const token = {
+    actor,
+    document: { mechanicalBounds: { x: 0, y: 0, width: 100, height: 100 } },
+  };
+  const previousCanvas = globalThis.canvas;
+  const previousGame = globalThis.game;
+  globalThis.canvas = { scene, grid: { size: 100 }, tokens: { placeables: [token] } };
+  globalThis.game = { actors: { get: () => commander } };
+  try {
+    assert.deepEqual(removableEnemyBanners(token, scene, user), [], "ally rejected");
+    actor.alliance = "opposition";
+    token.document.mechanicalBounds.x = 200;
+    assert.deepEqual(removableEnemyBanners(token, scene, user), [], "enemy beyond adjacency rejected");
+    token.document.mechanicalBounds.x = 0;
+    actor.testUserPermission = () => false;
+    assert.deepEqual(removableEnemyBanners(token, scene, user), [], "non-owner rejected");
+  } finally {
+    globalThis.canvas = previousCanvas;
+    globalThis.game = previousGame;
   }
 });

@@ -19,9 +19,9 @@ export function hasDrilledReactions(actor) {
 }
 
 export function bannerActive(actor) {
-  if (actor?.rollOptions?.all?.["commanders-banner"] === true) return true;
   const placement = globalThis.canvas?.scene?.getFlag?.(FLAG_SCOPE, "plantedBanners")?.[actor?.id];
-  return placement?.actorUuid === actor?.uuid;
+  if (placement?.actorUuid === actor?.uuid) return placement.removed !== true;
+  return actor?.rollOptions?.all?.["commanders-banner"] === true;
 }
 
 export function bannerToggle(actor) {
@@ -60,7 +60,8 @@ export function ownedTactics(actor) {
 
 export function getDailiesApi() {
   const module = game.modules.get("pf2e-dailies");
-  return module?.active ? (module.api ?? {}) : null;
+  if (!module?.active) return null;
+  return game.dailies?.api ?? module.api ?? {};
 }
 
 export function dailiesPreparationActor(actor) {
@@ -68,7 +69,9 @@ export function dailiesPreparationActor(actor) {
 }
 
 function storedDailiesTacticIds(actor) {
-  const selections = actor?.getFlag?.("pf2e-dailies", "dailies.commander-tactics")
+  const selections = actor?.getFlag?.("pf2e-dailies", "extra.dailies.commander-tactics.tactics")
+    ?? actor?.flags?.["pf2e-dailies"]?.extra?.dailies?.["commander-tactics"]?.tactics
+    ?? actor?.getFlag?.("pf2e-dailies", "dailies.commander-tactics")
     ?? actor?.flags?.["pf2e-dailies"]?.dailies?.["commander-tactics"];
   const values = Array.isArray(selections)
     ? selections
@@ -112,10 +115,11 @@ export async function togglePreparedTactic(actor, itemId) {
     ids.add(itemId);
   }
   if (dailies) {
-    const selections = Object.fromEntries(
-      [...ids].map((id, index) => [`ability${index + 1}`, id])
+    await preparationActor.setFlag(
+      "pf2e-dailies",
+      "extra.dailies.commander-tactics.tactics",
+      [...ids]
     );
-    await preparationActor.setFlag("pf2e-dailies", "dailies.commander-tactics", selections);
   } else {
     await actor.setFlag(FLAG_SCOPE, "preparedTactics", [...ids]);
   }

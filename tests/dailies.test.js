@@ -14,15 +14,15 @@ test("PF2e Dailies preparation reads the world actor behind a synthetic token ac
   let requestedActor = null;
   const previousGame = globalThis.game;
   globalThis.game = {
-    modules: new Map([["pf2e-dailies", {
-      active: true,
+    modules: new Map([["pf2e-dailies", { active: true }]]),
+    dailies: {
       api: {
         getCommanderTactics(actor) {
           requestedActor = actor;
           return actor === baseActor ? selected : syntheticActor.getFlag();
         },
       },
-    }]]),
+    },
   };
 
   try {
@@ -38,12 +38,8 @@ test("PF2e Dailies preparation reads commander tactic ability flags", () => {
   const baseActor = {
     uuid: "Actor.commander",
     getFlag(scope, key) {
-      if (scope !== "pf2e-dailies" || key !== "dailies.commander-tactics") return undefined;
-      return {
-        ability1: selected[0],
-        ability2: selected[1],
-        ability3: selected[2],
-      };
+      if (scope !== "pf2e-dailies" || key !== "extra.dailies.commander-tactics.tactics") return undefined;
+      return selected;
     },
   };
   const syntheticActor = {
@@ -85,10 +81,7 @@ test("active PF2e Dailies does not reuse stale Commanderer preparation", () => {
 });
 
 test("manual preparation updates PF2e Dailies commander tactic slots", async () => {
-  const selections = {
-    ability1: "coordinating-maneuvers-id",
-    ability2: "gather-to-me-id",
-  };
+  const selections = ["coordinating-maneuvers-id", "gather-to-me-id"];
   let update = null;
   const baseActor = {
     uuid: "Actor.commander",
@@ -111,12 +104,8 @@ test("manual preparation updates PF2e Dailies commander tactic slots", async () 
     assert.equal(await togglePreparedTactic(syntheticActor, "protective-screen-id"), true);
     assert.deepEqual(update, {
       scope: "pf2e-dailies",
-      key: "dailies.commander-tactics",
-      value: {
-        ability1: "coordinating-maneuvers-id",
-        ability2: "gather-to-me-id",
-        ability3: "protective-screen-id",
-      },
+      key: "extra.dailies.commander-tactics.tactics",
+      value: ["coordinating-maneuvers-id", "gather-to-me-id", "protective-screen-id"],
     });
   } finally {
     globalThis.game = previousGame;

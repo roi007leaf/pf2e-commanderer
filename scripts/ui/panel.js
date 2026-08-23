@@ -24,7 +24,14 @@ import {
 import { tacticAudience } from "../domain/squad-readiness.js";
 import { tacticDefinition } from "../domain/tactics.js";
 import { hasPlantBanner } from "../domain/banner-placement.js";
-import { canRetrieveBanner, plantBanner, plantedBanner, retrieveBanner } from "../foundry/banner.js";
+import {
+  bannerCarrierToken,
+  canRetrieveBanner,
+  plantBanner,
+  plantedBanner,
+  retrieveBanner,
+} from "../foundry/banner.js";
+import { recoverCarriedBanner } from "../foundry/banner-recovery.js";
 import { tacticViewModel } from "./tactic-view-model.js";
 
 const TEMPLATE = `modules/${MODULE_ID}/templates/panel.hbs`;
@@ -71,6 +78,7 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
 
   async _prepareContext() {
     const placement = plantedBanner(this.actor);
+    const bannerCarrier = bannerCarrierToken(placement);
     const prepared = preparedTacticIds(this.actor);
     const dailiesManaged = Boolean(getDailiesApi());
     const tacticalSquad = await squadTacticalState(this.actor);
@@ -103,6 +111,9 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
       bannerActive: bannerActive(this.actor),
       bannerToggleAvailable: Boolean(bannerToggle(this.actor)),
       bannerPlanted: Boolean(placement),
+      bannerRemoved: placement?.removed === true,
+      bannerTaken: placement?.removalMode === "carried",
+      bannerCarrierName: bannerCarrier?.actor?.name ?? placement?.removedBy?.actorName,
       bannerRadius: placement?.radius ?? 30,
       bannerRetrievable: canRetrieveBanner(this.actor),
       plantBannerAvailable: hasPlantBanner(this.actor),
@@ -201,9 +212,17 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
     }
   }
 
-  static async retrieveBanner() {
+  static async retrieveBanner(_event, button) {
+    if (this._bannerRecoveryPending) return;
+    this._bannerRecoveryPending = true;
+    button?.setAttribute("aria-busy", "true");
+    if (button) button.disabled = true;
     try {
-      if (await retrieveBanner(this.actor)) {
+      const placement = plantedBanner(this.actor);
+      const retrieved = placement?.removalMode === "carried"
+        ? await recoverCarriedBanner(this.actor)
+        : await retrieveBanner(this.actor);
+      if (retrieved) {
         this.bannerPlacementExpanded = false;
         this.requestRefresh();
         notify("info", "Banner retrieved. Its abilities originate from the commander again.");
@@ -211,6 +230,12 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
     } catch (error) {
       console.error(`${MODULE_ID} | Retrieve banner`, error);
       notify("error", error.message);
+    } finally {
+      this._bannerRecoveryPending = false;
+      if (button?.isConnected) {
+        button.removeAttribute("aria-busy");
+        button.disabled = !canRetrieveBanner(this.actor);
+      }
     }
   }
 
@@ -242,10 +267,24 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
     button.title = `${expanded ? "Hide" : "Show"} details for ${tacticName}`;
   }
 
-  static openDailies() {
-    const api = getDailiesApi();
-    if (typeof api?.openDailiesInterface === "function") {
-      api.openDailiesInterface(dailiesPreparationActor(this.actor));
+  static async openDailies() {
+    try {
+      const api = getDailiesApi();
+      const actor = dailiesPreparationActor(this.actor);
+      if (typeof api?.openDailiesInterface !== "function") {
+        throw new Error("PF2e Dailies is active, but its interface API is unavailable. Reload Foundry and try again.");
+      }
+      if (typeof api.canPrepareDailies === "function" && !api.canPrepareDailies(actor)) {
+        const reason = api.getDailiesSummary?.(actor);
+        notify("warn", reason || `${actor.name} cannot make daily preparations right now.`);
+        return false;
+      }
+      await api.openDailiesInterface(actor);
+      return true;
+    } catch (error) {
+      console.error(`${MODULE_ID} | Open PF2e Dailies`, error);
+      notify("error", error.message);
+      return false;
     }
   }
 }
@@ -269,6 +308,18 @@ function refreshPanelsForActor(actor, { candidates = false } = {}) {
   }
 }
 
+function refreshPanelsForToken(token, { candidates = false } = {}) {
+  const tokenUuid = token?.uuid ?? token?.document?.uuid;
+  for (const panel of openCommanderPanels()) {
+    const placement = plantedBanner(panel.actor);
+    const carriesBanner = tokenUuid && placement?.removalMode === "carried"
+      && placement.carrierTokenUuid === tokenUuid;
+    if (carriesBanner || actorAffectsPanel(panel, token?.actor) || (candidates && panel.squadPlannerExpanded)) {
+      panel.requestRefresh();
+    }
+  }
+}
+
 function refreshAllPanels() {
   for (const panel of openCommanderPanels()) panel.requestRefresh();
 }
@@ -282,9 +333,9 @@ function scenePlacementChanged(scene, changes) {
 export function registerCommanderPanelLiveUpdates() {
   if (liveUpdatesRegistered) return;
   liveUpdatesRegistered = true;
-  Hooks.on("updateToken", (token) => refreshPanelsForActor(token?.actor, { candidates: true }));
-  Hooks.on("createToken", (token) => refreshPanelsForActor(token?.actor, { candidates: true }));
-  Hooks.on("deleteToken", (token) => refreshPanelsForActor(token?.actor, { candidates: true }));
+  Hooks.on("updateToken", (token) => refreshPanelsForToken(token, { candidates: true }));
+  Hooks.on("createToken", (token) => refreshPanelsForToken(token, { candidates: true }));
+  Hooks.on("deleteToken", (token) => refreshPanelsForToken(token, { candidates: true }));
   Hooks.on("updateActor", (actor) => refreshPanelsForActor(actor, { candidates: true }));
   Hooks.on("createItem", (item) => refreshPanelsForActor(item?.actor ?? item?.parent));
   Hooks.on("updateItem", (item) => refreshPanelsForActor(item?.actor ?? item?.parent));

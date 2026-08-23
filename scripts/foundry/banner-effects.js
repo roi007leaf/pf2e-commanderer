@@ -85,6 +85,7 @@ function expectedRecipients(scene) {
   const expected = new Map();
   const tokens = globalThis.canvas?.tokens?.placeables ?? [];
   for (const placement of Object.values(sceneBannerPlacements(scene))) {
+    if (placement.removed === true) continue;
     const commander = commanderFor(placement);
     if (!commander) continue;
     for (const token of tokens) {

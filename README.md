@@ -14,6 +14,7 @@ Designed around one principle: automate everything reliable, keep table rulings 
 - One professional command panel opened from an owned Commander token or actor sheet.
 - Live squad, aura, banner, preparation, and tactic readiness updates without reopening the panel.
 - Carried and planted banner origins with native PF2e aura-effect synchronization.
+- Plant Banner temporary HP renewal plus adjacent-enemy controls to pull the standard down or carry it away.
 - Expandable tactic briefings with enriched PF2e rules and trait explanations.
 - Responsive squadmate-card selection for exact, limited, and all-responder tactics.
 - Shared, owner-aware chat cards: each player controls their own squadmate response.
@@ -48,7 +49,7 @@ https://github.com/roi007leaf/pf2e-commanderer/releases/latest/download/module.j
 
 1. Place a Commander actor's token on the active scene.
 2. Right-click the owned token and press the gold flag in its Token HUD. The **Commander** actor-sheet header button opens the same panel.
-3. Display the banner. If the Commander has **Plant Banner**, use **Plant**, choose a token corner, then retrieve it from the same panel when finished.
+3. Display the banner. If the Commander has **Plant Banner**, use **Plant**, choose a token corner, then retrieve it from the same panel when finished. An owned enemy token adjacent to the standard gets a red crossed-flag Token HUD control to remove it with Interact.
 4. Open **Manage** under Squad. Add allied scene tokens, add nearby allies, or replace the roster from current targets.
 5. Prepare tactics. When PF2e Dailies is active, use **Prepare in Dailies**; otherwise Commanderer manages preparation directly.
 6. Expand tactic titles to review responder count, signal reach, readiness, traits, and full PF2e rules.
@@ -61,8 +62,10 @@ https://github.com/roi007leaf/pf2e-commanderer/releases/latest/download/module.j
 | Displayed | Commander token; native 30-foot aura | Visual or auditory signals; Brandish allowed |
 | Stowed | No active aura | Banner-dependent tactics unavailable |
 | Planted | Chosen token corner; persistent 40-foot burst | Carried aura disabled; auditory signals only; Brandish unavailable |
+| Pulled down | Original planted point | Every benefit inactive until retrieval |
+| Taken | Enemy carrier token; follows its movement | Every benefit inactive; adjacent recovery uses a GM-ruled Commander check |
 
-The planted standard is stored on the scene and rendered on the canvas. Native Commander's Banner effects follow the planted burst immediately as allied tokens enter or leave it. Retrieval restores the carried aura and origin.
+The planted standard is stored on the scene and rendered on the canvas. Native Commander's Banner effects follow the planted burst immediately as allied tokens enter or leave it. An adjacent enemy can pull it down in place or take it away; deleting a carrier token drops the banner at its last position. To recover a carried banner, the Commander moves adjacent and presses **Recover**. The GM chooses Disarm, Grapple, an Athletics DC, any custom statistic/defense pair, or manual success. **Rolling player** defaults to an active non-GM Commander owner, so the native PF2e check opens and posts from that player's client. Success restores the carried aura and origin.
 
 ## Tactic workflow
 
@@ -116,6 +119,7 @@ Commanderer's catalog provides tactic-specific mechanical or guided workflows fo
 - preparation, frequency, signal, banner, aura, responder-count, and once-per-round response rules;
 - Drilled Reaction tracking;
 - carried and planted banner origins;
+- Plant Banner's immediate and turn-start temporary HP, hostile Interact removal, carried-banner tracking, and GM-ruled Commander recovery checks;
 - shared designated targets and responder roles;
 - half-, full-, double-, and fixed-Speed movement;
 - direct-toward, retreat, adjacency, reach, area, and close-formation validation;

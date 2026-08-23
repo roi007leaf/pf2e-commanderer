@@ -3,6 +3,9 @@ import { CommanderEngine, activateChatCards } from "./engine.js";
 import { hasCommanderFeatures } from "./foundry/runtime.js";
 import { registerSocket } from "./foundry/socket.js";
 import { registerPlantedBannerEffects } from "./foundry/banner-effects.js";
+import { registerPlantBannerTempHp } from "./foundry/plant-banner-temp-hp.js";
+import { registerBannerInteractions } from "./foundry/banner.js";
+import { registerBannerRecovery } from "./foundry/banner-recovery.js";
 import { openCommanderPanel, registerCommanderPanelLiveUpdates } from "./ui/panel.js";
 import { registerCommanderTokenHud } from "./ui/token-hud.js";
 import { registerBannerOverlay } from "./canvas/banner-overlay.js";
@@ -14,7 +17,10 @@ registerBannerOverlay();
 
 Hooks.once("ready", () => {
   registerSocket();
+  registerBannerInteractions();
+  registerBannerRecovery();
   registerPlantedBannerEffects();
+  registerPlantBannerTempHp();
   registerCommanderPanelLiveUpdates();
   engine = new CommanderEngine();
   activateChatCards(engine);

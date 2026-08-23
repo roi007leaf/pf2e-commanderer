@@ -210,6 +210,16 @@
   box-shadow: 0 0 0 3px rgba(114, 167, 122, 0.15), 0 0 8px rgba(114, 167, 122, 0.45);
 }
 
+.pf2e-commanderer .commanderer-banner.removed {
+  border-color: rgba(199, 86, 80, 0.5);
+  background: rgba(112, 31, 31, 0.16);
+}
+
+.pf2e-commanderer .commanderer-banner.removed .commanderer-status-dot {
+  background: #c75650;
+  box-shadow: 0 0 0 3px rgba(199, 86, 80, 0.14);
+}
+
 .pf2e-commanderer .commanderer-banner small,
 .pf2e-commanderer .commanderer-banner strong { display: block; line-height: 1.15; }
 .pf2e-commanderer .commanderer-banner small { color: var(--cmd-text-muted); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -1233,3 +1243,184 @@
 .pf2e-commanderer-dialog .commanderer-choice.locked { cursor: default; }
 .pf2e-commanderer-dialog .commanderer-choice.locked:hover { transform: none; }
 .token-hud .commander-token-hud-button { color: #f1d27a; }
+
+.token-hud .commander-remove-banner-hud-button {
+  color: #e4867e;
+  text-shadow: 0 1px 2px #000;
+}
+
+.pf2e-commanderer-dialog .commanderer-banner-removal-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.pf2e-commanderer-dialog .commanderer-banner-removal-options > div {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  border: 1px solid var(--cmd-border-strong);
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--cmd-surface-raised), var(--cmd-surface));
+}
+
+.pf2e-commanderer-dialog .commanderer-banner-removal-options > div > i {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--cmd-accent-bright);
+  background: var(--cmd-accent-soft);
+}
+
+.pf2e-commanderer-dialog .commanderer-banner-removal-options strong,
+.pf2e-commanderer-dialog .commanderer-banner-removal-options small { display: block; }
+
+.pf2e-commanderer-dialog .commanderer-banner-removal-options small {
+  margin-top: 2px;
+  color: var(--cmd-text-muted);
+  font-size: 10px;
+}
+
+.pf2e-commanderer-dialog.commander-banner-recovery-dialog {
+  display: grid;
+  gap: 12px;
+  min-width: min(620px, 80vw);
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-summary {
+  display: grid;
+  grid-template-columns: 48px 24px 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--cmd-border-strong);
+  border-radius: var(--cmd-radius);
+  background: linear-gradient(135deg, rgba(143, 52, 56, 0.2), var(--cmd-surface));
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-summary img {
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  border: 1px solid var(--cmd-accent);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-summary > i {
+  color: var(--cmd-accent-bright);
+  text-align: center;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-summary strong,
+.pf2e-commanderer-dialog .commanderer-recovery-summary small {
+  display: block;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-summary small {
+  margin-top: 3px;
+  color: var(--cmd-text-muted);
+  line-height: 1.35;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-fieldset {
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--cmd-border);
+  border-radius: var(--cmd-radius);
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-fieldset legend {
+  padding: 0 6px;
+  color: var(--cmd-accent-bright);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approaches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 9px;
+  min-height: 58px;
+  margin: 0;
+  padding: 9px;
+  border: 1px solid var(--cmd-border);
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--cmd-surface-raised), var(--cmd-surface));
+  cursor: pointer;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach > i {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--cmd-accent-bright);
+  background: var(--cmd-accent-soft);
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach strong,
+.pf2e-commanderer-dialog .commanderer-recovery-approach small { display: block; }
+.pf2e-commanderer-dialog .commanderer-recovery-approach small { margin-top: 2px; color: var(--cmd-text-muted); font-size: 10px; }
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach:has(input:checked) {
+  border-color: var(--cmd-accent);
+  background: linear-gradient(135deg, rgba(201, 166, 107, 0.2), var(--cmd-surface-raised));
+  box-shadow: 0 0 0 1px rgba(201, 166, 107, 0.16);
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach:has(input:checked) .commanderer-choice-indicator {
+  border-color: var(--cmd-accent-bright);
+  background: var(--cmd-accent-bright);
+}
+
+.pf2e-commanderer-dialog .commanderer-recovery-approach:has(input:checked) .commanderer-choice-indicator i { opacity: 1; transform: scale(1); }
+.pf2e-commanderer-dialog .commanderer-recovery-approach.disabled { opacity: 0.42; cursor: not-allowed; }
+.pf2e-commanderer-dialog .commanderer-recovery-approach.disabled > input { cursor: not-allowed; }
+
+.pf2e-commanderer-dialog .commander-recovery-custom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.pf2e-commanderer-dialog .commander-recovery-custom .form-group {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.pf2e-commanderer-dialog .commander-recovery-custom .hint { grid-column: 1 / -1; margin: 0; }
+
+@media (max-width: 700px) {
+  .pf2e-commanderer-dialog.commander-banner-recovery-dialog { min-width: 0; }
+  .pf2e-commanderer-dialog .commanderer-recovery-approaches,
+  .pf2e-commanderer-dialog .commander-recovery-custom { grid-template-columns: 1fr; }
+  .pf2e-commanderer-dialog .commander-recovery-custom .hint { grid-column: auto; }
+}
