@@ -1,5 +1,5 @@
 import { FLAG_SCOPE, MODULE_ID } from "./constants.js";
-import { combatRoundKey, responseAllowed, selectionAllowed } from "./domain/rules.js";
+import { combatRoundKey, participantControlType, responseAllowed, selectionAllowed } from "./domain/rules.js";
 import { tacticDefinition } from "./domain/tactics.js";
 import { tacticDependsOnBannerAura } from "./domain/squad-readiness.js";
 import { performResponse, swapTokenPositions } from "./foundry/actions.js";
@@ -156,15 +156,31 @@ async function designatedTargetFor(actor, definition) {
   };
 }
 
+function participantChoiceCard(member, { inputName = null, inputType = null, value = null, selected = false } = {}) {
+  const selectable = Boolean(inputName && inputType);
+  const tag = selectable ? "label" : "div";
+  const name = escapeHtml(member.name);
+  const input = selectable
+    ? `<input type="${inputType}" name="${inputName}" value="${value}" aria-label="Select ${name}">`
+    : "";
+  return `<${tag} class="commanderer-choice${selected ? " selected locked" : ""}">
+    ${input}
+    <img src="${escapeHtml(member.img)}" alt="">
+    <span class="commanderer-choice-name">
+      <strong>${name}</strong>
+      <small>${member.commander ? "Commander" : "Squadmate"}</small>
+    </span>
+    <span class="commanderer-choice-indicator" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+  </${tag}>`;
+}
+
 async function chooseInvocation(item, actor, definition, members, { bannerPlanted = false } = {}) {
   const brandish = item.system?.traits?.value?.includes("brandish") === true;
   const all = definition.selection === "all";
-  const memberRows = members.map((member, index) => `
-    <label class="commanderer-choice">
-      ${all ? '<i class="fa-solid fa-check"></i>' : `<input type="checkbox" name="participant" value="${index}">`}
-      <img src="${escapeHtml(member.img)}" alt="" width="28" height="28">
-      <span>${escapeHtml(member.name)}${member.commander ? " (Commander)" : ""}</span>
-    </label>`).join("");
+  const controlType = participantControlType(definition.selection);
+  const memberRows = members.map((member, index) => participantChoiceCard(member, all
+    ? { selected: true }
+    : { inputName: "participant", inputType: controlType, value: index })).join("");
   const signal = brandish
     ? '<input type="hidden" name="signal" value="visual"><p><i class="fa-solid fa-flag"></i> Brandish: visual banner signal.</p>'
     : bannerPlanted
@@ -214,7 +230,11 @@ async function chooseInvocation(item, actor, definition, members, { bannerPlante
 async function assignParticipantRoles(definition, response, members, indexes) {
   if (definition.response.kind === "shadows-in-the-moonlight" && response.actionCost === 2) {
     const selected = indexes.map((index) => ({ index, member: members[index] }));
-    const choices = selected.map(({ index, member }) => `<label class="commanderer-choice"><input type="checkbox" name="bonus" value="${index}"><img src="${escapeHtml(member.img)}" alt="" width="28" height="28"><span>${escapeHtml(member.name)}</span></label>`).join("");
+    const choices = selected.map(({ index, member }) => participantChoiceCard(member, {
+      inputName: "bonus",
+      inputType: "checkbox",
+      value: index,
+    })).join("");
     const result = await foundry.applications.api.DialogV2.wait({
       window: { title: "Shadows in the Moonlight" },
       content: `<div class="pf2e-commanderer-dialog"><p>Choose up to two squadmates who can Hide or Sneak as a free action.</p><div class="commanderer-choices">${choices}</div></div>`,

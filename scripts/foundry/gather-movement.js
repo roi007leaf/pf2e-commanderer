@@ -105,6 +105,12 @@ export function startGatherMovementPlanning(token, options) {
   return planning;
 }
 
+export function gatherMovementResult(verdictCode) {
+  return verdictCode === "inside-aura"
+    ? "moved inside the banner aura"
+    : "moved as close to the banner aura as Speed allowed";
+}
+
 export async function performGatherMovement({ actor, commander, tokenUuid, commanderTokenUuid } = {}) {
   const movingToken = await tokenFor(actor, tokenUuid);
   const commanderToken = await tokenFor(commander, commanderTokenUuid);
@@ -152,8 +158,7 @@ export async function performGatherMovement({ actor, commander, tokenUuid, comma
 
       const moved = await movingToken.document.startMovement(plan.id);
       if (!moved) throw new Error("Gather to Me! movement was stopped before completion.");
-      const outcome = verdict.code === "inside-aura" ? "inside the banner aura" : "as close to the banner aura as Speed allowed";
-      return `moved ${outcome} (${mode.label}, ${Math.round(cost)} feet)`;
+      return gatherMovementResult(verdict.code);
     }
   } finally {
     cancelMovementPlanning(movingToken);

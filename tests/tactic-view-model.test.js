@@ -27,11 +27,18 @@ test("tactic view model exposes professional panel metadata", () => {
     expanded: true,
     description: "<p>Attack now.</p>",
     audience: { eligibleCount: 2, readyLabel: "2 ready" },
+    traitDescriptions: { brandish: "PF2E.TraitDescriptionBrandish" },
   });
 
   assert.equal(view.actionLabel, "2 actions");
   assert.equal(view.levelLabel, "Level 1");
-  assert.deepEqual(view.tags, ["Offensive", "Brandish"]);
+  assert.deepEqual(view.tags, [
+    {
+      label: "Offensive",
+      description: "Offensive tactics help you attack enemies, control enemy positioning, or endure enemy attacks.",
+    },
+    { label: "Brandish", description: "PF2E.TraitDescriptionBrandish" },
+  ]);
   assert.equal(view.prepared, true);
   assert.equal(view.expanded, true);
   assert.equal(view.description, "<p>Attack now.</p>");

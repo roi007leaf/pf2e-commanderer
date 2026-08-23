@@ -60,7 +60,8 @@ function tokenIsAlly(commander, token) {
 }
 
 function tokenInside(placement, token, scene) {
-  const bounds = token?.mechanicalBounds ?? token?.bounds;
+  // TokenDocument is current during updateToken; Placeable bounds refresh afterward.
+  const bounds = token?.document?.mechanicalBounds ?? token?.mechanicalBounds ?? token?.bounds;
   if (!bounds) return false;
   return bannerRangeToBounds(placement, bounds, {
     gridSize: globalThis.canvas?.grid?.size ?? globalThis.canvas?.dimensions?.size ?? 100,
@@ -124,6 +125,25 @@ async function createBannerEffect(actor, commander, sceneId, baseEffect) {
   await actor.createEmbeddedDocuments("Item", [source]);
 }
 
+function missingEmbeddedItemId(error) {
+  return /^Item "([^"]+)" does not exist!$/.exec(error?.message ?? "")?.[1] ?? null;
+}
+
+async function deleteBannerEffects(actor, itemIds) {
+  let remaining = [...new Set(itemIds)];
+  while (remaining.length) {
+    try {
+      await actor.deleteEmbeddedDocuments("Item", remaining);
+      return;
+    } catch (error) {
+      // PF2e aura cleanup can win the race after this sync captures actor.items.
+      const missingId = missingEmbeddedItemId(error);
+      if (!missingId || !remaining.includes(missingId)) throw error;
+      remaining = remaining.filter((itemId) => itemId !== missingId);
+    }
+  }
+}
+
 export async function syncPlantedBannerEffects(scene = globalThis.canvas?.scene) {
   if (!mayManageEffects() || !scene || scene.id !== globalThis.canvas?.scene?.id) return;
   const placements = Object.values(sceneBannerPlacements(scene));
@@ -159,7 +179,7 @@ export async function syncPlantedBannerEffects(scene = globalThis.canvas?.scene)
       else existingByCommander.set(origin.commanderUuid, item);
     }
 
-    if (removals.length) await actor.deleteEmbeddedDocuments("Item", removals);
+    if (removals.length) await deleteBannerEffects(actor, removals);
     for (const [commanderUuid, commander] of wanted) {
       if (existingByCommander.has(commanderUuid)) continue;
       baseEffect ??= await globalThis.fromUuid?.(BANNER_EFFECT_UUID);

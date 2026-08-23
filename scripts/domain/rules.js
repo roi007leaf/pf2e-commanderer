@@ -25,3 +25,7 @@ export function selectionAllowed(selection, selectedCount, eligibleCount) {
   if (selection === "up-to-3") return selectedCount <= 3;
   return true;
 }
+
+export function participantControlType(selection) {
+  return selection === "one" ? "radio" : "checkbox";
+}

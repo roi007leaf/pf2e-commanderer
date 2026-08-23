@@ -1,4 +1,5 @@
-.pf2e-commanderer {
+.pf2e-commanderer,
+.pf2e-commanderer-dialog {
   --cmd-accent: #c9a66b;
   --cmd-accent-bright: #e2c38a;
   --cmd-accent-soft: rgba(201, 166, 107, 0.14);
@@ -45,6 +46,7 @@
 .pf2e-commanderer .commanderer-hero {
   position: relative;
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
@@ -148,9 +150,9 @@
 
 .pf2e-commanderer .commanderer-banner-corners {
   display: flex;
-  grid-column: 1 / -1;
+  flex: 0 0 auto;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 8px;
   padding: 7px 8px;
   border: 1px solid rgba(201, 166, 107, 0.28);
@@ -654,6 +656,8 @@
   background: linear-gradient(90deg, rgba(201, 166, 107, 0.035), transparent 70%);
 }
 
+.pf2e-commanderer .commanderer-tactic-details[hidden] { display: none; }
+
 .pf2e-commanderer .commanderer-details-header {
   justify-content: space-between;
   gap: 10px;
@@ -681,6 +685,8 @@
   font-size: 9px;
   line-height: 1.25;
 }
+
+.pf2e-commanderer .commanderer-traits span[data-tooltip] { cursor: help; }
 
 .pf2e-commanderer .commanderer-tactic-audience {
   display: grid;
@@ -1105,7 +1111,125 @@
 }
 
 /* Shared response-dialog presentation. */
-.pf2e-commanderer-dialog .commanderer-choices { display: flex; flex-direction: column; gap: 0.25rem; max-height: 280px; overflow-y: auto; }
-.pf2e-commanderer-dialog .commanderer-choice { display: flex; align-items: center; gap: 0.4rem; }
-.pf2e-commanderer-dialog .commanderer-choice img { border: 0; border-radius: 3px; object-fit: cover; }
+.pf2e-commanderer-dialog .commanderer-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+  max-height: 320px;
+  padding: 2px 4px 2px 0;
+  overflow-y: auto;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--cmd-border);
+  border-radius: var(--cmd-radius);
+  color: var(--cmd-text);
+  background: linear-gradient(135deg, var(--cmd-surface-raised), var(--cmd-surface));
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice:hover {
+  border-color: var(--cmd-border-strong);
+  background: linear-gradient(135deg, var(--cmd-surface-hover), var(--cmd-surface-raised));
+  transform: translateY(-1px);
+}
+
+.pf2e-commanderer-dialog .commanderer-choice input {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice img {
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  border: 1px solid var(--cmd-border-strong);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.32);
+}
+
+.pf2e-commanderer-dialog .commanderer-choice-name { min-width: 0; }
+.pf2e-commanderer-dialog .commanderer-choice-name strong {
+  display: block;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pf2e-commanderer-dialog .commanderer-choice-name small {
+  display: block;
+  margin-top: 3px;
+  color: var(--cmd-text-muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice-indicator {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--cmd-border-strong);
+  border-radius: 50%;
+  color: var(--cmd-bg-deep);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice-indicator i {
+  font-size: 10px;
+  opacity: 0;
+  transform: scale(0.55);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice:has(input:checked),
+.pf2e-commanderer-dialog .commanderer-choice.selected {
+  border-color: var(--cmd-accent);
+  background: linear-gradient(135deg, rgba(201, 166, 107, 0.2), var(--cmd-surface-raised));
+  box-shadow: 0 0 0 1px rgba(201, 166, 107, 0.18), 0 4px 11px rgba(0, 0, 0, 0.3);
+}
+
+.pf2e-commanderer-dialog .commanderer-choice:has(input:checked) .commanderer-choice-indicator,
+.pf2e-commanderer-dialog .commanderer-choice.selected .commanderer-choice-indicator {
+  border-color: var(--cmd-accent-bright);
+  background: var(--cmd-accent-bright);
+  transform: scale(1.04);
+}
+
+.pf2e-commanderer-dialog .commanderer-choice:has(input:checked) .commanderer-choice-indicator i,
+.pf2e-commanderer-dialog .commanderer-choice.selected .commanderer-choice-indicator i {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pf2e-commanderer-dialog .commanderer-choice:has(input:focus-visible) {
+  outline: 2px solid var(--cmd-accent-bright);
+  outline-offset: 2px;
+}
+
+.pf2e-commanderer-dialog .commanderer-choice.locked { cursor: default; }
+.pf2e-commanderer-dialog .commanderer-choice.locked:hover { transform: none; }
 .token-hud .commander-token-hud-button { color: #f1d27a; }

@@ -17,6 +17,16 @@ test("Commander panel exposes Plant Banner and Retrieve actions", async () => {
   assert.match(template, /data-action="retrieveBanner"/);
 });
 
+test("banner corner picker renders below the compact Commander hero", async () => {
+  const template = await readFile(new URL("../templates/panel.hbs", import.meta.url), "utf8");
+  const heroStart = template.indexOf('<header class="commanderer-hero">');
+  const heroEnd = template.indexOf("</header>", heroStart);
+  const picker = template.indexOf('class="commanderer-banner-corners"');
+
+  assert.ok(heroStart >= 0 && heroEnd > heroStart, "Commander hero exists");
+  assert.ok(picker > heroEnd, "expanded picker must not enlarge or overflow the hero banner grid");
+});
+
 test("Commander ApplicationV2 registers every banner placement action", async () => {
   const previousFoundry = globalThis.foundry;
   globalThis.foundry = { applications: { api: { ApplicationV2: class {} } } };

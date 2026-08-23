@@ -1,4 +1,8 @@
 const GENERIC_TRAITS = new Set(["commander", "tactic"]);
+const CATEGORY_DESCRIPTIONS = {
+  "commander-mobility-tactic": "Mobility tactics make it easier for your party to move across the battlefield or negotiate unusual terrain.",
+  "commander-offensive-tactic": "Offensive tactics help you attack enemies, control enemy positioning, or endure enemy attacks.",
+};
 
 function titleCase(slug) {
   return String(slug ?? "")
@@ -20,14 +24,17 @@ function actionLabel(item) {
   return "Tactic";
 }
 
-function tacticTags(item) {
+function tacticTags(item, traitDescriptions = {}) {
   const category = item.system?.traits?.otherTags
     ?.find((slug) => /^commander-.+-tactic$/.test(slug));
   const traits = item.system?.traits?.value ?? [];
   return [category, ...traits]
     .filter((slug) => slug && !GENERIC_TRAITS.has(slug))
-    .map(titleCase)
-    .filter((label, index, labels) => label && labels.indexOf(label) === index);
+    .map((slug) => ({
+      label: titleCase(slug),
+      description: CATEGORY_DESCRIPTIONS[slug] ?? traitDescriptions[slug] ?? null,
+    }))
+    .filter((tag, index, tags) => tag.label && tags.findIndex((candidate) => candidate.label === tag.label) === index);
 }
 
 function frequencyLabel(item) {
@@ -42,7 +49,13 @@ function frequencyLabel(item) {
  * The panel's stable interface for a PF2e tactic Item.
  * Foundry-specific enrichment happens outside this module and is injected here.
  */
-export function tacticViewModel(item, { prepared = false, expanded = false, description = "", audience = null } = {}) {
+export function tacticViewModel(item, {
+  prepared = false,
+  expanded = false,
+  description = "",
+  audience = null,
+  traitDescriptions = {},
+} = {}) {
   const level = Number(item.system?.level?.value ?? 0);
   const eligible = (audience?.eligibleCount ?? 1) > 0;
   return {
@@ -55,7 +68,7 @@ export function tacticViewModel(item, { prepared = false, expanded = false, desc
     actionLabel: actionLabel(item),
     frequencyLabel: frequencyLabel(item),
     levelLabel: level > 0 ? `Level ${level}` : null,
-    tags: tacticTags(item),
+    tags: tacticTags(item, traitDescriptions),
     audience,
     canIssue: prepared && eligible,
     issueTitle: !prepared

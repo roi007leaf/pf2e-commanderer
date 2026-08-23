@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { gatherDestinationVerdict, gatherMovementModes } from "../scripts/domain/gather-movement.js";
-import { startGatherMovementPlanning } from "../scripts/foundry/gather-movement.js";
+import { gatherMovementResult, startGatherMovementPlanning } from "../scripts/foundry/gather-movement.js";
 
 test("Gather to Me reads every supported PF2e movement Speed", () => {
   const actor = {
@@ -68,6 +68,11 @@ test("Gather to Me accepts a full routed move around an obstacle", () => {
     pathCost: 25,
     directRoute: false,
   }).code, "closest-routed");
+});
+
+test("Gather chat result omits movement mode and measured distance", () => {
+  assert.equal(gatherMovementResult("inside-aura"), "moved inside the banner aura");
+  assert.equal(gatherMovementResult("closest-routed"), "moved as close to the banner aura as Speed allowed");
 });
 
 test("Gather planning visibly activates and controls the responder token before arming Foundry", async () => {

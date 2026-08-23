@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { preparedCapacity, responseAllowed, selectionAllowed, squadCapacity } from "../scripts/domain/rules.js";
+import { participantControlType, preparedCapacity, responseAllowed, selectionAllowed, squadCapacity } from "../scripts/domain/rules.js";
 import { TACTICS, tacticDefinition } from "../scripts/domain/tactics.js";
 
 test("Commander squad capacity includes two plus Intelligence modifier", () => {
@@ -30,6 +30,12 @@ test("participant limits reject invalid selections", () => {
   assert.equal(selectionAllowed("up-to-2", 2, 4), true);
   assert.equal(selectionAllowed("all", 3, 4), false);
   assert.equal(selectionAllowed("all", 4, 4), true);
+});
+
+test("single-responder tactics use an exclusive participant control", () => {
+  assert.equal(participantControlType("one"), "radio");
+  assert.equal(participantControlType("two"), "checkbox");
+  assert.equal(participantControlType("up-to-2"), "checkbox");
 });
 
 test("unknown tactics still get the universal tracked workflow", () => {
