@@ -1,0 +1,269 @@
+<div class="commanderer-panel">
+  <header class="commanderer-hero">
+    <div class="commanderer-identity">
+      <img class="commanderer-portrait" src="{{actorImg}}" alt="{{actorName}}">
+      <div>
+        <span class="commanderer-eyebrow">Battlefield command</span>
+        <h2>{{actorName}}</h2>
+        <p>Level {{actorLevel}} Commander</p>
+      </div>
+    </div>
+
+    <div class="commanderer-banner-control {{#if bannerPlacementExpanded}}choosing-corner{{/if}}">
+      <div class="commanderer-banner {{#if bannerActive}}active{{else}}inactive{{/if}}">
+        <span class="commanderer-status-dot"></span>
+        <div>
+          <small>{{#if bannerPlanted}}Planted banner{{else}}Carried banner{{/if}}</small>
+          <strong>
+            {{#if bannerPlanted}}
+              {{bannerRadius}}-foot burst · Auditory tactics
+            {{else}}
+              {{#if bannerActive}}Displayed · Aura active{{else}}Stowed · Aura inactive{{/if}}
+            {{/if}}
+          </strong>
+        </div>
+      </div>
+      <div class="commanderer-banner-actions">
+        {{#if bannerPlanted}}
+          <button type="button" class="commanderer-button commander-banner-retrieve" data-action="retrieveBanner" {{#unless bannerRetrievable}}disabled{{/unless}} title="{{#if bannerRetrievable}}Retrieve the planted banner{{else}}Move adjacent to the planted banner to retrieve it{{/if}}">
+            <i class="fa-solid fa-hand"></i><span>Retrieve</span>
+          </button>
+        {{else}}
+          {{#if bannerToggleAvailable}}
+            <button type="button" class="commanderer-button commander-banner-toggle" data-action="toggleBanner" title="Toggle the native PF2e Commander's Banner aura">
+              <i class="fa-solid {{#if bannerActive}}fa-box-archive{{else}}fa-flag{{/if}}"></i>
+              {{#if bannerActive}}Stow{{else}}Display{{/if}}
+            </button>
+          {{/if}}
+          <button
+            type="button"
+            class="commanderer-button commander-banner-plant {{#if bannerPlacementExpanded}}active{{/if}}"
+            data-action="toggleBannerPlacement"
+            aria-expanded="{{#if bannerPlacementExpanded}}true{{else}}false{{/if}}"
+            {{#unless plantBannerAvailable}}disabled{{/unless}}
+            title="{{#if plantBannerAvailable}}Plant the banner in a corner of the Commander's space{{else}}Requires the Plant Banner feat{{/if}}"
+          >
+            <i class="fa-solid fa-location-pin"></i><span>Plant</span>
+          </button>
+        {{/if}}
+      </div>
+
+      {{#if bannerPlacementExpanded}}
+        <div class="commanderer-banner-corners" role="group" aria-label="Choose banner corner">
+          <span><i class="fa-solid fa-location-crosshairs"></i> Choose a corner of your token</span>
+          <div>
+            <button type="button" data-action="plantBannerAtCorner" data-corner="nw" title="Northwest corner" aria-label="Plant northwest"><i class="fa-solid fa-arrow-up-left"></i></button>
+            <button type="button" data-action="plantBannerAtCorner" data-corner="ne" title="Northeast corner" aria-label="Plant northeast"><i class="fa-solid fa-arrow-up-right"></i></button>
+            <button type="button" data-action="plantBannerAtCorner" data-corner="sw" title="Southwest corner" aria-label="Plant southwest"><i class="fa-solid fa-arrow-down-left"></i></button>
+            <button type="button" data-action="plantBannerAtCorner" data-corner="se" title="Southeast corner" aria-label="Plant southeast"><i class="fa-solid fa-arrow-down-right"></i></button>
+          </div>
+        </div>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="commanderer-metrics" aria-label="Commander overview">
+    <div class="commanderer-metric">
+      <i class="fa-solid fa-users"></i>
+      <div><strong>{{squadCount}} / {{squadLimit}}</strong><span>Squadmates</span></div>
+    </div>
+    <div class="commanderer-metric">
+      <i class="fa-solid fa-bookmark"></i>
+      <div><strong>{{preparedCount}} / {{preparationLimit}}</strong><span>Prepared</span></div>
+    </div>
+    <div class="commanderer-metric">
+      <i class="fa-solid fa-chess-knight"></i>
+      <div><strong>{{tacticCount}}</strong><span>Known tactics</span></div>
+    </div>
+  </div>
+
+  <section class="commanderer-surface commander-squad-section">
+    <header class="commanderer-section-header">
+      <div class="commanderer-section-heading">
+        <span class="commanderer-section-icon"><i class="fa-solid fa-people-group"></i></span>
+        <div>
+          <h3>Squad</h3>
+          <p>Select the allies trained to answer your commands.</p>
+        </div>
+      </div>
+      <div class="commanderer-actions">
+        <button type="button" class="commanderer-button subtle {{#if squadPlannerExpanded}}active{{/if}}" data-action="toggleSquadPlanner" aria-expanded="{{#if squadPlannerExpanded}}true{{else}}false{{/if}}" title="Discover and manage allied squad candidates on this scene">
+          <i class="fa-solid fa-user-gear"></i><span>Manage</span>
+        </button>
+        <button type="button" class="commanderer-icon-button danger" data-action="clearSquad" title="Clear squad" aria-label="Clear squad">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    </header>
+
+    {{#if squad.length}}
+      <div class="commanderer-squad">
+        {{#each squad}}
+          <div class="commanderer-member">
+            <img src="{{img}}" alt="">
+            <div class="commanderer-member-info">
+              <span>{{name}}</span>
+              {{#if onScene}}
+                {{#if auraActive}}
+                  <small class="{{#if inBannerAura}}in-aura{{else}}outside-aura{{/if}}"><i class="fa-solid {{#if inBannerAura}}fa-circle-dot{{else}}fa-location-arrow{{/if}}"></i> {{#if inBannerAura}}In banner aura{{else}}Outside aura{{/if}}</small>
+                {{else}}
+                  <small><i class="fa-solid fa-flag"></i> Aura inactive</small>
+                {{/if}}
+              {{else}}
+                <small><i class="fa-solid fa-map-location-dot"></i> Off scene</small>
+              {{/if}}
+            </div>
+            <i class="fa-solid fa-circle-check" title="Drilled squadmate"></i>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="commanderer-empty-state">
+        <i class="fa-solid fa-user-plus"></i>
+        <div>
+          <strong>No squadmates selected</strong>
+          <p>Target willing creatures on the canvas, then use targets. The Commander is always included and consumes no slot.</p>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if squadPlannerExpanded}}
+      <div class="commanderer-squad-planner">
+        <header class="commanderer-planner-header">
+          <div>
+            <span class="commanderer-eyebrow">Scene allies</span>
+            <strong>Drill your squad roster</strong>
+            <p>Nearby allies are suggestions, not automatic squadmates. Roster changes represent daily preparation or a 10-minute drill.</p>
+          </div>
+          <div class="commanderer-planner-actions">
+            <button type="button" class="commanderer-button subtle" data-action="setSquad" title="Replace roster with currently targeted allied tokens">
+              <i class="fa-solid fa-crosshairs"></i><span>Use targets</span>
+            </button>
+            <button type="button" class="commanderer-button subtle" data-action="addNearbySquad" {{#unless nearbyCandidateCount}}disabled{{/unless}} title="Add every untrained allied token currently inside the banner aura when capacity permits">
+              <i class="fa-solid fa-person-circle-plus"></i><span>Add nearby</span>
+            </button>
+          </div>
+        </header>
+
+        {{#if squadCandidates.length}}
+          <div class="commanderer-candidate-list">
+            {{#each squadCandidates}}
+              <article class="commanderer-candidate {{#if current}}current{{/if}}">
+                <img src="{{img}}" alt="">
+                <div class="commanderer-candidate-info">
+                  <strong>{{name}}</strong>
+                  <div class="commanderer-candidate-tags">
+                    {{#if current}}<span class="drilled"><i class="fa-solid fa-circle-check"></i> Drilled</span>{{/if}}
+                    {{#if targeted}}<span><i class="fa-solid fa-crosshairs"></i> Targeted</span>{{/if}}
+                    {{#if auraActive}}
+                      <span class="{{#if inBannerAura}}in-aura{{else}}outside-aura{{/if}}"><i class="fa-solid {{#if inBannerAura}}fa-circle-dot{{else}}fa-location-arrow{{/if}}"></i> {{#if inBannerAura}}In aura{{else}}Outside aura{{/if}}</span>
+                    {{else}}
+                      <span><i class="fa-solid fa-flag"></i> Aura inactive</span>
+                    {{/if}}
+                  </div>
+                </div>
+                <button type="button" class="commanderer-button candidate-toggle {{#if current}}remove{{/if}}" data-action="toggleSquadMember" data-actor-uuid="{{actorUuid}}" {{#unless canToggle}}disabled{{/unless}} title="{{#if current}}Remove {{name}} from squad{{else}}{{#if canToggle}}Add {{name}} to squad{{else}}Squad is full{{/if}}{{/if}}">
+                  <i class="fa-solid {{#if current}}fa-minus{{else}}fa-plus{{/if}}"></i><span>{{#if current}}Remove{{else}}Add{{/if}}</span>
+                </button>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="commanderer-empty-state compact">
+            <i class="fa-solid fa-user-group"></i>
+            <div><strong>No allied tokens found</strong><p>Place allied creature tokens on this scene to discover squad candidates.</p></div>
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+  </section>
+
+  <section class="commanderer-surface commander-tactics">
+    <header class="commanderer-section-header">
+      <div class="commanderer-section-heading">
+        <span class="commanderer-section-icon"><i class="fa-solid fa-map"></i></span>
+        <div>
+          <h3>Tactics</h3>
+          <p>Open a title for the full field briefing.</p>
+        </div>
+      </div>
+      {{#if dailiesManaged}}
+        <button type="button" class="commanderer-button subtle" data-action="openDailies">
+          <i class="fa-solid fa-calendar-check"></i><span>Prepare in Dailies</span>
+        </button>
+      {{/if}}
+    </header>
+
+    {{#if tactics.length}}
+      <div class="commanderer-tactic-list">
+        {{#each tactics}}
+          <article class="commanderer-tactic {{#if prepared}}prepared{{else}}unprepared{{/if}} {{#if expanded}}expanded{{/if}}">
+            <div class="commanderer-tactic-row">
+              <img class="commanderer-tactic-image" src="{{img}}" alt="">
+              <button
+                type="button"
+                class="commanderer-tactic-title"
+                data-action="toggleTacticDetails"
+                data-item-id="{{id}}"
+                aria-expanded="{{#if expanded}}true{{else}}false{{/if}}"
+                title="{{#if expanded}}Hide{{else}}Show{{/if}} details for {{name}}"
+              >
+                <span class="commanderer-tactic-heading">
+                  <strong>{{name}}</strong>
+                  <i class="fa-solid fa-chevron-down"></i>
+                </span>
+                <span class="commanderer-tactic-meta">
+                  <span class="commanderer-prepared-state"><i class="fa-solid fa-circle"></i> {{#if prepared}}Prepared{{else}}Not prepared{{/if}}</span>
+                  <span>{{actionLabel}}</span>
+                  {{#if audience}}<span class="commanderer-tactic-readiness {{audience.tone}}"><i class="fa-solid fa-users"></i> {{audience.readyLabel}}</span>{{/if}}
+                  {{#if levelLabel}}<span>{{levelLabel}}</span>{{/if}}
+                  {{#if frequencyLabel}}<span>{{frequencyLabel}}</span>{{/if}}
+                </span>
+              </button>
+
+              <div class="commanderer-tactic-actions">
+                {{#unless ../dailiesManaged}}
+                  <button type="button" class="commanderer-icon-button" data-action="prepare" data-item-id="{{id}}" title="{{#if prepared}}Unprepare{{else}}Prepare{{/if}} {{name}}" aria-label="Toggle prepared">
+                    <i class="fa-solid {{#if prepared}}fa-bookmark{{else}}fa-book-open{{/if}}"></i>
+                  </button>
+                {{/unless}}
+                <button type="button" class="commanderer-button issue" data-action="issue" data-item-id="{{id}}" {{#unless canIssue}}disabled{{/unless}} title="{{issueTitle}}">
+                  <i class="fa-solid fa-bullhorn"></i><span>Issue</span>
+                </button>
+              </div>
+            </div>
+
+            {{#if expanded}}
+              <div class="commanderer-tactic-details">
+                <div class="commanderer-details-header">
+                  <span><i class="fa-solid fa-scroll"></i> Field briefing</span>
+                  {{#if tags.length}}
+                    <div class="commanderer-traits">
+                      {{#each tags}}<span>{{this}}</span>{{/each}}
+                    </div>
+                  {{/if}}
+                </div>
+                {{#if audience}}
+                  <div class="commanderer-tactic-audience">
+                    <div><span>Responders</span><strong>{{audience.selectionLabel}}</strong></div>
+                    <div><span>Signal reach</span><strong>{{audience.reachLabel}}</strong></div>
+                    <div class="{{audience.tone}}"><span>Ready now</span><strong>{{audience.readyDetail}}</strong></div>
+                  </div>
+                {{/if}}
+                <div class="commanderer-description">{{{description}}}</div>
+              </div>
+            {{/if}}
+          </article>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="commanderer-empty-state">
+        <i class="fa-solid fa-map"></i>
+        <div>
+          <strong>No tactics found</strong>
+          <p>Add tactics through the Commander class or archetype features.</p>
+        </div>
+      </div>
+    {{/if}}
+  </section>
+</div>

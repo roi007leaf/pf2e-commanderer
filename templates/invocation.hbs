@@ -1,0 +1,95 @@
+<article class="commanderer-card" data-commanderer-card-version="{{cardVersion}}">
+  <header class="commanderer-order-header">
+    <img class="commanderer-order-icon" src="{{tacticImg}}" alt="">
+    <div class="commanderer-order-heading">
+      <span class="commanderer-card-eyebrow"><i class="fa-solid fa-flag"></i> Tactical order</span>
+      <h3>{{tacticName}}</h3>
+      <div class="commanderer-order-meta">
+        <span><i class="fa-solid fa-user-shield"></i> {{commanderName}}</span>
+        <span><i class="fa-solid fa-tower-broadcast"></i> {{signalLabel}}</span>
+        <span><i class="fa-solid fa-bolt"></i> {{responseTypeLabel}}</span>
+      </div>
+    </div>
+    <a class="commanderer-rules-link content-link" data-link data-uuid="{{tacticUuid}}" title="Open tactic rules"><i class="fa-solid fa-book-open"></i><span>Rules</span></a>
+  </header>
+
+  {{#if designatedTarget}}
+    <section class="commanderer-designated-target">
+      <img src="{{designatedTarget.img}}" alt="">
+      <div>
+        <span class="commanderer-card-eyebrow"><i class="fa-solid fa-crosshairs"></i> Designated target</span>
+        <strong>{{designatedTarget.name}}</strong>
+      </div>
+    </section>
+  {{/if}}
+
+  <section class="commanderer-instruction">
+    <span class="commanderer-card-eyebrow"><i class="fa-solid fa-bullhorn"></i> Command</span>
+    <p>{{response.instruction}}</p>
+  </section>
+
+  <section class="commanderer-response-section">
+    <header class="commanderer-response-header">
+      <div>
+        <span class="commanderer-card-eyebrow"><i class="fa-solid fa-people-group"></i> Squad responses</span>
+        <small>{{answeredCount}} of {{participantCount}} answered</small>
+      </div>
+      <span class="commanderer-response-count {{#if allAnswered}}complete{{/if}}">{{pendingCount}} pending</span>
+    </header>
+
+    <div class="commanderer-responses">
+    {{#each participants}}
+      <article class="commanderer-response {{status}}">
+        <img class="commanderer-response-avatar" src="{{img}}" alt="">
+        <div class="commanderer-response-name">
+          <strong>{{name}}</strong>
+          {{#if roleLabel}}<small class="commanderer-response-role"><i class="fa-solid fa-diagram-project"></i> {{roleLabel}}</small>{{/if}}
+          <small class="commanderer-response-status">
+            {{#if responded}}<i class="fa-solid fa-circle-check"></i>{{/if}}
+            {{#if declined}}<i class="fa-solid fa-circle-xmark"></i>{{/if}}
+            {{#if pending}}<i class="fa-solid fa-clock"></i>{{/if}}
+            {{statusLabel}}
+          </small>
+        </div>
+        {{#if responded}}<p class="commanderer-response-result">{{result}}</p>{{/if}}
+        {{#if pending}}
+          <div class="commanderer-card-actions">
+            <button type="button" class="commanderer-card-button primary" data-commanderer-action="respond" data-participant-index="{{index}}"><i class="fa-solid fa-reply"></i> Respond</button>
+            {{#if ../drilledAvailable}}
+              {{#unless commander}}
+                <button type="button" class="commanderer-card-button drilled" data-commanderer-action="respond-drilled" data-participant-index="{{index}}" title="Use the commander's once-per-round Drilled Reaction"><i class="fa-solid fa-bolt"></i> Drilled</button>
+              {{/unless}}
+            {{/if}}
+            <button type="button" class="commanderer-card-button manual" data-commanderer-action="manual-response" data-participant-index="{{index}}" title="Skip response automation and mark this squadmate complete"><i class="fa-solid fa-hand"></i> Manual</button>
+            <button type="button" class="commanderer-card-button decline" data-commanderer-action="decline" data-participant-index="{{index}}" title="Decline this tactic"><i class="fa-solid fa-xmark"></i> Decline</button>
+          </div>
+        {{/if}}
+      </article>
+    {{/each}}
+    </div>
+  </section>
+
+  {{#if drilledUsedBy}}<p class="commanderer-note"><i class="fa-solid fa-bolt"></i> <strong>Drilled Reaction</strong><span>{{drilledUsedBy}}</span></p>{{/if}}
+
+  {{#if hasResolution}}
+    <div class="commanderer-resolve">
+      <button type="button" class="commanderer-card-button resolve" data-commanderer-action="resolve"><i class="fa-solid fa-crosshairs"></i> {{resolveButtonLabel}}</button>
+      <small>{{resolveHint}}</small>
+      <div class="commanderer-resolve-overrides">
+        <button type="button" class="commanderer-card-button manual" data-commanderer-action="manual-resolve" title="Skip all automated rolls and effects"><i class="fa-solid fa-hand-paper"></i> Handle manually</button>
+        <button type="button" class="commanderer-card-button force" data-commanderer-action="force-resolve" title="GM: ignore formation and distance checks, then run normal automation" hidden><i class="fa-solid fa-shield-halved"></i> Resolve anyway</button>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if resolutionOverrideLabel}}<p class="commanderer-note commander-resolve-note"><i class="fa-solid fa-scale-balanced"></i> <strong>Override</strong><span>{{resolutionOverrideLabel}}</span></p>{{/if}}
+
+  {{#if resolutionResults.length}}
+    <section class="commanderer-results">
+      <span class="commanderer-card-eyebrow"><i class="fa-solid fa-list-check"></i> Resolution</span>
+      {{#each resolutionResults}}
+        <p><strong>{{name}}:</strong> {{degreeLabel}} — {{applied}}</p>
+      {{/each}}
+    </section>
+  {{/if}}
+</article>

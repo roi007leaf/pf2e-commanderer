@@ -1,0 +1,10 @@
+{
+  "name": "pf2e-commanderer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check scripts/main.js && node --check scripts/engine.js"
+  }
+}

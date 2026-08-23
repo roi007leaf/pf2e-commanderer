@@ -1,0 +1,39 @@
+# Changelog
+
+## 1.0.0
+
+- Add Commander squad and prepared-tactic panel.
+- Add Commander Token HUD flag button for owned Commander tokens.
+- Add direct Deploy/Stow Banner control to the Commander panel.
+- Add Plant Banner and Retrieve controls to the Commander panel, with four rule-legal token-corner choices.
+- Persist planted standards on the Scene, render their 40-foot burst on canvas, and use that point for squad and Gather range.
+- Disable the Commander's carried PF2e aura while planted, synchronize its native base effect from the planted burst, and restore the carried aura on retrieval.
+- Enforce auditory-only tactics and reject Brandish tactics while a banner is planted.
+- Redesign the Commander panel as a polished command center with compact status metrics, squad cards, and clearer tactic states.
+- Add integrated allied-token squad discovery, nearby-aura suggestions, and capacity-safe roster management.
+- Show tactic-specific responder selection, signal reach, and live squad readiness before issuing.
+- Redesign tactic chat messages as compact command briefs with responsive responder controls and clear progress states.
+- Add expandable tactic titles with enriched PF2e rules text, action cost, available uses, and trait details.
+- Add a professional canvas banner indicator using PF2e's native aura origin and radius.
+- Keep banner canvas guidance text-free to avoid collisions with token distance and status tooltips.
+- Automate Gather to Me! with Foundry's terrain-aware movement planner, movement-mode selection, and enforced aura destination.
+- Make Gather movement mode unmistakable with a responder-token canvas cue, explicit drag instructions, forced token-layer activation, and planner-start validation.
+- Fix Foundry v14 tactic and response-choice dialogs failing on submit.
+- Add shared, owner-aware tactic response cards.
+- Enforce banner, aura, participant, frequency, response-round, and Drilled Reaction rules.
+- Automate native PF2e actions, existing effects, enemy saves, and supported tactic conditions.
+- Expand tactic-specific automation to 35 of PF2e's 37 tactics with shared designated targets, exact responder roles, native movement planning, Strike filtering, reload capacity checks, maneuver choices, healing, and geometric resolution gates.
+- Add direct-toward, retreat, half-Speed, double-Speed, reach, adjacency, close-formation, area, and Commander-range movement validation.
+- Add safe Passage of Lines token swapping for equal-footprint willing allies, with GM socket authority and manual placement retained for unequal footprints.
+- Scope Pincer Attack's off-guard effect to melee attacks from the Commander and actual responders.
+- Automate Sanguine Revitalization's Fortitude save, persistent bleed, shared 10d6 healing, qualifying-weapon audience, and target-linked save penalty.
+- Add Demoralizing Charge saves and frightened outcomes, Tactical Takedown two-responder geometry, Mirrored Wall range, and Insta-Ballista formation/range verification.
+- Lock shared-target tactics to the Commander's designated canvas target and show it prominently on the chat card.
+- Assign and sequence Slip and Sizzle's Trip and spellcaster roles, and add one- versus two-action Shadows in the Moonlight responder handling.
+- Track Piranha Assault with a one-minute target-linked effect and damage-roll resistance reminder.
+- Prevent repeated resolution and require all selected squadmates to answer before aftermath effects are applied.
+- Add owner-side manual response completion that skips automation while preserving response-round tracking.
+- Add Commander-side manual resolution handoff with no automated rolls or effects.
+- Add a recorded GM-only geometry override that keeps target-count, relationship, save, and effect automation intact.
+- Integrate optional PF2e Dailies Commander preparation.
+- Add GitHub Actions validation, packaged release assets, and optional Foundry VTT publishing.
