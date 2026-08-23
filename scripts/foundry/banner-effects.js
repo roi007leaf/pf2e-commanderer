@@ -170,7 +170,8 @@ export async function syncPlantedBannerEffects(scene = globalThis.canvas?.scene)
     for (const item of actorItems(actor)) {
       const nativeOrigin = nativeAuraOrigin(item);
       if (nativeOrigin?.slug === BANNER_SLUG && plantedCommanderUuids.has(nativeOrigin.origin)) {
-        removals.push(item.id);
+        // PF2e owns native aura-effect cleanup. Deleting it here races the
+        // system's unawaited checkAreaEffects pass and rejects that promise.
         continue;
       }
       const origin = managedOrigin(item);

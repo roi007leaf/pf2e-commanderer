@@ -115,3 +115,52 @@ test("Plant Banner persists a rule-legal corner and Retrieve removes it", async 
     globalThis.canvas = previousCanvas;
   }
 });
+
+test("Plant and Retrieve publish banner placement only after native aura transitions", async () => {
+  let flags = {};
+  const operations = [];
+  const scene = {
+    id: "scene-id",
+    getFlag: (_scope, key) => flags[key],
+    async setFlag(_scope, key, value) {
+      operations.push("placement:set");
+      flags[key] = value;
+    },
+    async unsetFlag(_scope, key) {
+      operations.push("placement:unset");
+      delete flags[key];
+    },
+  };
+  const actor = {
+    id: "actor-id",
+    uuid: "Actor.actor-id",
+    items: [{ id: "plant-banner", slug: "plant-banner" }, {
+      id: "banner-item",
+      system: { rules: [{ key: "RollOption", domain: "all", option: "commanders-banner", toggleable: true }] },
+    }],
+    rollOptions: { all: { "commanders-banner": true } },
+    async toggleRollOption(_domain, _option, _itemId, active) {
+      operations.push(`banner:${active}`);
+      this.rollOptions.all["commanders-banner"] = active;
+    },
+  };
+  const token = {
+    actor,
+    document: { uuid: "Scene.scene-id.Token.token-id" },
+    mechanicalBounds: { x: 100, y: 100, width: 50, height: 50 },
+  };
+  actor.getActiveTokens = () => [token];
+
+  const previousCanvas = globalThis.canvas;
+  globalThis.canvas = { ready: true, scene, grid: { size: 100 } };
+  try {
+    await plantBanner(actor, "nw", scene);
+    assert.deepEqual(operations, ["banner:false", "placement:set"]);
+
+    operations.length = 0;
+    await retrieveBanner(actor, scene);
+    assert.deepEqual(operations, ["placement:unset", "banner:true"]);
+  } finally {
+    globalThis.canvas = previousCanvas;
+  }
+});

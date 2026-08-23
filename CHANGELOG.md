@@ -10,16 +10,21 @@
 - Disable the Commander's carried PF2e aura while planted, synchronize its native base effect from the planted burst, and restore the carried aura on retrieval.
 - Enforce auditory-only tactics and reject Brandish tactics while a banner is planted.
 - Redesign the Commander panel as a polished command center with compact status metrics, squad cards, and clearer tactic states.
+- Keep the Commander panel synchronized live while preserving its scroll position and expanded tactic details.
 - Add integrated allied-token squad discovery, nearby-aura suggestions, and capacity-safe roster management.
 - Show tactic-specific responder selection, signal reach, and live squad readiness before issuing.
+- Replace responder checkboxes with an accessible squadmate-card grid, omit the Commander from squad responses, and allow actor owners to answer their own tactics.
 - Redesign tactic chat messages as compact command briefs with responsive responder controls and clear progress states.
-- Add expandable tactic titles with enriched PF2e rules text, action cost, available uses, and trait details.
+- Add expandable tactic titles with enriched PF2e rules text, action cost, available uses, and PF2e trait tooltips.
 - Add a professional canvas banner indicator using PF2e's native aura origin and radius.
 - Keep banner canvas guidance text-free to avoid collisions with token distance and status tooltips.
+- Fix banner corner controls clipping beneath the panel header.
+- Apply planted-banner effects on the first qualifying movement and prevent cleanup races with PF2e-owned aura effects.
 - Automate Gather to Me! with Foundry's terrain-aware movement planner, movement-mode selection, and enforced aura destination.
 - Make Gather movement mode unmistakable with a responder-token canvas cue, explicit drag instructions, forced token-layer activation, and planner-start validation.
 - Fix Foundry v14 tactic and response-choice dialogs failing on submit.
 - Add shared, owner-aware tactic response cards.
+- Keep response outcomes concise by omitting internal movement type and path-distance bookkeeping.
 - Enforce banner, aura, participant, frequency, response-round, and Drilled Reaction rules.
 - Automate native PF2e actions, existing effects, enemy saves, and supported tactic conditions.
 - Expand tactic-specific automation to 35 of PF2e's 37 tactics with shared designated targets, exact responder roles, native movement planning, Strike filtering, reload capacity checks, maneuver choices, healing, and geometric resolution gates.

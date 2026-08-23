@@ -63,7 +63,6 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
   const point = bannerCorner(token.mechanicalBounds ?? token.bounds, corner);
 
   const placements = clone(sceneBannerPlacements(scene));
-  const previousPlacement = placements[actor.id] ?? null;
   const placement = {
     actorId: actor.id,
     actorUuid: actor.uuid,
@@ -74,14 +73,12 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
     corner,
   };
   placements[actor.id] = placement;
-  await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+  const suppressNativeAura = actor?.rollOptions?.all?.["commanders-banner"] === true;
+  if (suppressNativeAura) await setBannerActive(actor, false);
   try {
-    if (actor?.rollOptions?.all?.["commanders-banner"] === true) await setBannerActive(actor, false);
+    await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
   } catch (error) {
-    if (previousPlacement) placements[actor.id] = previousPlacement;
-    else delete placements[actor.id];
-    if (Object.keys(placements).length) await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
-    else await scene.unsetFlag(FLAG_SCOPE, PLACEMENTS_FLAG);
+    if (suppressNativeAura) await setBannerActive(actor, true);
     throw error;
   }
   globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, actor, placement);
@@ -89,17 +86,23 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
 }
 
 export async function retrieveBanner(actor, scene = globalThis.canvas?.scene) {
-  if (!scene || !plantedBanner(actor, scene)) return false;
+  const placement = scene ? plantedBanner(actor, scene) : null;
+  if (!scene || !placement) return false;
   if (!canRetrieveBanner(actor, scene)) throw new Error("Move adjacent to the planted banner before retrieving it.");
   const restoreNativeAura = actor?.rollOptions?.all?.["commanders-banner"] !== true;
-  if (restoreNativeAura) await setBannerActive(actor, true);
   const placements = clone(sceneBannerPlacements(scene));
   delete placements[actor.id];
   try {
     if (Object.keys(placements).length) await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
     else await scene.unsetFlag(FLAG_SCOPE, PLACEMENTS_FLAG);
   } catch (error) {
-    if (restoreNativeAura) await setBannerActive(actor, false);
+    throw error;
+  }
+  try {
+    if (restoreNativeAura) await setBannerActive(actor, true);
+  } catch (error) {
+    placements[actor.id] = placement;
+    await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
     throw error;
   }
   globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, actor, null);

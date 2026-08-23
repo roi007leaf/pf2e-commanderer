@@ -58,6 +58,10 @@ test("planted banner base effect follows planted burst instead of Commander toke
     flags: { pf2e: { aura: { slug: "commanders-banner", origin: commander.uuid, removeOnExit: true } } },
   });
   const near = fakeActor("near");
+  near.items.push({
+    id: "near-carried-aura",
+    flags: { pf2e: { aura: { slug: "commanders-banner", origin: commander.uuid, removeOnExit: true } } },
+  });
   const far = fakeActor("far");
   const commanderToken = fakeToken("commander-token", commander, 1000);
   const nearToken = fakeToken("near-token", near, 100);
@@ -97,14 +101,15 @@ test("planted banner base effect follows planted burst instead of Commander toke
   try {
     await syncPlantedBannerEffects(scene);
     assert.equal(commander.created, 0, "distant Commander no longer receives own carried aura");
-    assert.deepEqual(commander.deleted, ["old-carried-aura"], "stale carried aura effect is removed immediately");
+    assert.deepEqual(commander.deleted, [], "PF2e retains ownership of carried aura cleanup");
+    assert.deepEqual(near.deleted, [], "module does not race PF2e while replacing an in-range carried effect");
     assert.equal(near.created, 1, "ally inside planted burst receives banner effect");
     assert.equal(far.created, 0, "ally outside planted burst receives no effect");
 
     nearToken.document.x = 1000;
     nearToken.document.mechanicalBounds.x = 1000;
     await syncPlantedBannerEffects(scene);
-    assert.equal(near.items.length, 0, "effect removed after leaving planted burst");
+    assert.deepEqual(near.items.map((item) => item.id), ["near-carried-aura"], "module effect removed while PF2e retains its native cleanup ownership");
   } finally {
     globalThis.canvas = previousCanvas;
     globalThis.game = previousGame;
@@ -118,7 +123,11 @@ test("planted banner cleanup tolerates a PF2e effect already removed on the serv
   for (const id of ["already-gone", "still-live"]) {
     commander.items.push({
       id,
-      flags: { pf2e: { aura: { slug: "commanders-banner", origin: commander.uuid, removeOnExit: true } } },
+      flags: {
+        "pf2e-commanderer": {
+          plantedBannerOrigin: { commanderUuid: commander.uuid, sceneId: "scene" },
+        },
+      },
     });
   }
   commander.serverMissingItems.add("already-gone");
