@@ -1,0 +1,102 @@
+PF2E COMMANDERER PROPRIETARY LICENSE
+Version 1.0, 24 August 2026
+
+Copyright (c) 2026 RoiLeaf. All rights reserved.
+
+1. DEFINITIONS
+
+"Software" means the original source code, object code, documentation,
+user-interface designs, artwork, media, release packages, and other materials
+distributed in the PF2e Commanderer repository or its official releases that
+are owned by the Copyright Holder. Software does not include Third-Party
+Materials.
+
+"Copyright Holder" means RoiLeaf.
+
+"Third-Party Materials" means any game rules, trademarks, software, artwork,
+or other materials owned by Paizo Inc., Foundry Gaming LLC, the Pathfinder
+Second Edition system's contributors, or any other third party. Third-Party
+Materials remain governed by their respective licenses and terms.
+
+2. LIMITED RUNTIME LICENSE
+
+Subject to full compliance with this License, the Copyright Holder grants you
+a limited, non-exclusive, non-transferable license to download, install, and
+execute an unmodified copy of the Software solely as a Foundry Virtual
+Tabletop module for tabletop gameplay.
+
+You may make one backup copy solely to restore your authorized installation.
+
+3. RESTRICTIONS
+
+Except with the Copyright Holder's prior written permission, you may not:
+
+a. copy or reproduce the Software except as expressly allowed in Section 2;
+
+b. modify, adapt, translate, or create derivative works from the Software;
+
+c. copy, extract, reuse, port, or incorporate any Software code, architecture,
+   user-interface design, artwork, media, or other original material into any
+   other project, module, package, product, or service;
+
+d. distribute, publish, sublicense, sell, rent, lease, host, mirror, repackage,
+   transmit, or otherwise make the Software available to another person,
+   whether modified or unmodified;
+
+e. use the Software or any part of it to develop, train, improve, or evaluate
+   another software product, automated coding system, or machine-learning
+   model;
+
+f. remove, obscure, or alter any copyright, license, attribution, or
+   proprietary notice; or
+
+g. represent that you own, authored, sponsor, or officially maintain the
+   Software.
+
+Official release links may be shared, provided no Software files are mirrored
+or redistributed.
+
+4. PUBLIC REPOSITORY NOTICE
+
+Hosting the Software in a public GitHub repository permits GitHub users to
+view and fork repository content only to the extent required by GitHub's Terms
+of Service and platform functionality. No additional right to use, modify,
+distribute, or create derivative works is granted by public availability.
+
+5. THIRD-PARTY RIGHTS
+
+This License applies only to original material owned by the Copyright Holder.
+It grants no rights to Pathfinder, Pathfinder Second Edition, Foundry Virtual
+Tabletop, or any other Third-Party Materials, names, logos, rules text,
+trademarks, or intellectual property.
+
+6. TERMINATION
+
+This License terminates automatically if you breach any term. Upon
+termination, you must stop using the Software and delete every copy under your
+control, except repository forks that GitHub does not permit you to delete.
+
+7. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. THE COPYRIGHT HOLDER
+DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE, SECURE, OR COMPATIBLE
+WITH ANY PARTICULAR VERSION OF FOUNDRY VIRTUAL TABLETOP OR PATHFINDER SECOND
+EDITION.
+
+8. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER SHALL NOT BE
+LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT,
+OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR ITS
+USE.
+
+9. NO IMPLIED RIGHTS
+
+All rights not expressly granted in Section 2 are reserved by the Copyright
+Holder. No waiver or permission is valid unless provided in writing by the
+Copyright Holder.
+
+Permission requests may be made through the official PF2e Commanderer
+repository: https://github.com/roi007leaf/pf2e-commanderer
