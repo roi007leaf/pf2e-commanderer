@@ -1,9 +1,9 @@
 # PF2e Commanderer
+[![Latest Version](https://img.shields.io/github/v/release/roi007leaf/pf2e-commanderer?display_name=tag&sort=semver&label=Latest%20Version)](https://github.com/roi007leaf/pf2e-commanderer/releases/latest)
 
-[![Foundry VTT 14](https://img.shields.io/badge/Foundry_VTT-14-7b2c2c)](https://foundryvtt.com/)
-[![PF2e 8.4+](https://img.shields.io/badge/PF2e-8.4%2B-31537a)](https://github.com/foundryvtt/pf2e)
-[![Validation](https://github.com/roi007leaf/pf2e-commanderer/actions/workflows/release.yml/badge.svg)](https://github.com/roi007leaf/pf2e-commanderer/actions/workflows/release.yml)
-[![Latest release](https://img.shields.io/github/v/release/roi007leaf/pf2e-commanderer)](https://github.com/roi007leaf/pf2e-commanderer/releases/latest)
+[![GitHub all releases](https://img.shields.io/github/downloads/roi007leaf/pf2e-commanderer/total)](https://github.com/roi007leaf/pf2e-commanderer/releases)
+
+[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fpf2e-commanderer)](https://forge-vtt.com/bazaar)
 
 High-automation support for Pathfinder Second Edition's **Commander** class. Commanderer turns squad setup, banner positioning, tactic orders, player responses, guided movement, and automated aftermaths into one shared Foundry workflow.
 
