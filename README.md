@@ -11,6 +11,7 @@ High-automation support for Pathfinder Second Edition's **Commander** class. Com
 > Automate reliable rules. Keep table rulings easy to override.
 <img width="1368" height="1444" alt="CleanShot 2026-08-26 at 13 19 56@2x" src="https://github.com/user-attachments/assets/29a43473-4643-432e-ac89-55f4fe89790d" />
 <img width="960" height="742" alt="CleanShot 2026-08-26 at 13 20 48@2x" src="https://github.com/user-attachments/assets/0a958893-81a5-46c0-b1ee-ab6260909d59" />
+<img width="1328" height="1184" alt="CleanShot 2026-08-26 at 13 22 30@2x" src="https://github.com/user-attachments/assets/2cbf0c26-4708-4d4f-9b67-a80cee9faa09" />
 
 
 ## Features
