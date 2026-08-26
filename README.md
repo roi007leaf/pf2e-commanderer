@@ -9,6 +9,9 @@
 High-automation support for Pathfinder Second Edition's **Commander** class. Commanderer brings squad management, banner positioning, tactic orders, player responses, guided movement, and mechanical resolution into one shared Foundry workflow.
 
 > Automate reliable rules. Keep table rulings easy to override.
+<img width="1368" height="1444" alt="CleanShot 2026-08-26 at 13 19 56@2x" src="https://github.com/user-attachments/assets/29a43473-4643-432e-ac89-55f4fe89790d" />
+<img width="960" height="742" alt="CleanShot 2026-08-26 at 13 20 48@2x" src="https://github.com/user-attachments/assets/0a958893-81a5-46c0-b1ee-ab6260909d59" />
+
 
 ## Features
 
