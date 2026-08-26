@@ -1,10 +1,16 @@
 import { MODULE_ID } from "../constants.js";
-import { removableEnemyBanners, requestEnemyBannerRemoval } from "../foundry/banner.js";
+import {
+  carriedBanners,
+  removableEnemyBanners,
+  requestCarriedBannerDrop,
+  requestEnemyBannerRemoval,
+} from "../foundry/banner.js";
 import { hasCommanderFeatures, notify } from "../foundry/runtime.js";
 import { openCommanderPanel } from "./panel.js";
 
 const ACTION = `${MODULE_ID}-open`;
 const REMOVE_ACTION = `${MODULE_ID}-remove-banner`;
+const DROP_ACTION = `${MODULE_ID}-drop-banner`;
 
 export function shouldShowCommanderHudButton(actor) {
   return actor?.isOwner === true && hasCommanderFeatures(actor);
@@ -65,6 +71,33 @@ function addRemoveBannerButton(column, token, { commander, placement }) {
   column.append(button);
 }
 
+function addDropBannerButton(column, token, { commander, placement }) {
+  const ownerName = commander?.name ?? "the Commander";
+  const button = column.ownerDocument.createElement("button");
+  button.type = "button";
+  button.className = "control-icon commander-drop-banner-hud-button";
+  button.dataset.action = `${DROP_ACTION}-${placement.actorId}`;
+  button.dataset.commandererBannerDrop = "true";
+  button.dataset.tooltip = `Drop ${ownerName}'s banner (Release)`;
+  button.setAttribute("aria-label", `Drop ${ownerName}'s banner`);
+  button.innerHTML = '<i class="fa-solid fa-arrow-down" inert></i>';
+  button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    button.disabled = true;
+    try {
+      await requestCarriedBannerDrop(token, placement.actorId);
+      button.remove();
+      notify("info", `${ownerName}'s banner dropped at this token's position.`);
+    } catch (error) {
+      console.error(`${MODULE_ID} | Drop carried banner`, error);
+      notify("error", error.message);
+      button.disabled = false;
+    }
+  });
+  column.append(button);
+}
+
 export function renderCommanderTokenHud(tokenHud, html, engine) {
   const root = rootElement(html);
   const column = root?.querySelector(".col.right");
@@ -75,6 +108,7 @@ export function renderCommanderTokenHud(tokenHud, html, engine) {
   const actor = token?.actor ?? tokenHud?.actor ?? null;
   column.querySelector(`[data-action="${ACTION}"]`)?.remove();
   for (const button of column.querySelectorAll("[data-commanderer-banner-remove]")) button.remove();
+  for (const button of column.querySelectorAll("[data-commanderer-banner-drop]")) button.remove();
 
   if (engine && shouldShowCommanderHudButton(actor)) {
     const button = root.ownerDocument.createElement("button");
@@ -93,6 +127,7 @@ export function renderCommanderTokenHud(tokenHud, html, engine) {
   }
 
   for (const option of removableEnemyBanners(token)) addRemoveBannerButton(column, token, option);
+  for (const option of carriedBanners(token)) addDropBannerButton(column, token, option);
 }
 
 export function registerCommanderTokenHud(getEngine) {

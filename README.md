@@ -99,7 +99,4 @@ Bug reports and feature requests: [GitHub issues](https://github.com/roi007leaf/
 
 ## License
 
-PF2e Commanderer is source-visible proprietary software. Its [license](LICENSE)
-permits installing and running an unmodified copy for tabletop gameplay, but
-does not permit code or asset reuse, modification, redistribution, or
-derivative works without written permission.
+PF2e Commanderer is licensed under the [GNU General Public License version 3](LICENSE).

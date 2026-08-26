@@ -10,6 +10,7 @@ import { registerOperation, requestOperation } from "./socket.js";
 
 const PLACEMENTS_FLAG = "plantedBanners";
 const REMOVE_OPERATION = "remove-planted-banner";
+const DROP_OPERATION = "drop-carried-banner";
 const REMOVAL_MODES = new Set(["dropped", "carried"]);
 let interactionsRegistered = false;
 
@@ -117,6 +118,17 @@ export function removableEnemyBanners(token, scene = globalThis.canvas?.scene, u
   return removable;
 }
 
+export function carriedBanners(token, scene = globalThis.canvas?.scene, user = globalThis.game?.user) {
+  const actor = token?.actor ?? token?.document?.actor;
+  const tokenUuid = token?.document?.uuid ?? token?.uuid;
+  if (!scene || !tokenUuid || !userOwnsActor(user, actor)) return [];
+  return Object.values(sceneBannerPlacements(scene))
+    .filter((placement) => placement?.removed === true
+      && placement.removalMode === "carried"
+      && placement.carrierTokenUuid === tokenUuid)
+    .map((placement) => ({ commander: commanderForPlacement(placement), placement }));
+}
+
 export async function removePlantedBannerAsEnemy({ scene, commanderActorId, enemyToken, user, mode = "dropped" }) {
   if (!REMOVAL_MODES.has(mode)) throw new Error("Choose whether the enemy pulls down or takes the banner.");
   const target = removableEnemyBanners(enemyToken, scene, user)
@@ -171,6 +183,60 @@ async function handleEnemyBannerRemoval(payload, userId) {
   });
 }
 
+function droppedPlacement(placement, token, userId = null) {
+  const point = tokenAnchor(token);
+  if (!point) throw new Error("The banner carrier has no valid canvas position.");
+  const actor = token?.actor ?? token?.document?.actor;
+  const tokenUuid = token?.document?.uuid ?? token?.uuid ?? null;
+  return {
+    ...placement,
+    ...point,
+    removalMode: "dropped",
+    carrierTokenUuid: null,
+    droppedAt: Number(globalThis.game?.time?.worldTime ?? 0),
+    droppedBy: {
+      actorUuid: actor?.uuid ?? null,
+      actorName: actor?.name ?? null,
+      tokenUuid,
+      userId,
+    },
+  };
+}
+
+export async function dropCarriedBanner({ scene, commanderActorId, carrierToken, user }) {
+  const target = carriedBanners(carrierToken, scene, user)
+    .find(({ placement }) => placement.actorId === commanderActorId);
+  if (!target) throw new Error("This token does not carry that banner, or you do not own it.");
+
+  const placements = clone(sceneBannerPlacements(scene));
+  const current = placements[commanderActorId];
+  const carrierTokenUuid = carrierToken?.document?.uuid ?? carrierToken?.uuid;
+  if (current?.removed !== true
+    || current.removalMode !== "carried"
+    || current.carrierTokenUuid !== carrierTokenUuid
+    || current.actorUuid !== target.placement.actorUuid) {
+    throw new Error("That banner is no longer carried by this token.");
+  }
+  const dropped = droppedPlacement(current, carrierToken, user.id);
+  placements[commanderActorId] = dropped;
+  await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+  globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, target.commander, dropped);
+  return dropped;
+}
+
+async function handleCarriedBannerDrop(payload, userId) {
+  const scene = globalThis.game?.scenes?.get?.(payload.sceneId);
+  const user = globalThis.game?.users?.get?.(userId);
+  const carrierToken = sceneToken(scene, payload.carrierTokenUuid);
+  if (!scene || !user || !carrierToken) throw new Error("Banner drop request is no longer valid.");
+  return dropCarriedBanner({
+    scene,
+    commanderActorId: payload.commanderActorId,
+    carrierToken,
+    user,
+  });
+}
+
 export async function dropCarriedBannersForToken(tokenDocument, scene = tokenDocument?.parent) {
   if (!scene || !tokenDocument?.uuid) return 0;
   const point = tokenAnchor(tokenDocument.object ?? { document: tokenDocument });
@@ -179,13 +245,7 @@ export async function dropCarriedBannersForToken(tokenDocument, scene = tokenDoc
   const dropped = [];
   for (const [actorId, placement] of Object.entries(placements)) {
     if (placement.removalMode !== "carried" || placement.carrierTokenUuid !== tokenDocument.uuid) continue;
-    placements[actorId] = {
-      ...placement,
-      ...point,
-      removalMode: "dropped",
-      carrierTokenUuid: null,
-      droppedAt: Number(globalThis.game?.time?.worldTime ?? 0),
-    };
+    placements[actorId] = droppedPlacement(placement, tokenDocument.object ?? { document: tokenDocument });
     dropped.push(placements[actorId]);
   }
   if (!dropped.length) return 0;
@@ -207,6 +267,7 @@ export function registerBannerInteractions() {
   if (interactionsRegistered) return;
   interactionsRegistered = true;
   registerOperation(REMOVE_OPERATION, handleEnemyBannerRemoval);
+  registerOperation(DROP_OPERATION, handleCarriedBannerDrop);
   globalThis.Hooks?.on?.("deleteToken", (tokenDocument) => {
     if (!mayManagePlacements()) return;
     dropCarriedBannersForToken(tokenDocument).catch((error) => {
@@ -224,6 +285,16 @@ export function requestEnemyBannerRemoval(enemyToken, commanderActorId, mode, sc
     commanderActorId,
     enemyTokenUuid,
     mode,
+  }, { gmRequired: true });
+}
+
+export function requestCarriedBannerDrop(carrierToken, commanderActorId, scene = globalThis.canvas?.scene) {
+  const carrierTokenUuid = carrierToken?.document?.uuid ?? carrierToken?.uuid;
+  if (!scene?.id || !carrierTokenUuid) throw new Error("Use the banner carrier on the active scene.");
+  return requestOperation(DROP_OPERATION, {
+    sceneId: scene.id,
+    commanderActorId,
+    carrierTokenUuid,
   }, { gmRequired: true });
 }
 

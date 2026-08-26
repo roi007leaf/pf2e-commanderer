@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+- Let an owned banner carrier release the taken banner from its Token HUD, dropping it at the carrier's current position while keeping banner benefits inactive until retrieval.
+- License PF2e Commanderer under GNU GPL version 3.
+
 ## 1.0.1
 
 - Grant and renew Plant Banner's temporary Hit Points for eligible allies, including turn-start renewal and immediate cleanup when the banner falls.
