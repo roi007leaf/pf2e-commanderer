@@ -32,10 +32,12 @@ test("Commander panel exposes Plant Banner and Retrieve actions", async () => {
   assert.match(template, /bannerRemoved/);
   assert.match(tokenHud, /requestEnemyBannerRemoval/);
   assert.match(tokenHud, /requestCarriedBannerDrop/);
+  assert.match(tokenHud, /requestDroppedBannerPickup/);
   assert.match(tokenHud, /<strong>Interact<\/strong>/);
   assert.match(tokenHud, /Pull Down/);
   assert.match(tokenHud, /Take Banner/);
   assert.match(tokenHud, /Drop .*banner \(Release\)/);
+  assert.match(tokenHud, /Pick Up .*banner \(Interact\)/);
   assert.doesNotMatch(tokenHud, /commander-remove-banner-icon/);
   assert.doesNotMatch(css, /commander-remove-banner-icon/);
 });
@@ -368,6 +370,7 @@ test("owned banner carrier can release it at its current position", async () => 
   const carrierActor = {
     uuid: "Actor.enemy",
     name: "Enemy",
+    alliance: "opposition",
     testUserPermission: (user, level) => user.id === owner.id && level === "OWNER",
   };
   const carrierToken = {
@@ -377,7 +380,7 @@ test("owned banner carrier can release it at its current position", async () => 
       mechanicalBounds: { x: 500, y: 300, width: 100, height: 100 },
     },
   };
-  const commander = { id: "commander", uuid: "Actor.commander", name: "Commander" };
+  const commander = { id: "commander", uuid: "Actor.commander", name: "Commander", alliance: "party" };
   const previousCanvas = globalThis.canvas;
   const previousGame = globalThis.game;
   globalThis.canvas = { scene, tokens: { placeables: [carrierToken] } };
@@ -409,6 +412,29 @@ test("owned banner carrier can release it at its current position", async () => 
     assert.equal(dropped.droppedBy.userId, owner.id);
     assert.deepEqual(bannerDisplayPoint(dropped, scene), { x: 550, y: 300 });
     assert.deepEqual(carriedBanners(carrierToken, scene, owner), []);
+
+    const { pickupableDroppedBanners, pickupDroppedBannerAsEnemy } = await import("../scripts/foundry/banner.js");
+    assert.deepEqual(pickupableDroppedBanners(carrierToken, scene, nonOwner), []);
+    await assert.rejects(() => pickupDroppedBannerAsEnemy({
+      scene,
+      commanderActorId: commander.id,
+      enemyToken: carrierToken,
+      user: nonOwner,
+    }), /cannot pick up/);
+    carrierToken.document.mechanicalBounds.x = 800;
+    assert.deepEqual(pickupableDroppedBanners(carrierToken, scene, owner), []);
+    carrierToken.document.mechanicalBounds.x = 500;
+    assert.equal(pickupableDroppedBanners(carrierToken, scene, owner).length, 1);
+    const pickedUp = await pickupDroppedBannerAsEnemy({
+      scene,
+      commanderActorId: commander.id,
+      enemyToken: carrierToken,
+      user: owner,
+    });
+    assert.equal(pickedUp.removalMode, "carried");
+    assert.equal(pickedUp.carrierTokenUuid, carrierToken.document.uuid);
+    assert.deepEqual(bannerDisplayPoint(pickedUp, scene), { x: 550, y: 300 });
+    assert.equal(carriedBanners(carrierToken, scene, owner).length, 1);
   } finally {
     globalThis.canvas = previousCanvas;
     globalThis.game = previousGame;

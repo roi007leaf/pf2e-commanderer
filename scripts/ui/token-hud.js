@@ -1,8 +1,10 @@
 import { MODULE_ID } from "../constants.js";
 import {
   carriedBanners,
+  pickupableDroppedBanners,
   removableEnemyBanners,
   requestCarriedBannerDrop,
+  requestDroppedBannerPickup,
   requestEnemyBannerRemoval,
 } from "../foundry/banner.js";
 import { hasCommanderFeatures, notify } from "../foundry/runtime.js";
@@ -11,6 +13,7 @@ import { openCommanderPanel } from "./panel.js";
 const ACTION = `${MODULE_ID}-open`;
 const REMOVE_ACTION = `${MODULE_ID}-remove-banner`;
 const DROP_ACTION = `${MODULE_ID}-drop-banner`;
+const PICKUP_ACTION = `${MODULE_ID}-pickup-banner`;
 
 export function shouldShowCommanderHudButton(actor) {
   return actor?.isOwner === true && hasCommanderFeatures(actor);
@@ -58,8 +61,12 @@ function addRemoveBannerButton(column, token, { commander, placement }) {
     if (!mode) return;
     button.disabled = true;
     try {
-      await requestEnemyBannerRemoval(token, placement.actorId, mode);
+      const removed = await requestEnemyBannerRemoval(token, placement.actorId, mode);
       button.remove();
+      if (column.isConnected) {
+        if (mode === "carried") addDropBannerButton(column, token, { commander, placement: removed });
+        else addPickupBannerButton(column, token, { commander, placement: removed });
+      }
       const result = mode === "carried" ? "taken" : "pulled down";
       notify("info", `${commander.name}'s banner ${result}. Its benefits are inactive until retrieved.`);
     } catch (error) {
@@ -86,11 +93,40 @@ function addDropBannerButton(column, token, { commander, placement }) {
     event.stopPropagation();
     button.disabled = true;
     try {
-      await requestCarriedBannerDrop(token, placement.actorId);
+      const dropped = await requestCarriedBannerDrop(token, placement.actorId);
       button.remove();
+      if (column.isConnected) addPickupBannerButton(column, token, { commander, placement: dropped });
       notify("info", `${ownerName}'s banner dropped at this token's position.`);
     } catch (error) {
       console.error(`${MODULE_ID} | Drop carried banner`, error);
+      notify("error", error.message);
+      button.disabled = false;
+    }
+  });
+  column.append(button);
+}
+
+function addPickupBannerButton(column, token, { commander, placement }) {
+  const ownerName = commander?.name ?? "the Commander";
+  const button = column.ownerDocument.createElement("button");
+  button.type = "button";
+  button.className = "control-icon commander-pickup-banner-hud-button";
+  button.dataset.action = `${PICKUP_ACTION}-${placement.actorId}`;
+  button.dataset.commandererBannerPickup = "true";
+  button.dataset.tooltip = `Pick Up ${ownerName}'s banner (Interact)`;
+  button.setAttribute("aria-label", `Pick up ${ownerName}'s banner with Interact`);
+  button.innerHTML = '<i class="fa-solid fa-hand-fist" inert></i>';
+  button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    button.disabled = true;
+    try {
+      const pickedUp = await requestDroppedBannerPickup(token, placement.actorId);
+      button.remove();
+      if (column.isConnected) addDropBannerButton(column, token, { commander, placement: pickedUp });
+      notify("info", `${ownerName}'s banner picked up. Its benefits remain inactive until retrieved.`);
+    } catch (error) {
+      console.error(`${MODULE_ID} | Pick up dropped banner`, error);
       notify("error", error.message);
       button.disabled = false;
     }
@@ -109,6 +145,7 @@ export function renderCommanderTokenHud(tokenHud, html, engine) {
   column.querySelector(`[data-action="${ACTION}"]`)?.remove();
   for (const button of column.querySelectorAll("[data-commanderer-banner-remove]")) button.remove();
   for (const button of column.querySelectorAll("[data-commanderer-banner-drop]")) button.remove();
+  for (const button of column.querySelectorAll("[data-commanderer-banner-pickup]")) button.remove();
 
   if (engine && shouldShowCommanderHudButton(actor)) {
     const button = root.ownerDocument.createElement("button");
@@ -128,6 +165,7 @@ export function renderCommanderTokenHud(tokenHud, html, engine) {
 
   for (const option of removableEnemyBanners(token)) addRemoveBannerButton(column, token, option);
   for (const option of carriedBanners(token)) addDropBannerButton(column, token, option);
+  for (const option of pickupableDroppedBanners(token)) addPickupBannerButton(column, token, option);
 }
 
 export function registerCommanderTokenHud(getEngine) {

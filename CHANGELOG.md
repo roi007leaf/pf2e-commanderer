@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Let adjacent owned enemies pick up a fallen banner from their Token HUD and carry it again, with live Drop/Pick Up control swapping plus ownership and adjacency validation.
+
 ## 1.0.2
 
 - Let an owned banner carrier release the taken banner from its Token HUD, dropping it at the carrier's current position while keeping banner benefits inactive until retrieval.

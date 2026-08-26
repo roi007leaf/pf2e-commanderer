@@ -11,6 +11,7 @@ import { registerOperation, requestOperation } from "./socket.js";
 const PLACEMENTS_FLAG = "plantedBanners";
 const REMOVE_OPERATION = "remove-planted-banner";
 const DROP_OPERATION = "drop-carried-banner";
+const PICKUP_OPERATION = "pickup-dropped-banner";
 const REMOVAL_MODES = new Set(["dropped", "carried"]);
 let interactionsRegistered = false;
 
@@ -129,6 +130,19 @@ export function carriedBanners(token, scene = globalThis.canvas?.scene, user = g
     .map((placement) => ({ commander: commanderForPlacement(placement), placement }));
 }
 
+export function pickupableDroppedBanners(token, scene = globalThis.canvas?.scene, user = globalThis.game?.user) {
+  const actor = token?.actor ?? token?.document?.actor;
+  if (!scene || !userOwnsActor(user, actor)) return [];
+  const pickupable = [];
+  for (const placement of Object.values(sceneBannerPlacements(scene))) {
+    if (placement?.removed !== true || placement.removalMode !== "dropped") continue;
+    const commander = commanderForPlacement(placement);
+    if (!actorIsEnemy(actor, commander) || !tokenAdjacentToPlacement(token, placement, scene)) continue;
+    pickupable.push({ commander, placement });
+  }
+  return pickupable;
+}
+
 export async function removePlantedBannerAsEnemy({ scene, commanderActorId, enemyToken, user, mode = "dropped" }) {
   if (!REMOVAL_MODES.has(mode)) throw new Error("Choose whether the enemy pulls down or takes the banner.");
   const target = removableEnemyBanners(enemyToken, scene, user)
@@ -237,6 +251,51 @@ async function handleCarriedBannerDrop(payload, userId) {
   });
 }
 
+export async function pickupDroppedBannerAsEnemy({ scene, commanderActorId, enemyToken, user }) {
+  const target = pickupableDroppedBanners(enemyToken, scene, user)
+    .find(({ placement }) => placement.actorId === commanderActorId);
+  if (!target) throw new Error("This token cannot pick up that banner. It must be an adjacent enemy you own.");
+
+  const placements = clone(sceneBannerPlacements(scene));
+  const current = placements[commanderActorId];
+  if (current?.removed !== true
+    || current.removalMode !== "dropped"
+    || current.actorUuid !== target.placement.actorUuid) {
+    throw new Error("That banner is no longer available to pick up.");
+  }
+  const enemyActor = enemyToken.actor ?? enemyToken.document?.actor;
+  const enemyTokenUuid = enemyToken.document?.uuid ?? enemyToken.uuid ?? null;
+  const pickedUp = {
+    ...current,
+    removalMode: "carried",
+    carrierTokenUuid: enemyTokenUuid,
+    pickedUpAt: Number(globalThis.game?.time?.worldTime ?? 0),
+    pickedUpBy: {
+      actorUuid: enemyActor?.uuid ?? null,
+      actorName: enemyActor?.name ?? null,
+      tokenUuid: enemyTokenUuid,
+      userId: user.id,
+    },
+  };
+  placements[commanderActorId] = pickedUp;
+  await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+  globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, target.commander, pickedUp);
+  return pickedUp;
+}
+
+async function handleDroppedBannerPickup(payload, userId) {
+  const scene = globalThis.game?.scenes?.get?.(payload.sceneId);
+  const user = globalThis.game?.users?.get?.(userId);
+  const enemyToken = sceneToken(scene, payload.enemyTokenUuid);
+  if (!scene || !user || !enemyToken) throw new Error("Banner pickup request is no longer valid.");
+  return pickupDroppedBannerAsEnemy({
+    scene,
+    commanderActorId: payload.commanderActorId,
+    enemyToken,
+    user,
+  });
+}
+
 export async function dropCarriedBannersForToken(tokenDocument, scene = tokenDocument?.parent) {
   if (!scene || !tokenDocument?.uuid) return 0;
   const point = tokenAnchor(tokenDocument.object ?? { document: tokenDocument });
@@ -268,6 +327,7 @@ export function registerBannerInteractions() {
   interactionsRegistered = true;
   registerOperation(REMOVE_OPERATION, handleEnemyBannerRemoval);
   registerOperation(DROP_OPERATION, handleCarriedBannerDrop);
+  registerOperation(PICKUP_OPERATION, handleDroppedBannerPickup);
   globalThis.Hooks?.on?.("deleteToken", (tokenDocument) => {
     if (!mayManagePlacements()) return;
     dropCarriedBannersForToken(tokenDocument).catch((error) => {
@@ -295,6 +355,16 @@ export function requestCarriedBannerDrop(carrierToken, commanderActorId, scene =
     sceneId: scene.id,
     commanderActorId,
     carrierTokenUuid,
+  }, { gmRequired: true });
+}
+
+export function requestDroppedBannerPickup(enemyToken, commanderActorId, scene = globalThis.canvas?.scene) {
+  const enemyTokenUuid = enemyToken?.document?.uuid ?? enemyToken?.uuid;
+  if (!scene?.id || !enemyTokenUuid) throw new Error("Use an adjacent enemy on the active scene.");
+  return requestOperation(PICKUP_OPERATION, {
+    sceneId: scene.id,
+    commanderActorId,
+    enemyTokenUuid,
   }, { gmRequired: true });
 }
 

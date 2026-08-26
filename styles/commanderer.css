@@ -1254,6 +1254,11 @@
   text-shadow: 0 1px 2px #000;
 }
 
+.token-hud .commander-pickup-banner-hud-button {
+  color: #f1d27a;
+  text-shadow: 0 1px 2px #000;
+}
+
 .pf2e-commanderer-dialog .commanderer-banner-removal-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
