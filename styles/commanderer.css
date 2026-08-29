@@ -1024,6 +1024,8 @@
   padding-top: 1px;
 }
 
+.commanderer-card [hidden] { display: none !important; }
+
 .commanderer-card button.commanderer-card-button {
   width: auto;
   min-width: 0;

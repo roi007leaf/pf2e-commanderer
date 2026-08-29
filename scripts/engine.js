@@ -493,6 +493,7 @@ export function activateChatCards(engine) {
         const actor = participant ? await fromUuid(participant.actorUuid) : null;
         if (!actorCanUserModify(actor)) button.hidden = true;
       }
+      if (button.hidden) continue;
       button.addEventListener("click", async () => {
         button.disabled = true;
         try {
@@ -513,6 +514,9 @@ export function activateChatCards(engine) {
           button.disabled = false;
         }
       });
+    }
+    for (const actions of root.querySelectorAll(".commanderer-card-actions, .commanderer-resolve-overrides")) {
+      actions.hidden = !actions.querySelector("[data-commanderer-action]:not([hidden])");
     }
   });
 }

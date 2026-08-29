@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7
+
+- Hide tactic response controls from players who do not own the responding squadmate while preserving shared response status for everyone and full GM control.
+
 ## 1.0.6
 
 - Clear managed 40-foot Plant Banner effects before restoring the native 30-foot Commander aura, preventing distant allies from retaining banner benefits after retrieval.
