@@ -1,11 +1,11 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { bannerRangeToBounds } from "../domain/banner-placement.js";
-import { sceneBannerPlacements } from "./banner.js";
 import { setBannerActive } from "./runtime.js";
 
 const BANNER_EFFECT_UUID = "Compendium.pf2e.feat-effects.Item.JZWi6512m9RlMrNO";
 const BANNER_SLUG = "commanders-banner";
 const EFFECT_FLAG = "plantedBannerOrigin";
+const PLACEMENTS_FLAG = "plantedBanners";
 
 let registered = false;
 let syncQueued = false;
@@ -32,6 +32,11 @@ function actorsCollection() {
 
 function actorItems(actor) {
   return actor?.items ? Array.from(actor.items) : [];
+}
+
+function sceneBannerPlacements(scene = globalThis.canvas?.scene) {
+  const placements = scene?.getFlag?.(FLAG_SCOPE, PLACEMENTS_FLAG);
+  return placements && typeof placements === "object" ? placements : {};
 }
 
 function managedOrigin(item) {
@@ -143,6 +148,23 @@ async function deleteBannerEffects(actor, itemIds) {
       remaining = remaining.filter((itemId) => itemId !== missingId);
     }
   }
+}
+
+export async function clearPlantedBannerEffects(commanderUuid, scene = globalThis.canvas?.scene) {
+  if (!mayManageEffects() || !scene?.id || !commanderUuid) return 0;
+  let removed = 0;
+  for (const actor of actorsToInspect().values()) {
+    const itemIds = actorItems(actor)
+      .filter((item) => {
+        const origin = managedOrigin(item);
+        return origin?.sceneId === scene.id && origin.commanderUuid === commanderUuid;
+      })
+      .map((item) => item.id);
+    if (!itemIds.length) continue;
+    await deleteBannerEffects(actor, itemIds);
+    removed += itemIds.length;
+  }
+  return removed;
 }
 
 export async function syncPlantedBannerEffects(scene = globalThis.canvas?.scene) {

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { syncPlantedBannerEffects } from "../scripts/foundry/banner-effects.js";
+import { retrieveBanner } from "../scripts/foundry/banner.js";
 
 function fakeActor(id, alliance = "party") {
   const actor = {
@@ -169,6 +170,127 @@ test("planted banner cleanup tolerates a PF2e effect already removed on the serv
   } finally {
     globalThis.canvas = previousCanvas;
     globalThis.game = previousGame;
+  }
+});
+
+test("retrieving a banner removes every managed 40-foot planted effect", async () => {
+  const commander = fakeActor("commander");
+  const ally = fakeActor("ally");
+  ally.items.push({
+    id: "planted-banner-effect",
+    flags: {
+      "pf2e-commanderer": {
+        plantedBannerOrigin: { commanderUuid: commander.uuid, sceneId: "scene" },
+      },
+    },
+  });
+  const scene = {
+    id: "scene",
+    grid: { distance: 5 },
+    getFlag: () => ({}),
+  };
+
+  const previousCanvas = globalThis.canvas;
+  const previousGame = globalThis.game;
+  globalThis.canvas = {
+    ready: true,
+    scene,
+    grid: { size: 100 },
+    tokens: { placeables: [fakeToken("commander-token", commander, 0), fakeToken("ally-token", ally, 700)] },
+  };
+  globalThis.game = {
+    user: { id: "gm", isGM: true },
+    users: { activeGM: { id: "gm" } },
+    actors: { contents: [commander, ally] },
+    time: { worldTime: 100 },
+    combat: null,
+  };
+
+  try {
+    await syncPlantedBannerEffects(scene);
+    assert.deepEqual(ally.deleted, ["planted-banner-effect"]);
+  } finally {
+    globalThis.canvas = previousCanvas;
+    globalThis.game = previousGame;
+  }
+});
+
+test("Retrieve clears planted effects before restoring the native 30-foot aura", async () => {
+  const operations = [];
+  const commander = fakeActor("commander");
+  commander.items.push({
+    id: "banner-item",
+    slug: "commanders-banner",
+    system: { rules: [{ key: "RollOption", domain: "all", option: "commanders-banner", toggleable: true }] },
+  });
+  commander.rollOptions = { all: { "commanders-banner": false } };
+  commander.toggleRollOption = async (_domain, _option, _itemId, active) => {
+    operations.push(`aura:${active}`);
+    commander.rollOptions.all["commanders-banner"] = active;
+  };
+  const ally = fakeActor("ally");
+  const deleteEmbeddedDocuments = ally.deleteEmbeddedDocuments.bind(ally);
+  ally.deleteEmbeddedDocuments = async (...args) => {
+    operations.push("cleanup");
+    return deleteEmbeddedDocuments(...args);
+  };
+  ally.items.push({
+    id: "forty-foot-effect",
+    flags: {
+      "pf2e-commanderer": {
+        plantedBannerOrigin: { commanderUuid: commander.uuid, sceneId: "scene" },
+      },
+    },
+  });
+  const commanderToken = fakeToken("commander-token", commander, 0);
+  commander.getActiveTokens = () => [commanderToken];
+  let placements = {
+    [commander.id]: {
+      actorId: commander.id,
+      actorUuid: commander.uuid,
+      tokenUuid: commanderToken.document.uuid,
+      x: 0,
+      y: 0,
+      radius: 40,
+    },
+  };
+  const scene = {
+    id: "scene",
+    grid: { distance: 5 },
+    tokens: { get: () => null },
+    getFlag: () => placements,
+    async setFlag(_scope, _key, value) { placements = value; },
+    async unsetFlag() { placements = {}; },
+  };
+
+  const previousCanvas = globalThis.canvas;
+  const previousGame = globalThis.game;
+  const previousHooks = globalThis.Hooks;
+  globalThis.canvas = {
+    ready: true,
+    scene,
+    grid: { size: 100 },
+    dimensions: { distance: 5, size: 100 },
+    tokens: { placeables: [commanderToken, fakeToken("ally-token", ally, 700)] },
+  };
+  globalThis.game = {
+    user: { id: "gm", isGM: true },
+    users: { activeGM: { id: "gm" } },
+    actors: { contents: [commander, ally] },
+    time: { worldTime: 100 },
+    combat: null,
+  };
+  globalThis.Hooks = { callAll() {} };
+
+  try {
+    assert.equal(await retrieveBanner(commander, scene), true);
+    assert.deepEqual(ally.deleted, ["forty-foot-effect"]);
+    assert.equal(commander.rollOptions.all["commanders-banner"], true);
+    assert.deepEqual(operations, ["cleanup", "aura:true"]);
+  } finally {
+    globalThis.canvas = previousCanvas;
+    globalThis.game = previousGame;
+    globalThis.Hooks = previousHooks;
   }
 });
 

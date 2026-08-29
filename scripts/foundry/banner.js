@@ -6,6 +6,7 @@ import {
   plantedBannerRadius,
 } from "../domain/banner-placement.js";
 import { activeTokenFor, setBannerActive } from "./runtime.js";
+import { clearPlantedBannerEffects } from "./banner-effects.js";
 import { registerOperation, requestOperation } from "./socket.js";
 
 const PLACEMENTS_FLAG = "plantedBanners";
@@ -500,6 +501,13 @@ export async function retrieveBanner(actor, scene = globalThis.canvas?.scene, { 
     if (Object.keys(placements).length) await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
     else await scene.unsetFlag(FLAG_SCOPE, PLACEMENTS_FLAG);
   } catch (error) {
+    throw error;
+  }
+  try {
+    await clearPlantedBannerEffects(actor.uuid, scene);
+  } catch (error) {
+    placements[actor.id] = placement;
+    await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
     throw error;
   }
   try {

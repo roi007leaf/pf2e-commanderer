@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Clear managed 40-foot Plant Banner effects before restoring the native 30-foot Commander aura, preventing distant allies from retaining banner benefits after retrieval.
+
 ## 1.0.5
 
 - Replace silent socket-operation failures and vague timeouts with immediate, actionable errors for missing GM handlers, inactive GMs, and unresponsive authority clients.
