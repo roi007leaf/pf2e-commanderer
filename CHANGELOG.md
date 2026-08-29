@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+- Replace silent socket-operation failures and vague timeouts with immediate, actionable errors for missing GM handlers, inactive GMs, and unresponsive authority clients.
+
 ## 1.0.4
 
 - Route Plant Banner and normal banner retrieval through active-GM socket authority so owned players can use Scene-backed banner controls without Scene update permission errors.

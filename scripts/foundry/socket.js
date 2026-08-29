@@ -24,7 +24,15 @@ async function receive(packet) {
   }
   if (packet.type !== "request" || !isAuthority(packet.authorityUserId, packet.gmRequired, packet.directed)) return;
   const handler = handlers.get(packet.operation);
-  if (!handler) return;
+  if (!handler) {
+    game.socket.emit(SOCKET_NAME, {
+      type: "response",
+      requestId: packet.requestId,
+      ok: false,
+      error: `Authority client cannot handle "${packet.operation}". Update PF2e Commanderer and hard-reload that client.`,
+    });
+    return;
+  }
   try {
     const result = await handler(packet.payload, packet.userId);
     game.socket.emit(SOCKET_NAME, { type: "response", requestId: packet.requestId, ok: true, result });
@@ -58,6 +66,9 @@ export async function requestOperation(operation, payload, {
     directed,
     userId: game.user.id,
   };
+  if (gmRequired && !activeGM()) {
+    throw new Error("An active GM with PF2e Commanderer enabled is required for this action.");
+  }
   if (isAuthority(authorityUserId, gmRequired, directed)) {
     const handler = handlers.get(operation);
     if (!handler) throw new Error(`No handler registered for ${operation}.`);
@@ -66,7 +77,10 @@ export async function requestOperation(operation, payload, {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       pending.delete(packet.requestId);
-      reject(new Error("Commander automation request timed out. Is a GM connected?"));
+      const message = gmRequired
+        ? "Active GM did not answer the Commander request. Hard-reload PF2e Commanderer on the GM client."
+        : "Commander authority client did not answer. Hard-reload PF2e Commanderer on that client.";
+      reject(new Error(message));
     }, timeoutMs);
     pending.set(packet.requestId, { resolve, reject, timeout });
     game.socket.emit(SOCKET_NAME, packet);

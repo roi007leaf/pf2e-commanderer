@@ -3,6 +3,40 @@ import assert from "node:assert/strict";
 
 import { requestOperation } from "../scripts/foundry/socket.js";
 
+test("authority reports an unavailable operation instead of silently timing out", async () => {
+  const previousGame = globalThis.game;
+  let listener;
+  let response;
+  const gm = { id: "gm", isGM: true, active: true };
+  globalThis.game = {
+    user: gm,
+    users: { activeGM: gm },
+    socket: {
+      on: (_channel, callback) => { listener = callback; },
+      emit: (_channel, packet) => { response = packet; },
+    },
+  };
+  try {
+    const { registerSocket } = await import("../scripts/foundry/socket.js");
+    registerSocket();
+    await listener({
+      type: "request",
+      requestId: "missing-handler",
+      operation: "newer-client-operation",
+      payload: {},
+      authorityUserId: "player",
+      gmRequired: true,
+      directed: false,
+      userId: "player",
+    });
+    assert.equal(response?.type, "response");
+    assert.equal(response?.ok, false);
+    assert.match(response?.error, /reload|update/i);
+  } finally {
+    globalThis.game = previousGame;
+  }
+});
+
 test("interactive GM operations can extend the socket timeout", async () => {
   const previousGame = globalThis.game;
   const previousFoundry = globalThis.foundry;
@@ -15,7 +49,27 @@ test("interactive GM operations can extend the socket timeout", async () => {
   try {
     await assert.rejects(
       () => requestOperation("interactive", {}, { gmRequired: true, timeoutMs: 5 }),
-      /request timed out/
+      /Active GM did not answer/
+    );
+  } finally {
+    globalThis.game = previousGame;
+    globalThis.foundry = previousFoundry;
+  }
+});
+
+test("GM-required operation fails immediately when no GM is active", async () => {
+  const previousGame = globalThis.game;
+  const previousFoundry = globalThis.foundry;
+  globalThis.game = {
+    user: { id: "player" },
+    users: { activeGM: null, find: () => null },
+    socket: { emit() {} },
+  };
+  globalThis.foundry = { utils: { randomID: () => "no-gm-request" } };
+  try {
+    await assert.rejects(
+      () => requestOperation("gm-operation", {}, { gmRequired: true }),
+      /active GM.*required/i
     );
   } finally {
     globalThis.game = previousGame;
@@ -40,7 +94,7 @@ test("directed operation bypasses active-GM authority and reaches selected playe
         directed: true,
         timeoutMs: 5,
       }),
-      /request timed out/
+      /authority client did not answer/
     );
     assert.equal(emitted.authorityUserId, "player");
     assert.equal(emitted.directed, true);
