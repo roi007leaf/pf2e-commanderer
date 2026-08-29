@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8
+
+- Register tactic chat ownership controls before Foundry hydrates existing chat history so player-specific button visibility survives a browser refresh.
+
 ## 1.0.7
 
 - Hide tactic response controls from players who do not own the responding squadmate while preserving shared response status for everyone and full GM control.

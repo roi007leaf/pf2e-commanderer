@@ -10,10 +10,11 @@ import { openCommanderPanel, registerCommanderPanelLiveUpdates } from "./ui/pane
 import { registerCommanderTokenHud } from "./ui/token-hud.js";
 import { registerBannerOverlay } from "./canvas/banner-overlay.js";
 
-let engine;
+const engine = new CommanderEngine();
 
 registerCommanderTokenHud(() => engine);
 registerBannerOverlay();
+activateChatCards(engine);
 
 Hooks.once("ready", () => {
   registerSocket();
@@ -22,8 +23,6 @@ Hooks.once("ready", () => {
   registerPlantedBannerEffects();
   registerPlantBannerTempHp();
   registerCommanderPanelLiveUpdates();
-  engine = new CommanderEngine();
-  activateChatCards(engine);
 
   const module = game.modules.get(MODULE_ID);
   module.api = Object.freeze({

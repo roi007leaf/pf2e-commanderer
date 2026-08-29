@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const template = await readFile(new URL("../templates/invocation.hbs", import.meta.url), "utf8");
+const main = await readFile(new URL("../scripts/main.js", import.meta.url), "utf8");
 const engine = await readFile(new URL("../scripts/engine.js", import.meta.url), "utf8");
 const effects = await readFile(new URL("../scripts/foundry/effects.js", import.meta.url), "utf8");
 const styles = await readFile(new URL("../styles/commanderer.css", import.meta.url), "utf8");
@@ -18,6 +19,13 @@ test("chat card keeps controls hidden from users who cannot operate them", () =>
   assert.match(engine, /if \(button\.hidden\) continue/);
   assert.match(engine, /actions\.hidden = !actions\.querySelector\("\[data-commanderer-action\]:not\(\[hidden\]\)"\)/);
   assert.match(styles, /\.commanderer-card \[hidden\]\s*\{\s*display:\s*none\s*!important;/);
+});
+
+test("chat ownership controls register before Foundry hydrates history", () => {
+  const activation = main.indexOf("activateChatCards(engine);");
+  const ready = main.indexOf('Hooks.once("ready"');
+  assert.ok(activation >= 0, "chat card activation is registered");
+  assert.ok(activation < ready, "chat card activation must happen before ready");
 });
 
 test("manual completion reserves the normal round response and skips automation", () => {
