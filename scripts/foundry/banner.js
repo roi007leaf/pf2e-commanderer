@@ -9,6 +9,8 @@ import { activeTokenFor, setBannerActive } from "./runtime.js";
 import { registerOperation, requestOperation } from "./socket.js";
 
 const PLACEMENTS_FLAG = "plantedBanners";
+const PLANT_OPERATION = "plant-banner";
+const RETRIEVE_OPERATION = "retrieve-banner";
 const REMOVE_OPERATION = "remove-planted-banner";
 const DROP_OPERATION = "drop-carried-banner";
 const PICKUP_OPERATION = "pickup-dropped-banner";
@@ -183,6 +185,30 @@ function sceneToken(scene, tokenUuid) {
   return document?.object ?? (document ? { actor: document.actor, document } : null);
 }
 
+function commanderOperationContext(payload, userId) {
+  const scene = globalThis.game?.scenes?.get?.(payload.sceneId);
+  const user = globalThis.game?.users?.get?.(userId);
+  const token = sceneToken(scene, payload.tokenUuid);
+  const actor = token?.actor ?? token?.document?.actor;
+  if (!scene || !user || !token || !actor
+    || actor.id !== payload.actorId
+    || actor.uuid !== payload.actorUuid
+    || !userOwnsActor(user, actor)) {
+    throw new Error("Commander banner request is no longer valid or you do not own that actor.");
+  }
+  return { scene, user, token, actor };
+}
+
+async function handlePlantBanner(payload, userId) {
+  const { scene, token, actor } = commanderOperationContext(payload, userId);
+  return plantBanner(actor, payload.corner, scene, { token });
+}
+
+async function handleRetrieveBanner(payload, userId) {
+  const { scene, actor } = commanderOperationContext(payload, userId);
+  return retrieveBanner(actor, scene);
+}
+
 async function handleEnemyBannerRemoval(payload, userId) {
   const scene = globalThis.game?.scenes?.get?.(payload.sceneId);
   const user = globalThis.game?.users?.get?.(userId);
@@ -325,6 +351,8 @@ function mayManagePlacements() {
 export function registerBannerInteractions() {
   if (interactionsRegistered) return;
   interactionsRegistered = true;
+  registerOperation(PLANT_OPERATION, handlePlantBanner);
+  registerOperation(RETRIEVE_OPERATION, handleRetrieveBanner);
   registerOperation(REMOVE_OPERATION, handleEnemyBannerRemoval);
   registerOperation(DROP_OPERATION, handleCarriedBannerDrop);
   registerOperation(PICKUP_OPERATION, handleDroppedBannerPickup);
@@ -334,6 +362,36 @@ export function registerBannerInteractions() {
       console.error(`${FLAG_SCOPE} | Could not drop a carried banner from a deleted token`, error);
     });
   });
+}
+
+export function requestPlantBanner(actor, corner, scene = globalThis.canvas?.scene) {
+  if (!hasPlantBanner(actor)) throw new Error("This commander does not have the Plant Banner feat.");
+  if (!scene?.id || globalThis.canvas?.ready !== true) {
+    throw new Error("Open an active scene before planting the banner.");
+  }
+  const token = activeTokenFor(actor);
+  const tokenUuid = token?.document?.uuid ?? token?.uuid;
+  if (!tokenUuid) throw new Error("Place this commander on the active scene before planting the banner.");
+  return requestOperation(PLANT_OPERATION, {
+    sceneId: scene.id,
+    actorId: actor.id,
+    actorUuid: actor.uuid,
+    tokenUuid,
+    corner,
+  }, { gmRequired: true });
+}
+
+export function requestRetrieveBanner(actor, scene = globalThis.canvas?.scene) {
+  const placement = plantedBanner(actor, scene);
+  const token = sceneToken(scene, placement?.tokenUuid) ?? activeTokenFor(actor);
+  const tokenUuid = token?.document?.uuid ?? token?.uuid;
+  if (!scene?.id || !placement || !tokenUuid) return false;
+  return requestOperation(RETRIEVE_OPERATION, {
+    sceneId: scene.id,
+    actorId: actor.id,
+    actorUuid: actor.uuid,
+    tokenUuid,
+  }, { gmRequired: true });
 }
 
 export function requestEnemyBannerRemoval(enemyToken, commanderActorId, mode, scene = globalThis.canvas?.scene) {
@@ -394,12 +452,11 @@ export function canRetrieveBanner(actor, scene = globalThis.canvas?.scene) {
   return distance <= adjacentDistance;
 }
 
-export async function plantBanner(actor, corner, scene = globalThis.canvas?.scene) {
+export async function plantBanner(actor, corner, scene = globalThis.canvas?.scene, { token = activeTokenFor(actor) } = {}) {
   if (!hasPlantBanner(actor)) throw new Error("This commander does not have the Plant Banner feat.");
-  if (!scene || globalThis.canvas?.ready !== true) throw new Error("Open an active scene before planting the banner.");
-  const token = activeTokenFor(actor);
+  if (!scene) throw new Error("Open an active scene before planting the banner.");
   if (!token) throw new Error("Place this commander on the active scene before planting the banner.");
-  const point = bannerCorner(token.mechanicalBounds ?? token.bounds, corner);
+  const point = bannerCorner(tokenBounds(token), corner);
 
   const placements = clone(sceneBannerPlacements(scene));
   const placement = {

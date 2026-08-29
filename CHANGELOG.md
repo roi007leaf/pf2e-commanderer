@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- Route Plant Banner and normal banner retrieval through active-GM socket authority so owned players can use Scene-backed banner controls without Scene update permission errors.
+
 ## 1.0.3
 
 - Let adjacent owned enemies pick up a fallen banner from their Token HUD and carry it again, with live Drop/Pick Up control swapping plus ownership and adjacency validation.

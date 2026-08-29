@@ -71,6 +71,113 @@ test("Plant Banner is feat-gated and uses a 40-foot burst", () => {
   assert.equal(plantedBannerRadius(), 40);
 });
 
+test("owned player delegates Plant Banner scene placement to the active GM", async () => {
+  const banner = await import("../scripts/foundry/banner.js");
+  assert.equal(typeof banner.requestPlantBanner, "function", "player-facing Plant Banner request exists");
+
+  let socketListener;
+  let placements;
+  const player = { id: "player", isGM: false, active: true };
+  const gm = { id: "gm", isGM: true, active: true };
+  const actor = {
+    id: "commander",
+    uuid: "Actor.commander",
+    items: [{ id: "plant-banner", slug: "plant-banner" }, {
+      id: "banner-item",
+      system: { rules: [{ key: "RollOption", domain: "all", option: "commanders-banner", toggleable: true }] },
+    }],
+    rollOptions: { all: { "commanders-banner": true } },
+    testUserPermission: (user, level) => user.id === player.id && level === "OWNER",
+    async toggleRollOption(_domain, _option, _itemId, active) {
+      this.rollOptions.all["commanders-banner"] = active;
+    },
+  };
+  const tokenDocument = {
+    id: "commander-token",
+    uuid: "Scene.scene.Token.commander-token",
+    actor,
+    mechanicalBounds: { x: 100, y: 200, width: 50, height: 50 },
+  };
+  const token = {
+    id: tokenDocument.id,
+    actor,
+    document: tokenDocument,
+    mechanicalBounds: tokenDocument.mechanicalBounds,
+  };
+  tokenDocument.object = token;
+  actor.getActiveTokens = () => [token];
+  const scene = {
+    id: "scene",
+    grid: { distance: 5 },
+    tokens: { get: (id) => id === tokenDocument.id ? tokenDocument : null },
+    getFlag: () => placements,
+    async setFlag(_scope, _key, value) {
+      if (!globalThis.game.user.isGM) throw new Error("Player lacks permission to update Scene");
+      placements = value;
+    },
+    async unsetFlag() {
+      if (!globalThis.game.user.isGM) throw new Error("Player lacks permission to update Scene");
+      placements = undefined;
+    },
+  };
+  const socket = {
+    on: (_channel, listener) => { socketListener = listener; },
+    emit: (_channel, packet) => {
+      queueMicrotask(async () => {
+        globalThis.game.user = packet.type === "request" ? gm : player;
+        await socketListener(packet);
+      });
+    },
+  };
+
+  const previousCanvas = globalThis.canvas;
+  const previousFoundry = globalThis.foundry;
+  const previousGame = globalThis.game;
+  const previousHooks = globalThis.Hooks;
+  globalThis.canvas = {
+    ready: true,
+    scene,
+    grid: { size: 100 },
+    tokens: { placeables: [token] },
+  };
+  globalThis.foundry = {
+    utils: {
+      deepClone: (value) => structuredClone(value),
+      randomID: () => "plant-request",
+    },
+  };
+  globalThis.game = {
+    user: player,
+    users: {
+      activeGM: gm,
+      get: (id) => id === player.id ? player : id === gm.id ? gm : null,
+      find: (predicate) => [player, gm].find(predicate),
+    },
+    scenes: { get: (id) => id === scene.id ? scene : null },
+    actors: { get: (id) => id === actor.id ? actor : null },
+    socket,
+  };
+  globalThis.Hooks = { callAll() {}, on() {} };
+
+  try {
+    const socketApi = await import("../scripts/foundry/socket.js");
+    socketApi.registerSocket();
+    banner.registerBannerInteractions();
+    const placement = await banner.requestPlantBanner(actor, "ne", scene);
+    assert.equal(placement.corner, "ne");
+    assert.equal(placements[actor.id].actorUuid, actor.uuid);
+    assert.equal(actor.rollOptions.all["commanders-banner"], false);
+    assert.equal(await banner.requestRetrieveBanner(actor, scene), true);
+    assert.equal(placements, undefined);
+    assert.equal(actor.rollOptions.all["commanders-banner"], true);
+  } finally {
+    globalThis.canvas = previousCanvas;
+    globalThis.foundry = previousFoundry;
+    globalThis.game = previousGame;
+    globalThis.Hooks = previousHooks;
+  }
+});
+
 test("banner corners resolve to exact token footprint corners", () => {
   const bounds = { x: 100, y: 200, width: 50, height: 100 };
   assert.deepEqual(bannerCorner(bounds, "nw"), { x: 100, y: 200 });

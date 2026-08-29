@@ -27,9 +27,9 @@ import { hasPlantBanner } from "../domain/banner-placement.js";
 import {
   bannerCarrierToken,
   canRetrieveBanner,
-  plantBanner,
   plantedBanner,
-  retrieveBanner,
+  requestPlantBanner,
+  requestRetrieveBanner,
 } from "../foundry/banner.js";
 import { recoverCarriedBanner } from "../foundry/banner-recovery.js";
 import { tacticViewModel } from "./tactic-view-model.js";
@@ -202,7 +202,7 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
 
   static async plantBannerAtCorner(_event, button) {
     try {
-      await plantBanner(this.actor, button.dataset.corner);
+      await requestPlantBanner(this.actor, button.dataset.corner);
       this.bannerPlacementExpanded = false;
       this.requestRefresh();
       notify("info", "Banner planted. Its abilities now originate from the 40-foot burst.");
@@ -221,7 +221,7 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
       const placement = plantedBanner(this.actor);
       const retrieved = placement?.removalMode === "carried"
         ? await recoverCarriedBanner(this.actor)
-        : await retrieveBanner(this.actor);
+        : await requestRetrieveBanner(this.actor);
       if (retrieved) {
         this.bannerPlacementExpanded = false;
         this.requestRefresh();
