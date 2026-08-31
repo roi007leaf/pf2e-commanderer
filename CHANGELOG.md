@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.9
+
+- Keep Commander tactic messages opaque by resolving the Foundry parchment texture from a stable route and retaining a solid fallback when the texture is unavailable.
+
 ## 1.0.8
 
 - Register tactic chat ownership controls before Foundry hydrates existing chat history so player-specific button visibility survives a browser refresh.

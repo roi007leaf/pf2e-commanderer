@@ -763,9 +763,11 @@
   border: 1px solid rgba(94, 32, 36, 0.38);
   border-left: 3px solid var(--cmd-chat-red);
   border-radius: 8px;
-  background:
+  background-color: #e7e3d9;
+  background-image:
     linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(129, 47, 52, 0.035)),
-    var(--chat-message-background, #e7e3d9);
+    url("../../../ui/parchment.jpg");
+  background-repeat: no-repeat, repeat;
   box-shadow: 0 2px 7px rgba(24, 18, 14, 0.2);
   container-type: inline-size;
 }
