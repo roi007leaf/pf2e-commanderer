@@ -57,6 +57,17 @@ High-automation support for Pathfinder Second Edition's **Commander** class. Com
 6. Expand a tactic, press **Issue**, then choose its responders.
 7. Each actor owner answers from the shared chat order; the Commander owner or GM resolves any aftermath.
 
+### Banner objects and companion workaround
+
+- **Plant → Material** selects cloth, thin leather, thin wood, thin steel, or custom durability. An affixed inventory item supplies its HP/Hardness when greater. Configure AC for the object as adjudicated by the GM. Unusual items without PF2e durability data need custom values.
+- **Plant → Map** highlights the commander's four legal corners; click to plant, or cancel with Escape/right-click. The corner buttons remain available. **Chat** posts the native Plant Banner rules as a reference, without triggering Summons Assistant or another item-use placement workflow.
+- Planting creates a reusable PF2e hazard actor and a targetable token. Native damage application handles Hardness and object immunities. The weapon/pole gains level + Intelligence modifier Hardness while planted; affixed shields retain their own Hardness. Token damage persists between placements. Use **Object** to inspect HP or let the GM repair it.
+- Broken banners stop granting benefits. Theft or destruction applies frightened 1 to actors currently receiving that banner's bonus, without lowering an existing frightened value. Pulling down a banner ends benefits but is not theft. A destroyed banner cannot be retrieved; **Replace banner** is GM-only.
+- An adjacent NPC's Token HUD has a flag control for **Take Banner** or **Pull Down**, and **Pick Up** for a dropped banner. GMs can use these controls regardless of the NPC's alliance; player-controlled actors must be enemies of the commander.
+- **Squad → Limit** lets the GM override each commander's squad capacity. Increase it by one and add the Commander's Companion as a squadmate. Blank restores the normal limit. Lowering capacity keeps the existing roster, allowing the GM to remove excess members explicitly.
+
+The companion option is a squad-capacity workaround; companion reaction grants and mounting the banner on the companion remain manual. Inventory transfers, inventory-item damage, and whether an area effect affects an unattended object remain GM rulings. Enemy removal retains the feat's Interact action; it does not substitute Disarm, Grapple, or Trip. Existing planted overlays can be retrieved and replanted to create their object token.
+
 ## Documentation
 
 Full documentation lives in the [project wiki](https://github.com/roi007leaf/pf2e-commanderer/wiki).
@@ -87,6 +98,7 @@ See the [complete automation matrix](https://github.com/roi007leaf/pf2e-commande
 - [Commander class](https://2e.aonprd.com/Classes.aspx?ID=66)
 - [Commander tactics](https://2e.aonprd.com/Tactics.aspx)
 - [Plant Banner](https://2e.aonprd.com/Feats.aspx?ID=7796)
+- [Item damage and object immunities](https://2e.aonprd.com/Rules.aspx?ID=2160)
 
 ## Development
 

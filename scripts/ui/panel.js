@@ -33,6 +33,9 @@ import {
 } from "../foundry/banner.js";
 import { recoverCarriedBanner } from "../foundry/banner-recovery.js";
 import { tacticViewModel } from "./tactic-view-model.js";
+import { configureBanner, configureSquadLimit } from "./banner-settings.js";
+import { pickBannerCorner } from "../canvas/banner-picker.js";
+import { bannerObjectActor, replaceDestroyedBanner } from "../foundry/banner-object.js";
 
 const TEMPLATE = `modules/${MODULE_ID}/templates/panel.hbs`;
 const LIVE_REFRESH_DELAY = 50;
@@ -54,6 +57,12 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
       toggleBanner: CommanderPanel.toggleBanner,
       toggleBannerPlacement: CommanderPanel.toggleBannerPlacement,
       plantBannerAtCorner: CommanderPanel.plantBannerAtCorner,
+      plantBannerOnMap: CommanderPanel.plantBannerOnMap,
+      configureBanner: CommanderPanel.configureBanner,
+      configureSquadLimit: CommanderPanel.configureSquadLimit,
+      bannerToChat: CommanderPanel.bannerToChat,
+      openBannerSheet: CommanderPanel.openBannerSheet,
+      replaceBanner: CommanderPanel.replaceBanner,
       retrieveBanner: CommanderPanel.retrieveBanner,
       prepare: CommanderPanel.prepare,
       issue: CommanderPanel.issue,
@@ -106,6 +115,10 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
     }));
     return {
       actorName: this.actor.name,
+      isGM: globalThis.game?.user?.isGM === true,
+      bannerDestroyed: placement?.removalMode === "destroyed",
+      bannerBroken: placement?.broken === true,
+      bannerObjectAvailable: Boolean(bannerObjectActor(placement, this.actor)),
       actorImg: this.actor.img,
       actorLevel: this.actor.level ?? this.actor.system?.details?.level?.value ?? 0,
       bannerActive: bannerActive(this.actor),
@@ -212,6 +225,53 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
     }
   }
 
+  static async plantBannerOnMap() {
+    try {
+      await this.minimize();
+      const corner = await pickBannerCorner(this.actor);
+      if (corner) await CommanderPanel.plantBannerAtCorner.call(this, null, { dataset: { corner } });
+    } catch (error) {
+      notify("error", error.message);
+    } finally {
+      await this.maximize();
+    }
+  }
+
+  static async configureBanner() {
+    try { await configureBanner(this.actor); this.requestRefresh(); }
+    catch (error) { notify("error", error.message); }
+  }
+
+  static async configureSquadLimit() {
+    try { await configureSquadLimit(this.actor); this.requestRefresh(); }
+    catch (error) { notify("error", error.message); }
+  }
+
+  static async bannerToChat() {
+    try {
+      const item = this.actor.items.find((item) => item.slug === "plant-banner");
+      if (!item) throw new Error("This commander does not have Plant Banner.");
+      const draft = await item.toMessage(null, { create: false });
+      const source = draft.toObject();
+      delete source._id;
+      // Preserve PF2e's rendered rules and chat privacy, but post a reference
+      // rather than an item-use event. Summons Assistant reacts to that origin.
+      if (source.flags?.pf2e) delete source.flags.pf2e.origin;
+      source.flags ??= {};
+      source.flags[MODULE_ID] = { ...source.flags[MODULE_ID], bannerRules: { itemUuid: item.uuid } };
+      await ChatMessage.create(source, { renderSheet: false });
+    } catch (error) { notify("error", error.message); }
+  }
+
+  static openBannerSheet() {
+    bannerObjectActor(plantedBanner(this.actor), this.actor)?.sheet?.render({ force: true });
+  }
+
+  static async replaceBanner() {
+    try { await replaceDestroyedBanner(this.actor); this.requestRefresh(); }
+    catch (error) { notify("error", error.message); }
+  }
+
   static async retrieveBanner(_event, button) {
     if (this._bannerRecoveryPending) return;
     this._bannerRecoveryPending = true;
@@ -225,7 +285,9 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
       if (retrieved) {
         this.bannerPlacementExpanded = false;
         this.requestRefresh();
-        notify("info", "Banner retrieved. Its abilities originate from the commander again.");
+        notify("info", placement?.broken
+          ? "Banner retrieved. Repair it before displaying it again."
+          : "Banner retrieved. Its abilities originate from the commander again.");
       }
     } catch (error) {
       console.error(`${MODULE_ID} | Retrieve banner`, error);
@@ -345,6 +407,7 @@ export function registerCommanderPanelLiveUpdates() {
       if (panel.squadPlannerExpanded) panel.requestRefresh();
     }
   });
+  Hooks.on("updateUser", refreshAllPanels);
   Hooks.on("updateScene", (scene, changes) => {
     if (scenePlacementChanged(scene, changes)) refreshAllPanels();
   });

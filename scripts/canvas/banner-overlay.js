@@ -248,7 +248,9 @@ export function renderBannerOverlay() {
     if (active) addBoundaryAt(container, placement, rangeRadiusPixels(placement.radius ?? 40), gathering);
     const carrier = bannerCarrierToken(placement);
     if (placement.removalMode === "carried" && (!carrier || carrier.isVisible === false)) continue;
-    addPlantedBanner(container, { ...placement, ...bannerDisplayPoint(placement) }, active);
+    if (!placement.objectTokenId || placement.removalMode === "carried") {
+      addPlantedBanner(container, { ...placement, ...bannerDisplayPoint(placement) }, active);
+    }
   }
 
   if (guidance?.movingTokenId) {

@@ -20,7 +20,7 @@ export function hasDrilledReactions(actor) {
 
 export function bannerActive(actor) {
   const placement = globalThis.canvas?.scene?.getFlag?.(FLAG_SCOPE, "plantedBanners")?.[actor?.id];
-  if (placement?.actorUuid === actor?.uuid) return placement.removed !== true;
+  if (placement?.actorUuid === actor?.uuid) return placement.removed !== true && placement.broken !== true;
   return actor?.rollOptions?.all?.["commanders-banner"] === true;
 }
 
@@ -41,6 +41,11 @@ export function bannerToggle(actor) {
 }
 
 export async function setBannerActive(actor, active) {
+  const object = globalThis.game?.actors?.find?.((candidate) => candidate.getFlag?.(FLAG_SCOPE, "bannerObject")?.commanderUuid === actor.uuid);
+  const hp = object?.system?.attributes?.hp;
+  if (active && hp && hp.value <= Math.floor(hp.max / 2)) {
+    throw new Error("Repair or replace this commander's banner before displaying it.");
+  }
   const toggle = bannerToggle(actor);
   if (!toggle || typeof actor?.toggleRollOption !== "function") {
     throw new Error("This actor has no toggleable Commander's Banner feature.");

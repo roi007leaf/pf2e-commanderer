@@ -217,6 +217,8 @@ test("retrieving a banner removes every managed 40-foot planted effect", async (
 
 test("Retrieve clears planted effects before restoring the native 30-foot aura", async () => {
   const operations = [];
+  const notifications = [];
+  let sceneSync;
   const commander = fakeActor("commander");
   commander.items.push({
     id: "banner-item",
@@ -232,6 +234,14 @@ test("Retrieve clears planted effects before restoring the native 30-foot aura",
   const deleteEmbeddedDocuments = ally.deleteEmbeddedDocuments.bind(ally);
   ally.deleteEmbeddedDocuments = async (...args) => {
     operations.push("cleanup");
+    await new Promise((resolve) => setImmediate(resolve));
+    const missing = args[1].find((id) => !ally.items.some((item) => item.id === id));
+    if (missing) {
+      // Foundry reports the error before the caller's rejection handler runs.
+      const message = `Item "${missing}" does not exist!`;
+      notifications.push(message);
+      throw new Error(message);
+    }
     return deleteEmbeddedDocuments(...args);
   };
   ally.items.push({
@@ -260,7 +270,11 @@ test("Retrieve clears planted effects before restoring the native 30-foot aura",
     tokens: { get: () => null },
     getFlag: () => placements,
     async setFlag(_scope, _key, value) { placements = value; },
-    async unsetFlag() { placements = {}; },
+    async unsetFlag() {
+      placements = {};
+      // Scene hooks start aura reconciliation while Retrieve also requests cleanup.
+      sceneSync = syncPlantedBannerEffects(scene);
+    },
   };
 
   const previousCanvas = globalThis.canvas;
@@ -284,6 +298,8 @@ test("Retrieve clears planted effects before restoring the native 30-foot aura",
 
   try {
     assert.equal(await retrieveBanner(commander, scene), true);
+    await sceneSync;
+    assert.deepEqual(notifications, [], "Retrieve must not submit duplicate item deletions");
     assert.deepEqual(ally.deleted, ["forty-foot-effect"]);
     assert.equal(commander.rollOptions.all["commanders-banner"], true);
     assert.deepEqual(operations, ["cleanup", "aura:true"]);

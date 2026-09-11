@@ -548,6 +548,26 @@ test("owned banner carrier can release it at its current position", async () => 
   }
 });
 
+test("GM can have an adjacent neutral NPC take a banner without changing its alliance", async () => {
+  const { pickupableDroppedBanners } = await import("../scripts/foundry/banner.js");
+  const commander = { id: "commander", uuid: "Actor.commander", alliance: "party" };
+  const placement = { actorId: commander.id, actorUuid: commander.uuid, x: 0, y: 0, radius: 40 };
+  const scene = { id: "scene", grid: { distance: 5 }, getFlag: () => ({ commander: placement }) };
+  const actor = { type: "npc", uuid: "Actor.neutral", alliance: null, isEnemyOf: () => false, testUserPermission: () => true };
+  const token = { actor, document: { mechanicalBounds: { x: 0, y: 0, width: 100, height: 100 } } };
+  const previousGame = globalThis.game;
+  globalThis.game = { actors: { get: () => commander } };
+  try {
+    const gm = { id: "gm", isGM: true };
+    assert.equal(removableEnemyBanners(token, scene, gm).length, 1);
+    assert.equal(removableEnemyBanners(token, scene, { isGM: false }).length, 0);
+    placement.removed = true; placement.removalMode = "dropped";
+    assert.equal(pickupableDroppedBanners(token, scene, gm).length, 1);
+    token.document.mechanicalBounds.x = 1000;
+    assert.equal(pickupableDroppedBanners(token, scene, gm).length, 0);
+  } finally { globalThis.game = previousGame; }
+});
+
 test("allies, distant enemies, and non-owners cannot remove a planted banner", () => {
   const commander = { id: "commander", uuid: "Actor.commander", alliance: "party" };
   const placement = { actorId: commander.id, actorUuid: commander.uuid, x: 0, y: 0, radius: 40 };

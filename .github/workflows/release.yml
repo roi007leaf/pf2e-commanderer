@@ -76,7 +76,7 @@ jobs:
           mv module.release.json module.json
 
       - name: Create module archive
-        run: zip --recurse-paths module.zip module.json README.md CHANGELOG.md LICENSE templates scripts styles lang
+        run: zip --recurse-paths module.zip module.json README.md CHANGELOG.md LICENSE templates scripts styles lang assets
 
       - name: Attach installable release files
         uses: ncipollo/release-action@v1

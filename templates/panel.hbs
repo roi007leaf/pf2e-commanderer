@@ -13,8 +13,9 @@
       <div class="commanderer-banner {{#if bannerRemoved}}removed{{else}}{{#if bannerActive}}active{{else}}inactive{{/if}}{{/if}}">
         <span class="commanderer-status-dot"></span>
         <div>
-          <small>{{#if bannerRemoved}}{{#if bannerTaken}}Taken banner{{else}}Pulled-down banner{{/if}}{{else}}{{#if bannerPlanted}}Planted banner{{else}}Carried banner{{/if}}{{/if}}</small>
+          <small>{{#if bannerDestroyed}}Destroyed banner{{else}}{{#if bannerRemoved}}{{#if bannerTaken}}Taken banner{{else}}Pulled-down banner{{/if}}{{else}}{{#if bannerPlanted}}Planted banner{{else}}Carried banner{{/if}}{{/if}}{{/if}}</small>
           <strong>
+            {{#if bannerDestroyed}}Destroyed · Replace banner{{else}}{{#if bannerBroken}}Broken · Benefits inactive{{else}}
             {{#if bannerRemoved}}
               {{#if bannerTaken}}Taken by {{bannerCarrierName}} · {{/if}}Benefits inactive
             {{else}}
@@ -24,14 +25,19 @@
                 {{#if bannerActive}}Displayed · Aura active{{else}}Stowed · Aura inactive{{/if}}
               {{/if}}
             {{/if}}
+            {{/if}}{{/if}}
           </strong>
         </div>
       </div>
       <div class="commanderer-banner-actions">
+        {{#if bannerObjectAvailable}}<button type="button" class="commanderer-button" data-action="openBannerSheet"><i class="fa-solid fa-shield-halved"></i> Object</button>{{/if}}
+        {{#if bannerDestroyed}}{{#if isGM}}<button type="button" class="commanderer-button" data-action="replaceBanner">Replace banner</button>{{/if}}{{/if}}
         {{#if bannerPlanted}}
+          {{#unless bannerDestroyed}}
           <button type="button" class="commanderer-button commander-banner-retrieve" data-action="retrieveBanner" {{#unless bannerRetrievable}}disabled{{/unless}} data-tooltip="{{#if bannerRetrievable}}{{#if bannerTaken}}Ask the GM to rule a recovery check{{else}}{{#if bannerRemoved}}Recover the removed banner and restore its benefits{{else}}Retrieve the planted banner{{/if}}{{/if}}{{else}}{{#if bannerTaken}}Move adjacent to {{bannerCarrierName}} to attempt recovery{{else}}Move adjacent to the planted banner to retrieve it{{/if}}{{/if}}">
             <i class="fa-solid {{#if bannerTaken}}fa-dice-d20{{else}}fa-hand{{/if}}"></i><span>{{#if bannerTaken}}Recover{{else}}Retrieve{{/if}}</span>
           </button>
+          {{/unless}}
         {{else}}
           {{#if bannerToggleAvailable}}
             <button type="button" class="commanderer-button commander-banner-toggle" data-action="toggleBanner" data-tooltip="Toggle the native PF2e Commander's Banner aura">
@@ -59,6 +65,9 @@
     <div class="commanderer-banner-corners" role="group" aria-label="Choose banner corner">
       <span><i class="fa-solid fa-location-crosshairs"></i> Choose a corner of your token</span>
       <div>
+        <button type="button" data-action="plantBannerOnMap" aria-label="Place banner on map"><i class="fa-solid fa-location-crosshairs"></i> Map</button>
+        <button type="button" data-action="configureBanner" aria-label="Configure banner material"><i class="fa-solid fa-gear"></i> Material</button>
+        <button type="button" data-action="bannerToChat" aria-label="Send Plant Banner rules to chat" data-tooltip="Post rules only; use Map or a corner button to plant"><i class="fa-solid fa-comment"></i> Chat</button>
         <button type="button" data-action="plantBannerAtCorner" data-corner="nw" data-tooltip="Northwest corner" aria-label="Plant northwest"><i class="fa-solid fa-arrow-up-left"></i></button>
         <button type="button" data-action="plantBannerAtCorner" data-corner="ne" data-tooltip="Northeast corner" aria-label="Plant northeast"><i class="fa-solid fa-arrow-up-right"></i></button>
         <button type="button" data-action="plantBannerAtCorner" data-corner="sw" data-tooltip="Southwest corner" aria-label="Plant southwest"><i class="fa-solid fa-arrow-down-left"></i></button>
@@ -92,6 +101,7 @@
         </div>
       </div>
       <div class="commanderer-actions">
+        {{#if isGM}}<button type="button" class="commanderer-button subtle" data-action="configureSquadLimit" data-tooltip="Override squad limit, including a companion slot">Limit</button>{{/if}}
         <button type="button" class="commanderer-button subtle {{#if squadPlannerExpanded}}active{{/if}}" data-action="toggleSquadPlanner" aria-expanded="{{#if squadPlannerExpanded}}true{{else}}false{{/if}}" data-tooltip="Discover and manage allied squad candidates on this scene">
           <i class="fa-solid fa-user-gear"></i><span>Manage</span>
         </button>

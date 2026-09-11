@@ -47,6 +47,7 @@
   position: relative;
   display: flex;
   flex: 0 0 auto;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
@@ -81,7 +82,8 @@
   align-items: center;
 }
 
-.pf2e-commanderer .commanderer-identity { min-width: 0; gap: 12px; }
+.pf2e-commanderer .commanderer-identity { flex: 1 1 210px; min-width: 0; gap: 12px; }
+.pf2e-commanderer .commanderer-identity > div { min-width: 0; }
 
 .pf2e-commanderer .commanderer-portrait {
   flex: 0 0 56px;
@@ -130,7 +132,8 @@
 
 .pf2e-commanderer .commanderer-banner-control {
   display: grid;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  max-width: 100%;
   grid-template-columns: auto auto;
   align-items: center;
   gap: 8px;
@@ -1431,6 +1434,13 @@
 }
 
 .pf2e-commanderer-dialog .commander-recovery-custom .hint { grid-column: 1 / -1; margin: 0; }
+
+.pf2e-commanderer-dialog .commanderer-settings { display: grid; gap: 12px; }
+.pf2e-commanderer-dialog .commanderer-settings label { display: grid; gap: 4px; }
+.pf2e-commanderer-dialog .commanderer-settings p { margin: 0; color: var(--cmd-text-muted); }
+.pf2e-commanderer .commanderer-banner-corners > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.pf2e-commanderer .commanderer-banner-corners button:not([data-corner]) { width: auto; min-width: 54px; padding: 0 7px; }
+.pf2e-commanderer .commanderer-banner-actions { flex-wrap: wrap; }
 
 @media (max-width: 700px) {
   .pf2e-commanderer-dialog.commander-banner-recovery-dialog { min-width: 0; }

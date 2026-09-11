@@ -12,6 +12,13 @@ let syncQueued = false;
 let pendingScene = null;
 let syncChain = Promise.resolve();
 
+function queueEffectOperation(operation) {
+  const result = syncChain.then(operation);
+  // Keep later operations runnable, while preserving rejection for the caller.
+  syncChain = result.catch(() => {});
+  return result;
+}
+
 function activeGM() {
   const users = globalThis.game?.users;
   return users?.activeGM
@@ -90,7 +97,7 @@ function expectedRecipients(scene) {
   const expected = new Map();
   const tokens = globalThis.canvas?.tokens?.placeables ?? [];
   for (const placement of Object.values(sceneBannerPlacements(scene))) {
-    if (placement.removed === true) continue;
+    if (placement.removed === true || placement.broken === true) continue;
     const commander = commanderFor(placement);
     if (!commander) continue;
     for (const token of tokens) {
@@ -150,7 +157,11 @@ async function deleteBannerEffects(actor, itemIds) {
   }
 }
 
-export async function clearPlantedBannerEffects(commanderUuid, scene = globalThis.canvas?.scene) {
+export function clearPlantedBannerEffects(commanderUuid, scene = globalThis.canvas?.scene) {
+  return queueEffectOperation(() => clearPlantedBannerEffectsNow(commanderUuid, scene));
+}
+
+async function clearPlantedBannerEffectsNow(commanderUuid, scene) {
   if (!mayManageEffects() || !scene?.id || !commanderUuid) return 0;
   let removed = 0;
   for (const actor of actorsToInspect().values()) {
@@ -167,7 +178,11 @@ export async function clearPlantedBannerEffects(commanderUuid, scene = globalThi
   return removed;
 }
 
-export async function syncPlantedBannerEffects(scene = globalThis.canvas?.scene) {
+export function syncPlantedBannerEffects(scene = globalThis.canvas?.scene) {
+  return queueEffectOperation(() => syncPlantedBannerEffectsNow(scene));
+}
+
+async function syncPlantedBannerEffectsNow(scene) {
   if (!mayManageEffects() || !scene || scene.id !== globalThis.canvas?.scene?.id) return;
   const placements = Object.values(sceneBannerPlacements(scene));
   for (const placement of placements) {
@@ -226,7 +241,7 @@ function scheduleSync(scene = globalThis.canvas?.scene) {
     syncQueued = false;
     const nextScene = pendingScene;
     pendingScene = null;
-    syncChain = syncChain.then(() => syncPlantedBannerEffects(nextScene)).catch(reportSyncError);
+    syncPlantedBannerEffects(nextScene).catch(reportSyncError);
   }, 0);
 }
 

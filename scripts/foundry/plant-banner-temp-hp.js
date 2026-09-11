@@ -67,7 +67,7 @@ function tokensForActor(actor) {
 function bestCommanderForActor(actor, scene) {
   let best = null;
   for (const placement of Object.values(sceneBannerPlacements(scene))) {
-    if (placement.removed === true) continue;
+    if (placement.removed === true || placement.broken === true) continue;
     const commander = commanderFor(placement);
     if (!commander) continue;
     const inBurst = tokensForActor(actor).some((token) => tokenIsOtherAlly(commander, token)
@@ -138,7 +138,7 @@ async function replaceTempHpEffect(actor, commander, scene, combatant = null) {
 }
 
 export async function grantInitialPlantBannerTempHp(scene, placement) {
-  if (!mayManageEffects() || !scene || !placement || placement.removed === true) return 0;
+  if (!mayManageEffects() || !scene || !placement || placement.removed === true || placement.broken === true) return 0;
   const commander = commanderFor(placement);
   if (!commander) return 0;
   const recipients = new Map();
@@ -204,7 +204,7 @@ export async function refreshPlantBannerTempHpForTurn(combatant, scene = globalT
 }
 
 function placementSignature(placement) {
-  return [placement.actorUuid, placement.x, placement.y, placement.radius, placement.corner, placement.removed === true].join(":");
+  return [placement.actorUuid, placement.x, placement.y, placement.radius, placement.corner, placement.removed === true, placement.broken === true].join(":");
 }
 
 function snapshotPlacements(scene) {
@@ -220,7 +220,7 @@ async function handleSceneUpdate(scene) {
   placementSnapshots.set(scene.id, current);
   for (const [actorId, placement] of Object.entries(placements)) {
     if (previous.get(actorId) === current.get(actorId)) continue;
-    if (placement.removed === true) await removePlantBannerTempHp(scene, placement.actorUuid);
+    if (placement.removed === true || placement.broken === true) await removePlantBannerTempHp(scene, placement.actorUuid);
     else await grantInitialPlantBannerTempHp(scene, placement);
   }
 }

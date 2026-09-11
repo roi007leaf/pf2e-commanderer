@@ -8,6 +8,8 @@ import {
 import { activeTokenFor, setBannerActive } from "./runtime.js";
 import { clearPlantedBannerEffects } from "./banner-effects.js";
 import { registerOperation, requestOperation } from "./socket.js";
+import { bannerBeneficiaries, frightenBannerBeneficiaries } from "./banner-loss.js";
+import { createBannerObject, removeBannerObjectToken, syncBannerObject } from "./banner-object.js";
 
 const PLACEMENTS_FLAG = "plantedBanners";
 const PLANT_OPERATION = "plant-banner";
@@ -17,6 +19,15 @@ const DROP_OPERATION = "drop-carried-banner";
 const PICKUP_OPERATION = "pickup-dropped-banner";
 const REMOVAL_MODES = new Set(["dropped", "carried"]);
 let interactionsRegistered = false;
+let bannerOperationChain = Promise.resolve();
+
+function serializeBannerOperation(handler) {
+  return (...args) => {
+    const operation = bannerOperationChain.then(() => handler(...args));
+    bannerOperationChain = operation.catch(() => {});
+    return operation;
+  };
+}
 
 function clone(value) {
   if (typeof globalThis.foundry?.utils?.deepClone === "function") return foundry.utils.deepClone(value);
@@ -36,7 +47,7 @@ export function plantedBanner(actor, scene = globalThis.canvas?.scene) {
 
 export function bannerOrigin(actor) {
   const placement = plantedBanner(actor);
-  if (placement) return placement.removed === true ? null : { ...placement, planted: true };
+  if (placement) return placement.removed === true || placement.broken === true ? null : { ...placement, planted: true };
   const token = activeTokenFor(actor);
   return token ? { token, radius: 30, planted: false } : null;
 }
@@ -53,8 +64,11 @@ function userOwnsActor(user, actor) {
   return user?.isGM === true || actor?.testUserPermission?.(user, "OWNER") === true;
 }
 
-function actorIsEnemy(actor, commander) {
+function actorMayTakeBanner(actor, commander, user) {
   if (!actor || !commander || actor.uuid === commander.uuid) return false;
+  // NPC allegiance can be neutral or reflect a temporary alliance. The GM
+  // adjudicates the hostile Interact without rewriting that actor's alliance.
+  if (user?.isGM && actor.type === "npc") return true;
   if (typeof actor.isEnemyOf === "function") return actor.isEnemyOf(commander);
   if (typeof commander.isEnemyOf === "function") return commander.isEnemyOf(actor);
   return actor.alliance != null && commander.alliance != null && actor.alliance !== commander.alliance;
@@ -116,7 +130,7 @@ export function removableEnemyBanners(token, scene = globalThis.canvas?.scene, u
   for (const placement of Object.values(sceneBannerPlacements(scene))) {
     if (placement?.removed === true) continue;
     const commander = commanderForPlacement(placement);
-    if (!actorIsEnemy(actor, commander) || !tokenAdjacentToPlacement(token, placement, scene)) continue;
+    if (!actorMayTakeBanner(actor, commander, user) || !tokenAdjacentToPlacement(token, placement, scene)) continue;
     removable.push({ commander, placement });
   }
   return removable;
@@ -140,7 +154,7 @@ export function pickupableDroppedBanners(token, scene = globalThis.canvas?.scene
   for (const placement of Object.values(sceneBannerPlacements(scene))) {
     if (placement?.removed !== true || placement.removalMode !== "dropped") continue;
     const commander = commanderForPlacement(placement);
-    if (!actorIsEnemy(actor, commander) || !tokenAdjacentToPlacement(token, placement, scene)) continue;
+    if (!actorMayTakeBanner(actor, commander, user) || !tokenAdjacentToPlacement(token, placement, scene)) continue;
     pickupable.push({ commander, placement });
   }
   return pickupable;
@@ -173,7 +187,10 @@ export async function removePlantedBannerAsEnemy({ scene, commanderActorId, enem
     },
   };
   placements[commanderActorId] = removed;
+  const beneficiaries = mode === "carried" ? bannerBeneficiaries(current.actorUuid, scene) : [];
   await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+  await frightenBannerBeneficiaries(beneficiaries);
+  await syncBannerObject(scene, removed);
   globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, target.commander, removed);
   return removed;
 }
@@ -261,6 +278,7 @@ export async function dropCarriedBanner({ scene, commanderActorId, carrierToken,
   const dropped = droppedPlacement(current, carrierToken, user.id);
   placements[commanderActorId] = dropped;
   await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+  await syncBannerObject(scene, dropped);
   globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, target.commander, dropped);
   return dropped;
 }
@@ -306,6 +324,7 @@ export async function pickupDroppedBannerAsEnemy({ scene, commanderActorId, enem
   };
   placements[commanderActorId] = pickedUp;
   await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+  await syncBannerObject(scene, pickedUp);
   globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, target.commander, pickedUp);
   return pickedUp;
 }
@@ -337,6 +356,7 @@ export async function dropCarriedBannersForToken(tokenDocument, scene = tokenDoc
   if (!dropped.length) return 0;
   await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
   for (const placement of dropped) {
+    await syncBannerObject(scene, placement);
     globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, commanderForPlacement(placement), placement);
   }
   return dropped.length;
@@ -352,11 +372,11 @@ function mayManagePlacements() {
 export function registerBannerInteractions() {
   if (interactionsRegistered) return;
   interactionsRegistered = true;
-  registerOperation(PLANT_OPERATION, handlePlantBanner);
-  registerOperation(RETRIEVE_OPERATION, handleRetrieveBanner);
-  registerOperation(REMOVE_OPERATION, handleEnemyBannerRemoval);
-  registerOperation(DROP_OPERATION, handleCarriedBannerDrop);
-  registerOperation(PICKUP_OPERATION, handleDroppedBannerPickup);
+  registerOperation(PLANT_OPERATION, serializeBannerOperation(handlePlantBanner));
+  registerOperation(RETRIEVE_OPERATION, serializeBannerOperation(handleRetrieveBanner));
+  registerOperation(REMOVE_OPERATION, serializeBannerOperation(handleEnemyBannerRemoval));
+  registerOperation(DROP_OPERATION, serializeBannerOperation(handleCarriedBannerDrop));
+  registerOperation(PICKUP_OPERATION, serializeBannerOperation(handleDroppedBannerPickup));
   globalThis.Hooks?.on?.("deleteToken", (tokenDocument) => {
     if (!mayManagePlacements()) return;
     dropCarriedBannersForToken(tokenDocument).catch((error) => {
@@ -440,6 +460,7 @@ export function bannerRangeToToken(actor, token) {
 
 export function canRetrieveBanner(actor, scene = globalThis.canvas?.scene) {
   const placement = plantedBanner(actor, scene);
+  if (placement?.removalMode === "destroyed") return false;
   const token = sceneToken(scene, placement?.tokenUuid) ?? activeTokenFor(actor);
   if (!placement || !token) return false;
   const carrier = bannerCarrierToken(placement, scene);
@@ -460,6 +481,7 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
   const point = bannerCorner(tokenBounds(token), corner);
 
   const placements = clone(sceneBannerPlacements(scene));
+  if (placements[actor.id]) throw new Error("Retrieve the existing banner before planting it again.");
   const placement = {
     actorId: actor.id,
     actorUuid: actor.uuid,
@@ -471,10 +493,14 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
   };
   placements[actor.id] = placement;
   const suppressNativeAura = actor?.rollOptions?.all?.["commanders-banner"] === true;
-  if (suppressNativeAura) await setBannerActive(actor, false);
+  if (typeof scene.createEmbeddedDocuments === "function") {
+    Object.assign(placement, await createBannerObject(actor, scene, placement));
+  }
   try {
+    if (suppressNativeAura) await setBannerActive(actor, false);
     await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
   } catch (error) {
+    await removeBannerObjectToken(scene, placement);
     if (suppressNativeAura) await setBannerActive(actor, true);
     throw error;
   }
@@ -485,6 +511,7 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
 export async function retrieveBanner(actor, scene = globalThis.canvas?.scene, { allowCarried = false } = {}) {
   const placement = scene ? plantedBanner(actor, scene) : null;
   if (!scene || !placement) return false;
+  if (placement.removalMode === "destroyed") throw new Error("A destroyed banner must be replaced by the GM.");
   if (placement.removalMode === "carried" && !allowCarried) {
     throw new Error("A GM must rule the check to recover a banner carried by an enemy.");
   }
@@ -494,11 +521,12 @@ export async function retrieveBanner(actor, scene = globalThis.canvas?.scene, { 
       : "Move adjacent to the planted banner before retrieving it.";
     throw new Error(message);
   }
-  const restoreNativeAura = actor?.rollOptions?.all?.["commanders-banner"] !== true;
+  const restoreNativeAura = !placement.broken && actor?.rollOptions?.all?.["commanders-banner"] !== true;
   const placements = clone(sceneBannerPlacements(scene));
   delete placements[actor.id];
   try {
-    if (Object.keys(placements).length) await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
+    if (typeof scene.update === "function") await scene.update({ [`flags.${FLAG_SCOPE}.${PLACEMENTS_FLAG}.-=${actor.id}`]: null });
+    else if (Object.keys(placements).length) await scene.setFlag(FLAG_SCOPE, PLACEMENTS_FLAG, placements);
     else await scene.unsetFlag(FLAG_SCOPE, PLACEMENTS_FLAG);
   } catch (error) {
     throw error;
@@ -518,5 +546,6 @@ export async function retrieveBanner(actor, scene = globalThis.canvas?.scene, { 
     throw error;
   }
   globalThis.Hooks?.callAll?.(`${FLAG_SCOPE}.bannerPlacementChanged`, actor, null);
+  await removeBannerObjectToken(scene, placement);
   return true;
 }

@@ -9,7 +9,17 @@ export function intelligenceModifier(actor) {
 }
 
 export function squadLimit(actor) {
+  const override = actor.getFlag?.(FLAG_SCOPE, "squadLimit");
+  if (Number.isInteger(override) && override >= 0) return override;
   return squadCapacity(intelligenceModifier(actor));
+}
+
+export async function setSquadLimit(actor, value) {
+  if (!globalThis.game?.user?.isGM) throw new Error("Only a GM can change squad limits.");
+  if (value === "" || value === null) return actor.unsetFlag(FLAG_SCOPE, "squadLimit");
+  const limit = Number(value);
+  if (!Number.isInteger(limit) || limit < 0) throw new Error("Squad limit must be a nonnegative integer.");
+  await actor.setFlag(FLAG_SCOPE, "squadLimit", limit);
 }
 
 export function storedSquad(actor) {

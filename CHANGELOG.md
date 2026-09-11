@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0
+
+- Plant banners as targetable objects with configurable materials, HP, AC, and Hardness, including affixed item statistics and Plant Banner's bonus Hardness. Damage persists when retrieving and replanting; GMs can replace destroyed banners.
+- Add direct map placement alongside the existing corner buttons, plus a chat button for the Plant Banner rules without triggering duplicate summons.
+- Stop banner benefits when broken or destroyed, and apply frightened 1 to benefiting creatures when the banner is stolen or destroyed.
+- Let GMs use NPCs to take adjacent banners, and prevent banner objects from being accidentally added to combat.
+- Add a GM squad limit override as a workaround for Commander's Companion.
+- Fix overlapping banner effect cleanup that could report a missing item after retrieving a banner.
+- Restrict Plant Banner temporary HP to allies, including effects and renewals from PF2e Summons Assistant.
+- Improve banner controls and include banner artwork in release downloads.
+
 ## 1.0.9
 
 - Keep Commander tactic messages opaque by resolving the Foundry parchment texture from a stable route and retaining a solid fallback when the texture is unavailable.

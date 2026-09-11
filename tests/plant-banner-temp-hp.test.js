@@ -110,17 +110,21 @@ test("planting grants the native temp-HP effect to other allies within 30 feet",
   const commander = fakeActor("commander", { level: 5, items: [plantFeat] });
   const near = fakeActor("near");
   const far = fakeActor("far");
+  const opposition = fakeActor("opposition", { alliance: "opposition" });
   const commanderToken = fakeToken("commander", commander, 0);
   const nearToken = fakeToken("near", near, 100);
   const farToken = fakeToken("far", far, 700);
   const placement = { actorId: commander.id, actorUuid: commander.uuid, x: 0, y: 0, radius: 40 };
   const previous = { canvas: globalThis.canvas, game: globalThis.game, fromUuid: globalThis.fromUuid };
-  const scene = setupWorld({ commander, tokens: [commanderToken, nearToken, farToken], placement });
+  const scene = setupWorld({ commander, tokens: [commanderToken, nearToken, farToken, fakeToken("enemy", opposition, 100)], placement });
 
   try {
     await grantInitialPlantBannerTempHp(scene, placement);
     assert.equal(commander.created.length, 0, "Commander is not their own ally");
     assert.equal(near.created.length, 1, "near ally gains temporary HP immediately");
+    assert.equal(opposition.created.length, 0, "near opposition gains no temporary HP");
+    await refreshPlantBannerTempHpForTurn({ actor: opposition }, scene);
+    assert.equal(opposition.created.length, 0, "opposition turn does not renew temporary HP");
     assert.equal(far.created.length, 0, "40-foot banner aura does not enlarge 30-foot temp-HP burst");
     const source = near.created[0];
     assert.equal(source.name, "Effect: Plant Banner");

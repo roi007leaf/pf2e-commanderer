@@ -5,6 +5,8 @@ import { registerSocket } from "./foundry/socket.js";
 import { registerPlantedBannerEffects } from "./foundry/banner-effects.js";
 import { registerPlantBannerTempHp } from "./foundry/plant-banner-temp-hp.js";
 import { registerBannerInteractions } from "./foundry/banner.js";
+import { registerBannerObjects } from "./foundry/banner-object.js";
+import { registerBannerRecipientGuard } from "./foundry/banner-recipient-guard.js";
 import { registerBannerRecovery } from "./foundry/banner-recovery.js";
 import { openCommanderPanel, registerCommanderPanelLiveUpdates } from "./ui/panel.js";
 import { registerCommanderTokenHud } from "./ui/token-hud.js";
@@ -19,6 +21,8 @@ activateChatCards(engine);
 Hooks.once("ready", () => {
   registerSocket();
   registerBannerInteractions();
+  registerBannerObjects();
+  registerBannerRecipientGuard();
   registerBannerRecovery();
   registerPlantedBannerEffects();
   registerPlantBannerTempHp();
