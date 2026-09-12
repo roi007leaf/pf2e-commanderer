@@ -6,6 +6,7 @@ import { registerPlantedBannerEffects } from "./foundry/banner-effects.js";
 import { registerPlantBannerTempHp } from "./foundry/plant-banner-temp-hp.js";
 import { registerBannerInteractions } from "./foundry/banner.js";
 import { registerBannerObjects } from "./foundry/banner-object.js";
+import { registerBannerSaveRule, upgradeBannerSaves } from "./foundry/banner-saves.js";
 import { registerBannerRecipientGuard } from "./foundry/banner-recipient-guard.js";
 import { registerBannerRecovery } from "./foundry/banner-recovery.js";
 import { openCommanderPanel, registerCommanderPanelLiveUpdates } from "./ui/panel.js";
@@ -17,11 +18,13 @@ const engine = new CommanderEngine();
 registerCommanderTokenHud(() => engine);
 registerBannerOverlay();
 activateChatCards(engine);
+Hooks.once("setup", registerBannerSaveRule);
 
 Hooks.once("ready", () => {
   registerSocket();
   registerBannerInteractions();
   registerBannerObjects();
+  void upgradeBannerSaves();
   registerBannerRecipientGuard();
   registerBannerRecovery();
   registerPlantedBannerEffects();

@@ -238,7 +238,7 @@ test("Plant Banner persists a rule-legal corner and Retrieve removes it", async 
     assert.equal(plantedBanner(actor, scene)?.corner, "ne");
 
     token.mechanicalBounds = { x: 1000, y: 1000, width: 50, height: 50 };
-    await assert.rejects(() => retrieveBanner(actor, scene), /Move adjacent/);
+    await assert.rejects(() => retrieveBanner(actor, scene), /Move within unarmed reach/);
     token.mechanicalBounds = { x: 100, y: 200, width: 50, height: 50 };
     assert.equal(await retrieveBanner(actor, scene), true);
     assert.equal(plantedBanner(actor, scene), null);

@@ -46,12 +46,12 @@ test("banner materials combine with affixed item durability and planted bonus", 
   for (const hp of [0, -1, 1.5, NaN]) assert.throws(() => bannerObjectStats(actor, { material: "custom", hp, hardness: 0 }));
 });
 
-test("banner is a native hazard with HP, Hardness, no fabricated saves or creature alliance", () => {
+test("banner is a native hazard with HP, Hardness and rollable saves for automation", () => {
   const source = bannerObjectSource(commander, bannerObjectStats(commander));
   assert.equal(source.type, "hazard");
   assert.equal(source.system.attributes.hardness, 11);
   assert.equal(source.system.attributes.hp.max, 12);
-  assert.equal(source.system.saves.reflex.value, null);
+  for (const save of ["fortitude", "reflex", "will"]) assert.equal(source.system.saves[save].value, 0);
   assert.equal(source.prototypeToken.actorLink, true);
 });
 

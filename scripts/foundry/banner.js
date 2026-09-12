@@ -78,10 +78,24 @@ function tokenAdjacentToPlacement(token, placement, scene) {
   const bounds = token?.document?.mechanicalBounds ?? token?.mechanicalBounds ?? token?.bounds;
   if (!bounds) return false;
   const gridDistance = Number(scene?.grid?.distance ?? globalThis.canvas?.dimensions?.distance ?? 5);
-  return bannerRangeToBounds(placement, bounds, {
+  const distance = bannerRangeToBounds(placement, bounds, {
     gridSize: globalThis.canvas?.grid?.size ?? globalThis.canvas?.dimensions?.size ?? 100,
     gridDistance,
-  }) <= gridDistance;
+  });
+  return withinBannerReach(token, placement, distance);
+}
+
+function tokenPosition(token) {
+  const document = token?.document ?? token;
+  return { elevation: Number(document?.elevation ?? 0), ...(document?.level ? { level: document.level } : {}) };
+}
+
+function withinBannerReach(token, position, distance) {
+  const origin = tokenPosition(token);
+  if (origin.level && position.level && origin.level !== position.level) return false;
+  const actor = token?.actor ?? token?.document?.actor;
+  const reach = Number(actor?.getReach?.({ action: "interact" }) ?? actor?.system?.attributes?.reach?.base ?? 5);
+  return Math.hypot(distance, origin.elevation - Number(position.elevation ?? origin.elevation)) <= reach;
 }
 
 function tokenBounds(token) {
@@ -223,6 +237,16 @@ async function handlePlantBanner(payload, userId) {
 }
 
 async function handleRetrieveBanner(payload, userId) {
+  if (payload.force === true) {
+    const user = globalThis.game?.users?.get?.(userId);
+    if (!user?.isGM) throw new Error("Only a GM can force banner retrieval.");
+    const scene = globalThis.game?.scenes?.get?.(payload.sceneId);
+    const placement = sceneBannerPlacements(scene)[payload.actorId];
+    if (!scene || placement?.actorUuid !== payload.actorUuid) throw new Error("Banner request is no longer valid.");
+    const actor = commanderForPlacement(placement);
+    if (!actor) throw new Error("The banner's commander no longer exists.");
+    return retrieveBanner(actor, scene, { force: true });
+  }
   const { scene, actor } = commanderOperationContext(payload, userId);
   return retrieveBanner(actor, scene);
 }
@@ -249,6 +273,7 @@ function droppedPlacement(placement, token, userId = null) {
   return {
     ...placement,
     ...point,
+    ...tokenPosition(token),
     removalMode: "dropped",
     carrierTokenUuid: null,
     droppedAt: Number(globalThis.game?.time?.worldTime ?? 0),
@@ -402,16 +427,18 @@ export function requestPlantBanner(actor, corner, scene = globalThis.canvas?.sce
   }, { gmRequired: true });
 }
 
-export function requestRetrieveBanner(actor, scene = globalThis.canvas?.scene) {
+export function requestRetrieveBanner(actor, scene = globalThis.canvas?.scene, { force = false } = {}) {
+  if (force && !globalThis.game?.user?.isGM) throw new Error("Only a GM can force banner retrieval.");
   const placement = plantedBanner(actor, scene);
   const token = sceneToken(scene, placement?.tokenUuid) ?? activeTokenFor(actor);
   const tokenUuid = token?.document?.uuid ?? token?.uuid;
-  if (!scene?.id || !placement || !tokenUuid) return false;
+  if (!scene?.id || !placement || (!tokenUuid && !force)) return false;
   return requestOperation(RETRIEVE_OPERATION, {
     sceneId: scene.id,
     actorId: actor.id,
     actorUuid: actor.uuid,
     tokenUuid,
+    force,
   }, { gmRequired: true });
 }
 
@@ -464,14 +491,14 @@ export function canRetrieveBanner(actor, scene = globalThis.canvas?.scene) {
   const token = sceneToken(scene, placement?.tokenUuid) ?? activeTokenFor(actor);
   if (!placement || !token) return false;
   const carrier = bannerCarrierToken(placement, scene);
+  if (!tokenBounds(token) || (carrier && !tokenBounds(carrier))) return false;
   const distance = carrier
     ? boundsRange(tokenBounds(carrier), tokenBounds(token), scene)
     : bannerRangeToBounds(bannerDisplayPoint(placement, scene), tokenBounds(token), {
         gridSize: globalThis.canvas?.grid?.size ?? globalThis.canvas?.dimensions?.size ?? 100,
         gridDistance: scene?.grid?.distance ?? globalThis.canvas?.dimensions?.distance ?? 5,
       });
-  const adjacentDistance = Number(globalThis.canvas?.scene?.grid?.distance ?? globalThis.canvas?.dimensions?.distance ?? 5);
-  return distance <= adjacentDistance;
+  return withinBannerReach(token, carrier ? tokenPosition(carrier) : placement, distance);
 }
 
 export async function plantBanner(actor, corner, scene = globalThis.canvas?.scene, { token = activeTokenFor(actor) } = {}) {
@@ -488,6 +515,7 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
     tokenUuid: token.document?.uuid ?? null,
     x: point.x,
     y: point.y,
+    ...tokenPosition(token),
     radius: plantedBannerRadius(actor),
     corner,
   };
@@ -508,20 +536,21 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
   return placement;
 }
 
-export async function retrieveBanner(actor, scene = globalThis.canvas?.scene, { allowCarried = false } = {}) {
+export async function retrieveBanner(actor, scene = globalThis.canvas?.scene, { allowCarried = false, force = false } = {}) {
+  if (force && !globalThis.game?.user?.isGM) throw new Error("Only a GM can force banner retrieval.");
   const placement = scene ? plantedBanner(actor, scene) : null;
   if (!scene || !placement) return false;
   if (placement.removalMode === "destroyed") throw new Error("A destroyed banner must be replaced by the GM.");
-  if (placement.removalMode === "carried" && !allowCarried) {
+  if (placement.removalMode === "carried" && !allowCarried && !force) {
     throw new Error("A GM must rule the check to recover a banner carried by an enemy.");
   }
-  if (!canRetrieveBanner(actor, scene)) {
+  if (!force && !canRetrieveBanner(actor, scene)) {
     const message = placement.removalMode === "carried"
-      ? `Move adjacent to ${placement.removedBy?.actorName ?? "the banner carrier"} before retrieving it.`
-      : "Move adjacent to the planted banner before retrieving it.";
+      ? `Move within unarmed reach of ${placement.removedBy?.actorName ?? "the banner carrier"} before retrieving it.`
+      : "Move within unarmed reach of the planted banner before retrieving it.";
     throw new Error(message);
   }
-  const restoreNativeAura = !placement.broken && actor?.rollOptions?.all?.["commanders-banner"] !== true;
+  const restoreNativeAura = !placement.broken && placement.removalMode !== "destroyed" && actor?.rollOptions?.all?.["commanders-banner"] !== true;
   const placements = clone(sceneBannerPlacements(scene));
   delete placements[actor.id];
   try {

@@ -30,11 +30,13 @@
         </div>
       </div>
       <div class="commanderer-banner-actions">
-        {{#if bannerObjectAvailable}}<button type="button" class="commanderer-button" data-action="openBannerSheet"><i class="fa-solid fa-shield-halved"></i> Object</button>{{/if}}
+        {{#if bannerObjectAvailable}}<button type="button" class="commanderer-button" data-action="openBannerSheet"><i class="fa-solid fa-shield-halved"></i> Banner actor</button>
+        {{#if isGM}}<button type="button" class="commanderer-button" data-action="repairBanner" data-tooltip="Apply HP restored after resolving Repair">Repair</button>{{/if}}{{/if}}
         {{#if bannerDestroyed}}{{#if isGM}}<button type="button" class="commanderer-button" data-action="replaceBanner">Replace banner</button>{{/if}}{{/if}}
         {{#if bannerPlanted}}
           {{#unless bannerDestroyed}}
-          <button type="button" class="commanderer-button commander-banner-retrieve" data-action="retrieveBanner" {{#unless bannerRetrievable}}disabled{{/unless}} data-tooltip="{{#if bannerRetrievable}}{{#if bannerTaken}}Ask the GM to rule a recovery check{{else}}{{#if bannerRemoved}}Recover the removed banner and restore its benefits{{else}}Retrieve the planted banner{{/if}}{{/if}}{{else}}{{#if bannerTaken}}Move adjacent to {{bannerCarrierName}} to attempt recovery{{else}}Move adjacent to the planted banner to retrieve it{{/if}}{{/if}}">
+          {{#if isGM}}<button type="button" class="commanderer-button" data-action="forceRetrieveBanner" data-tooltip="Bypass reach and recovery checks; clean up a stale placement">Force retrieve</button>{{/if}}
+          <button type="button" class="commanderer-button commander-banner-retrieve" data-action="retrieveBanner" {{#unless bannerRetrievable}}disabled{{/unless}} data-tooltip="{{#if bannerRetrievable}}{{#if bannerTaken}}Ask the GM to rule a recovery check{{else}}{{#if bannerRemoved}}Recover the removed banner and restore its benefits{{else}}Retrieve the planted banner{{/if}}{{/if}}{{else}}{{#if bannerTaken}}Move within unarmed reach of {{bannerCarrierName}} to attempt recovery{{else}}Move within unarmed reach of the planted banner to retrieve it{{/if}}{{/if}}">
             <i class="fa-solid {{#if bannerTaken}}fa-dice-d20{{else}}fa-hand{{/if}}"></i><span>{{#if bannerTaken}}Recover{{else}}Retrieve{{/if}}</span>
           </button>
           {{/unless}}

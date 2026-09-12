@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1
+
+- Add GM force retrieval to bypass banner reach and recovery checks, including stale placements with a missing commander token.
+- Rename Object to Banner actor and add a GM Repair button to apply restored HP after resolving the Crafting check.
+- Preserve the holder's elevation and scene level when planting or dropping a banner.
+- Use Foundry's native token lock for banners, allowing manual placement corrections after unlocking while keeping the banner's stored origin synchronized.
+- Use unarmed Interact reach for PC and NPC banner retrieval and enemy interactions.
+- Make banner saves rollable and resolve them as failures through a banner-only extension of PF2e's native save adjustment. Preserve hazard Hardness, object immunities, and HP/2 Broken Threshold; automatically upgrade existing banners without changing their HP or placement.
+
 ## 1.1.0
 
 - Plant banners as targetable objects with configurable materials, HP, AC, and Hardness, including affixed item statistics and Plant Banner's bonus Hardness. Damage persists when retrieving and replanting; GMs can replace destroyed banners.

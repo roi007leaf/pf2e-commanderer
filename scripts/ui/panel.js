@@ -35,7 +35,7 @@ import { recoverCarriedBanner } from "../foundry/banner-recovery.js";
 import { tacticViewModel } from "./tactic-view-model.js";
 import { configureBanner, configureSquadLimit } from "./banner-settings.js";
 import { pickBannerCorner } from "../canvas/banner-picker.js";
-import { bannerObjectActor, replaceDestroyedBanner } from "../foundry/banner-object.js";
+import { bannerObjectActor, promptBannerRepair, replaceDestroyedBanner } from "../foundry/banner-object.js";
 
 const TEMPLATE = `modules/${MODULE_ID}/templates/panel.hbs`;
 const LIVE_REFRESH_DELAY = 50;
@@ -64,6 +64,8 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
       openBannerSheet: CommanderPanel.openBannerSheet,
       replaceBanner: CommanderPanel.replaceBanner,
       retrieveBanner: CommanderPanel.retrieveBanner,
+      forceRetrieveBanner: CommanderPanel.forceRetrieveBanner,
+      repairBanner: CommanderPanel.repairBanner,
       prepare: CommanderPanel.prepare,
       issue: CommanderPanel.issue,
       openDailies: CommanderPanel.openDailies,
@@ -270,6 +272,18 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
   static async replaceBanner() {
     try { await replaceDestroyedBanner(this.actor); this.requestRefresh(); }
     catch (error) { notify("error", error.message); }
+  }
+
+  static async repairBanner() {
+    try { await promptBannerRepair(this.actor); this.requestRefresh(); }
+    catch (error) { notify("error", error.message); }
+  }
+
+  static async forceRetrieveBanner() {
+    try {
+      await requestRetrieveBanner(this.actor, globalThis.canvas?.scene, { force: true });
+      this.requestRefresh();
+    } catch (error) { notify("error", error.message); }
   }
 
   static async retrieveBanner(_event, button) {

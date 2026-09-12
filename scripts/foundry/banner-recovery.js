@@ -277,7 +277,7 @@ function recoveryContext(payload, userId) {
   const carrier = bannerCarrierToken(placement, scene);
   if (!carrier) throw new Error("The banner carrier is no longer on this scene.");
   if (!canRetrieveBanner(commander, scene)) {
-    throw new Error(`Move adjacent to ${carrier.actor?.name ?? "the banner carrier"} before attempting recovery.`);
+    throw new Error(`Move within unarmed reach of ${carrier.actor?.name ?? "the banner carrier"} before attempting recovery.`);
   }
   return { scene, user, placement, commander, carrier };
 }
@@ -374,7 +374,7 @@ export async function recoverCarriedBanner(commander, scene = globalThis.canvas?
   const placement = plantedBanner(commander, scene);
   if (!scene?.id || placement?.removalMode !== "carried") return false;
   if (!canRetrieveBanner(commander, scene)) {
-    throw new Error(`Move adjacent to ${placement.removedBy?.actorName ?? "the banner carrier"} before attempting recovery.`);
+    throw new Error(`Move within unarmed reach of ${placement.removedBy?.actorName ?? "the banner carrier"} before attempting recovery.`);
   }
   if (!activeGM()) throw new Error("An active GM is required to rule banner recovery.");
 
