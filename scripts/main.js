@@ -6,24 +6,34 @@ import { registerPlantedBannerEffects } from "./foundry/banner-effects.js";
 import { registerPlantBannerTempHp } from "./foundry/plant-banner-temp-hp.js";
 import { registerBannerInteractions } from "./foundry/banner.js";
 import { registerBannerObjects } from "./foundry/banner-object.js";
+import { registerClaimTheFieldDamage } from "./foundry/claim-the-field.js";
 import { registerBannerSaveRule, upgradeBannerSaves } from "./foundry/banner-saves.js";
 import { registerBannerRecipientGuard } from "./foundry/banner-recipient-guard.js";
 import { registerBannerRecovery } from "./foundry/banner-recovery.js";
 import { openCommanderPanel, registerCommanderPanelLiveUpdates } from "./ui/panel.js";
 import { registerCommanderTokenHud } from "./ui/token-hud.js";
 import { registerBannerOverlay } from "./canvas/banner-overlay.js";
+import { registerFeatWorkflows } from "./foundry/feats.js";
+import { registerPassiveFeats } from "./foundry/passive-feats.js";
+import { registerGuidedTactics } from "./foundry/guided-tactics.js";
+import { registerFeatChatActions } from "./ui/feat-chat.js";
 
 const engine = new CommanderEngine();
 
 registerCommanderTokenHud(() => engine);
 registerBannerOverlay();
 activateChatCards(engine);
+registerFeatChatActions();
 Hooks.once("setup", registerBannerSaveRule);
 
 Hooks.once("ready", () => {
   registerSocket();
+  registerFeatWorkflows();
+  registerGuidedTactics();
+  registerPassiveFeats();
   registerBannerInteractions();
   registerBannerObjects();
+  registerClaimTheFieldDamage();
   void upgradeBannerSaves();
   registerBannerRecipientGuard();
   registerBannerRecovery();

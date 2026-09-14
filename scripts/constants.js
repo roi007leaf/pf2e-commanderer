@@ -12,6 +12,13 @@ export const SYSTEM_EFFECTS = Object.freeze({
 });
 
 export const CONDITION_UUIDS = Object.freeze({
+  quickened: "Compendium.pf2e.conditionitems.Item.nlCjDvLMf2EkV2dl",
+  confused: "Compendium.pf2e.conditionitems.Item.yblD8fOR1J8rDwEQ",
+  slowed: "Compendium.pf2e.conditionitems.Item.xYTAsEpcJE1Ccni3",
+  drained: "Compendium.pf2e.conditionitems.Item.4D2KBtexWXa6oUMR",
+  enfeebled: "Compendium.pf2e.conditionitems.Item.MIRkyAjyBeXivMa7",
+  deafened: "Compendium.pf2e.conditionitems.Item.9PR9y0bi4JPKnHPR",
+  sickened: "Compendium.pf2e.conditionitems.Item.fesd1n5eVhpCSS18",
   blinded: "Compendium.pf2e.conditionitems.Item.XgEqL1kFApUbl5Z2",
   clumsy: "Compendium.pf2e.conditionitems.Item.i3OJZU2nk64Df3xm",
   dazzled: "Compendium.pf2e.conditionitems.Item.TkIyaNPgTZFBCCuh",

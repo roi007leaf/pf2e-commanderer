@@ -1031,7 +1031,7 @@
 
 .commanderer-card [hidden] { display: none !important; }
 
-.commanderer-card button.commanderer-card-button {
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button {
   width: auto;
   min-width: 0;
   min-height: 28px;
@@ -1049,18 +1049,18 @@
   transition: border-color 120ms ease, background 120ms ease, color 120ms ease, transform 120ms ease;
 }
 
-.commanderer-card button.commanderer-card-button:hover:not(:disabled) {
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button:hover:not(:disabled) {
   border-color: var(--cmd-chat-red, #812f34);
   color: var(--cmd-chat-red, #812f34);
   background: rgba(129, 47, 52, 0.09);
   box-shadow: none;
 }
 
-.commanderer-card button.commanderer-card-button:active:not(:disabled) { transform: translateY(1px); }
-.commanderer-card button.commanderer-card-button:focus-visible { outline: 2px solid rgba(129, 47, 52, 0.48); outline-offset: 1px; }
-.commanderer-card button.commanderer-card-button:disabled { opacity: 0.52; cursor: progress; }
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button:active:not(:disabled) { transform: translateY(1px); }
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button:focus-visible { outline: 2px solid rgba(129, 47, 52, 0.48); outline-offset: 1px; }
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button:disabled { opacity: 0.52; cursor: progress; }
 
-.commanderer-card button.commanderer-card-button.primary {
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button.primary {
   flex: 1 1 90px;
   border-color: var(--cmd-chat-red-deep, #5e2024);
   color: #fffaf1;
@@ -1068,7 +1068,7 @@
   text-shadow: 0 1px rgba(0, 0, 0, 0.25);
 }
 
-.commanderer-card button.commanderer-card-button.primary:hover:not(:disabled) {
+:is(.commanderer-card, .commanderer-feat-actions) button.commanderer-card-button.primary:hover:not(:disabled) {
   border-color: #9d4449;
   color: #fff;
   background: linear-gradient(135deg, #944047, #6f272c);
@@ -1447,4 +1447,27 @@
   .pf2e-commanderer-dialog .commanderer-recovery-approaches,
   .pf2e-commanderer-dialog .commander-recovery-custom { grid-template-columns: 1fr; }
   .pf2e-commanderer-dialog .commander-recovery-custom .hint { grid-column: auto; }
+}
+.commanderer-feat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.commanderer-feat-actions button.commanderer-card-button {
+  flex: 1 1 180px;
+  white-space: normal;
+  height: auto;
+  min-height: 28px;
+  padding: 7px 9px;
+  line-height: 1.3;
+}
+
+.commanderer-feat-status {
+  flex: 1 0 100%;
+  margin: 2px 0 0;
+  color: var(--cmd-chat-muted, #625d54);
+  font-size: 11px;
+  line-height: 1.4;
 }

@@ -2,7 +2,7 @@ import { gatherMovementModes } from "../domain/gather-movement.js";
 import { movementBudget, movementDestinationVerdict } from "../domain/tactic-movement.js";
 import { showGatherGuidance } from "../canvas/banner-overlay.js";
 import { formFromDialogSubmit } from "./dialog.js";
-import { startGatherMovementPlanning } from "./gather-movement.js";
+import { movementPlanCost, startGatherMovementPlanning } from "./gather-movement.js";
 import { bannerOrigin, bannerRangeToToken } from "./banner.js";
 import { activeTokenFor, notify } from "./runtime.js";
 import { storedSquad } from "./squad.js";
@@ -63,12 +63,6 @@ async function chooseMovementMode(actor, title, modes) {
 function planWaypoints(plan) {
   if (Array.isArray(plan?.waypoints) && plan.waypoints.length) return plan.waypoints;
   return plan?.destination ? [plan.destination] : [];
-}
-
-function planCost(token, plan) {
-  const measurement = token.document?.measureMovementPath?.(planWaypoints(plan));
-  const cost = Number(measurement?.cost ?? measurement?.distance);
-  return Number.isFinite(cost) ? cost : NaN;
 }
 
 function virtualTokenAt(token, destination) {
@@ -177,9 +171,10 @@ export async function performTacticMovement({ actor, commander, item, tokenUuid,
         notify("warn", verdict.message);
         continue;
       }
-      const cost = planCost(movingToken, plan);
+      const cost = movementPlanCost(movingToken, plan);
       const moved = await movingToken.document.startMovement(plan.id);
       if (!moved) throw new Error(`${item?.name ?? "Tactic"} movement stopped before completion.`);
+      await movingToken.movementAnimationPromise;
       return `moved ${Math.round(cost)} feet (${mode.label})`;
     }
   } finally {

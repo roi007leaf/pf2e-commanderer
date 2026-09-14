@@ -119,9 +119,10 @@ test("bursty live updates coalesce into one panel render", () => {
   const callbacks = new Map();
   let nextTimer = 0;
   let renders = 0;
+  let renderOptions;
   const panel = Object.assign(Object.create(CommanderPanel.prototype), {
     _refreshTimer: null,
-    render: () => { renders += 1; },
+    render: (options) => { renders += 1; renderOptions = options; },
   });
   Object.defineProperty(panel, "id", { value: "commander-panel" });
   globalThis.foundry = {
@@ -143,6 +144,7 @@ test("bursty live updates coalesce into one panel render", () => {
     assert.equal(callbacks.size, 1);
     [...callbacks.values()][0]();
     assert.equal(renders, 1);
+    assert.equal(renderOptions.force, false, "background refresh must not raise or maximize the panel over a workflow dialog");
   } finally {
     globalThis.foundry = originalFoundry;
     globalThis.setTimeout = originalSetTimeout;

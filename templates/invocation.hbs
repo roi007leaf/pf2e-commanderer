@@ -23,6 +23,11 @@
     </section>
   {{/if}}
 
+  <section class="commanderer-instruction commander-workflow-status" role="status">
+    <span class="commanderer-card-eyebrow">{{#if workflowComplete}}Complete{{else}}Next step{{/if}}</span>
+    <p>{{workflowHint}}</p>
+  </section>
+
   <section class="commanderer-instruction">
     <span class="commanderer-card-eyebrow"><i class="fa-solid fa-bullhorn"></i> Command</span>
     <p>{{response.instruction}}</p>
@@ -57,7 +62,7 @@
             <button type="button" class="commanderer-card-button primary" data-commanderer-action="respond" data-participant-index="{{index}}"><i class="fa-solid fa-reply"></i> Respond</button>
             {{#if ../drilledAvailable}}
               {{#unless commander}}
-                <button type="button" class="commanderer-card-button drilled" data-commanderer-action="respond-drilled" data-participant-index="{{index}}" title="Use the commander's once-per-round Drilled Reaction"><i class="fa-solid fa-bolt"></i> Drilled</button>
+                <button type="button" class="commanderer-card-button drilled" data-commanderer-action="respond-drilled" data-participant-index="{{index}}" title="Use an available Drilled Reaction; Reflexes feats upgrade the allowance"><i class="fa-solid fa-bolt"></i> Drilled</button>
               {{/unless}}
             {{/if}}
             <button type="button" class="commanderer-card-button manual" data-commanderer-action="manual-response" data-participant-index="{{index}}" title="Skip response automation and mark this squadmate complete"><i class="fa-solid fa-hand"></i> Manual</button>

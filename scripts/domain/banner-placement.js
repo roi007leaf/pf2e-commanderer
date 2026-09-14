@@ -1,12 +1,27 @@
-const PLANTED_RADIUS = 40;
+import { bannerRadius } from "./feat-rules.js";
 const CORNERS = new Set(["nw", "ne", "sw", "se"]);
+
+export function hasClaimTheField(actor) {
+  return hasPlantBanner(actor) && actor.items.some((item) => item.slug === "claim-the-field");
+}
+
+export function claimTheFieldRange(actor) {
+  const itemId = actor?.getFlag?.("pf2e-commanderer", "bannerConfiguration")?.itemId;
+  const weapon = actor?.items?.find((item) => item.id === itemId && item.type === "weapon");
+  if (!weapon) return 0;
+  const traits = weapon.system?.traits?.value ?? [];
+  const thrown = traits.find((trait) => /^thrown-\d+$/.test(trait));
+  const range = thrown ? Number(thrown.slice(7))
+    : weapon.isThrown || traits.includes("thrown") ? Number(weapon.range?.increment ?? weapon.system?.range) : 0;
+  return Number.isFinite(range) && range > 0 ? range : 0;
+}
 
 export function hasPlantBanner(actor) {
   return actor?.items?.some((item) => item.slug === "plant-banner") === true;
 }
 
-export function plantedBannerRadius() {
-  return PLANTED_RADIUS;
+export function plantedBannerRadius(actor) {
+  return bannerRadius(actor, { planted: true });
 }
 
 export function plantBannerTemporaryHitPoints(level) {

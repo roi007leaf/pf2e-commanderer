@@ -23,9 +23,10 @@ import {
 } from "../foundry/squad.js";
 import { tacticAudience } from "../domain/squad-readiness.js";
 import { tacticDefinition } from "../domain/tactics.js";
-import { hasPlantBanner } from "../domain/banner-placement.js";
+import { hasPlantBanner, hasClaimTheField, claimTheFieldRange } from "../domain/banner-placement.js";
 import {
   bannerCarrierToken,
+  bannerOrigin,
   canRetrieveBanner,
   plantedBanner,
   requestPlantBanner,
@@ -129,9 +130,10 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
       bannerRemoved: placement?.removed === true,
       bannerTaken: placement?.removalMode === "carried",
       bannerCarrierName: bannerCarrier?.actor?.name ?? placement?.removedBy?.actorName,
-      bannerRadius: placement?.radius ?? 30,
+      bannerRadius: bannerOrigin(this.actor)?.radius ?? 30,
       bannerRetrievable: canRetrieveBanner(this.actor),
       plantBannerAvailable: hasPlantBanner(this.actor),
+      claimTheFieldAvailable: hasClaimTheField(this.actor) && claimTheFieldRange(this.actor) > 0,
       bannerPlacementExpanded: this.bannerPlacementExpanded,
       squad,
       squadCount: stored.length,
@@ -164,7 +166,7 @@ export class CommanderPanel extends foundry.applications.api.ApplicationV2 {
     if (this._refreshTimer) globalThis.clearTimeout(this._refreshTimer);
     this._refreshTimer = globalThis.setTimeout(() => {
       this._refreshTimer = null;
-      if (foundry.applications.instances.get(this.id) === this) this.render({ force: true });
+      if (foundry.applications.instances.get(this.id) === this) this.render({ force: false });
     }, LIVE_REFRESH_DELAY);
   }
 

@@ -1,6 +1,7 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { isTacticItem } from "../domain/tactics.js";
 import { preparedCapacity } from "../domain/rules.js";
+import { hasFeat } from "../domain/feat-rules.js";
 
 export function notify(level, message) {
   ui.notifications?.[level]?.(message);
@@ -21,6 +22,8 @@ export function hasDrilledReactions(actor) {
 export function bannerActive(actor) {
   const placement = globalThis.canvas?.scene?.getFlag?.(FLAG_SCOPE, "plantedBanners")?.[actor?.id];
   if (placement?.actorUuid === actor?.uuid) return placement.removed !== true && placement.broken !== true;
+  const companion = hasFeat(actor, "commanders-companion") ? actor.getFlag?.(FLAG_SCOPE, "companion") : null;
+  if (companion?.banner) return companion.displayed !== false;
   return actor?.rollOptions?.all?.["commanders-banner"] === true;
 }
 
@@ -41,10 +44,15 @@ export function bannerToggle(actor) {
 }
 
 export async function setBannerActive(actor, active) {
+  const companion = hasFeat(actor, "commanders-companion") ? actor.getFlag?.(FLAG_SCOPE, "companion") : null;
   const object = globalThis.game?.actors?.find?.((candidate) => candidate.getFlag?.(FLAG_SCOPE, "bannerObject")?.commanderUuid === actor.uuid);
   const hp = object?.system?.attributes?.hp;
   if (active && hp && hp.value <= Math.floor(hp.max / 2)) {
     throw new Error("Repair or replace this commander's banner before displaying it.");
+  }
+  if (companion?.banner) {
+    await actor.setFlag(FLAG_SCOPE, "companion", { ...companion, displayed: Boolean(active) });
+    return Boolean(active);
   }
   const toggle = bannerToggle(actor);
   if (!toggle || typeof actor?.toggleRollOption !== "function") {

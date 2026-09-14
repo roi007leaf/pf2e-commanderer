@@ -7,7 +7,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ['**/*.js'],
+    files: ['**/*.js', 'tests/live-audit.mjs'],
     languageOptions: {
       globals: {
         ...globals.browser,

@@ -19,8 +19,53 @@ import {
 } from "./foundry/runtime.js";
 import { registerOperation, requestOperation } from "./foundry/socket.js";
 import { INVOCATION_CARD_VERSION, invocationViewModel } from "./ui/invocation-view-model.js";
+import { ACTIVE_FEATS, drilledReactionLimit } from "./domain/feat-rules.js";
+import { requestCommanderFeat } from "./foundry/feats.js";
 
 const TEMPLATE = `modules/${MODULE_ID}/templates/invocation.hbs`;
+const operationLocks = new Set();
+const responseReservations = new Map();
+
+function exclusive(operation, keyFor) {
+  return async (payload, userId) => {
+    const key = keyFor(payload);
+    if (operationLocks.has(key)) throw new Error("This commander operation is already in progress.");
+    operationLocks.add(key);
+    try { return await operation(payload, userId); } finally { operationLocks.delete(key); }
+  };
+}
+
+async function reserveResponse(payload, userId) {
+  const invocation = game.messages.get(payload.messageId)?.getFlag(FLAG_SCOPE, "invocation");
+  const participant = invocation?.participants?.[payload.participantIndex];
+  const actor = participant ? await fromUuid(participant.actorUuid) : null;
+  if (!actor || !requesterOwns(userId, actor) || participant.status !== "pending") throw new Error("Response unavailable.");
+  if (invocation.combat && combatRoundKey(game.combat) !== invocation.roundKey) throw new Error("Tactic card expired.");
+  if (responseReservations.has(actor.uuid) || !responseAllowed(actor.getFlag(FLAG_SCOPE, "lastResponseRound"), invocation.roundKey)) throw new Error("Squadmate already responded or is responding.");
+  const commander = await fromUuid(invocation.commanderUuid);
+  if (payload.useDrilledReaction) {
+    if (!hasDrilledReactions(commander) || !invocation.response.reaction || participant.commander) throw new Error("Drilled Reactions cannot apply.");
+    const saved = commander.getFlag(FLAG_SCOPE, "drilledReactions");
+    const used = saved?.round === invocation.roundKey ? saved.actors : [];
+    if (used.length >= drilledReactionLimit(commander) || used.includes(actor.uuid)) throw new Error("Drilled Reactions allowance already spent.");
+    await commander.setFlag(FLAG_SCOPE, "drilledReactions", { round: invocation.roundKey, actors: [...used, actor.uuid] });
+  }
+  responseReservations.set(actor.uuid, { ...payload, userId, round: invocation.roundKey, commander });
+  return true;
+}
+
+async function releaseResponse(payload, userId) {
+  const invocation = game.messages.get(payload.messageId)?.getFlag(FLAG_SCOPE, "invocation");
+  const uuid = invocation?.participants?.[payload.participantIndex]?.actorUuid;
+  const reservation = responseReservations.get(uuid);
+  if (!reservation || reservation.userId !== userId || reservation.messageId !== payload.messageId) return false;
+  if (reservation.useDrilledReaction && !payload.completed) {
+    const saved = reservation.commander.getFlag(FLAG_SCOPE, "drilledReactions");
+    if (saved?.round === reservation.round) await reservation.commander.setFlag(FLAG_SCOPE, "drilledReactions", { ...saved, actors: saved.actors.filter((id) => id !== uuid) });
+  }
+  responseReservations.delete(uuid);
+  return true;
+}
 
 async function renderInvocation(invocation) {
   return foundry.applications.handlebars.renderTemplate(TEMPLATE, invocationViewModel(invocation));
@@ -58,6 +103,7 @@ async function recordResponse(payload, userId) {
   const message = game.messages.get(payload.messageId);
   const invocation = foundry.utils.deepClone(message?.getFlag(FLAG_SCOPE, "invocation"));
   if (!message || !invocation) throw new Error("Tactic message no longer exists.");
+  if (!["responded", "declined"].includes(payload.status)) throw new Error("Invalid response status.");
   const participant = invocation.participants[payload.participantIndex];
   const actor = participant ? await fromUuid(participant.actorUuid) : null;
   if (!participant || !actor || !requesterOwns(userId, actor)) throw new Error("You do not own this squadmate.");
@@ -73,11 +119,11 @@ async function recordResponse(payload, userId) {
       if (!hasDrilledReactions(commander) || !invocation.response.reaction || participant.commander) {
         throw new Error("Drilled Reactions cannot apply to this response.");
       }
-      if (!responseAllowed(commander.getFlag(FLAG_SCOPE, "lastDrilledReactionRound"), invocation.roundKey)) {
-        throw new Error("Drilled Reactions was already used this round.");
-      }
+      const saved = commander.getFlag(FLAG_SCOPE, "drilledReactions");
+      const used = saved?.round === invocation.roundKey ? saved.actors : [];
+      if (!used.includes(actor.uuid)) throw new Error("Drilled Reaction was not reserved.");
       await commander.setFlag(FLAG_SCOPE, "lastDrilledReactionRound", invocation.roundKey);
-      invocation.drilledUsedBy = participant.name;
+      invocation.drilledUsedBy = [invocation.drilledUsedBy, participant.name].filter(Boolean).join(", ");
     }
   }
 
@@ -275,13 +321,16 @@ async function assignParticipantRoles(definition, response, members, indexes) {
 
 export class CommanderEngine {
   constructor() {
-    registerOperation("record-response", recordResponse);
-    registerOperation("resolve-invocation", resolveInvocation);
-    registerOperation("resolve-invocation-manually", resolveInvocationManually);
+    registerOperation("reserve-response", exclusive(reserveResponse, () => "response-reservation"));
+    registerOperation("release-response", exclusive(releaseResponse, () => "response-reservation"));
+    registerOperation("record-response", exclusive(recordResponse, (p) => p.messageId));
+    registerOperation("resolve-invocation", exclusive(resolveInvocation, (p) => p.messageId));
+    registerOperation("resolve-invocation-manually", exclusive(resolveInvocationManually, (p) => p.messageId));
     registerOperation("swap-tokens", swapTokenPositions);
   }
 
   async execute(item, actor) {
+    if (item && ACTIVE_FEATS.has(item.slug)) return requestCommanderFeat(item, actor);
     if (!item || item.actor?.uuid !== actor?.uuid) throw new Error("Use an embedded tactic from the commander.");
     if (!actorCanUserModify(actor)) throw new Error("You do not own this commander.");
     const prepared = preparedTacticIds(actor);
@@ -298,6 +347,7 @@ export class CommanderEngine {
     const bannerIsPlanted = Boolean(plantedBanner(actor));
     if (brandish && !bannerActive(actor)) throw new Error(`${item.name} requires the commander's banner to be displayed.`);
     if (brandish && bannerIsPlanted) throw new Error(`${item.name} has the brandish trait and cannot be used while the banner is planted.`);
+    if (brandish && actor.getFlag(FLAG_SCOPE, "companion")?.banner) throw new Error(`${item.name} requires you to hold the banner. Retrieve it from your companion first.`);
     if (tacticDependsOnBannerAura(definition) && !bannerActive(actor)) {
       throw new Error(`${item.name} requires the commander's banner aura to be active.`);
     }
@@ -385,6 +435,9 @@ export class CommanderEngine {
     if (!responseAllowed(actor.getFlag(FLAG_SCOPE, "lastResponseRound"), invocation.roundKey)) {
       throw new Error(`${participant.name} already responded to a tactic this round.`);
     }
+    await requestOperation("reserve-response", { messageId, participantIndex, useDrilledReaction }, { authorityUserId: invocation.authorityUserId });
+    let completed = false;
+    try {
     let result;
     if (manual) {
       const confirmed = await confirmOverride({
@@ -410,9 +463,10 @@ export class CommanderEngine {
       });
     }
     if (result == null) return false;
+    completed = true;
     await actor.setFlag(FLAG_SCOPE, "lastResponseRound", invocation.roundKey);
     try {
-      return await requestOperation("record-response", {
+      const recorded = await requestOperation("record-response", {
         messageId,
         participantIndex,
         status: "responded",
@@ -420,9 +474,13 @@ export class CommanderEngine {
         manual,
         useDrilledReaction,
       }, { authorityUserId: invocation.authorityUserId });
+      completed = true;
+      return recorded;
     } catch (error) {
-      if (actor.getFlag(FLAG_SCOPE, "lastResponseRound") === invocation.roundKey) await actor.unsetFlag(FLAG_SCOPE, "lastResponseRound");
       throw error;
+    }
+    } finally {
+      await requestOperation("release-response", { messageId, participantIndex, completed }, { authorityUserId: invocation.authorityUserId });
     }
   }
 
@@ -447,8 +505,10 @@ export class CommanderEngine {
       if (!confirmed) return false;
     }
     return requestOperation("resolve-invocation", { messageId, targetTokenUuids, ignoreGeometry }, {
-      authorityUserId: invocation.authorityUserId,
+      authorityUserId: game.user.isGM ? game.user.id : invocation.authorityUserId,
+      directed: game.user.isGM,
       gmRequired: !game.user.isGM,
+      timeoutMs: 600_000,
     });
   }
 

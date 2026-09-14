@@ -1,7 +1,30 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { requestOperation } from "../scripts/foundry/socket.js";
+import { registerOperation, requestOperation } from "../scripts/foundry/socket.js";
+import { requestCommanderWorkflow } from "../scripts/foundry/feats.js";
+
+test("a second GM keeps interactive feat dialogs on their own client", async () => {
+  const previousGame = globalThis.game;
+  const previousFoundry = globalThis.foundry;
+  let calls = 0;
+  globalThis.game = {
+    user: { id: "second-gm", isGM: true, targets: new Set() },
+    users: { activeGM: { id: "first-gm", isGM: true } },
+    socket: { emit: () => assert.fail("interactive workflow sent to another GM") },
+  };
+  globalThis.foundry = { utils: { randomID: () => "local-gm" } };
+  registerOperation("commander-feat", async (payload, userId) => {
+    calls++;
+    assert.equal(userId, "second-gm");
+    assert.equal(payload.itemId, "feat");
+    return true;
+  });
+  try {
+    assert.equal(await requestCommanderWorkflow({ uuid: "Actor.commander" }, "feat"), true);
+    assert.equal(calls, 1);
+  } finally { globalThis.game = previousGame; globalThis.foundry = previousFoundry; }
+});
 
 test("authority reports an unavailable operation instead of silently timing out", async () => {
   const previousGame = globalThis.game;

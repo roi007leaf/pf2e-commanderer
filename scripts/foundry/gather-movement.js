@@ -44,9 +44,9 @@ function planWaypoints(plan) {
   return plan?.destination ? [plan.destination] : [];
 }
 
-function planCost(token, plan) {
+export function movementPlanCost(token, plan) {
   const waypoints = planWaypoints(plan);
-  const measurement = token.document?.measureMovementPath?.(waypoints);
+  const measurement = token.document?.measureMovementPath?.(plan.origin ? [plan.origin, ...waypoints] : waypoints);
   const cost = Number(measurement?.cost ?? measurement?.distance);
   return Number.isFinite(cost) ? cost : NaN;
 }
@@ -138,7 +138,7 @@ export async function performGatherMovement({ actor, commander, tokenUuid, comma
       });
       if (!plan) return null;
 
-      const cost = planCost(movingToken, plan);
+      const cost = movementPlanCost(movingToken, plan);
       const destination = plan.destination ?? planWaypoints(plan).at(-1);
       const destinationRange = destinationDistance(origin, movingToken, destination);
       const verdict = gatherDestinationVerdict({
@@ -158,6 +158,7 @@ export async function performGatherMovement({ actor, commander, tokenUuid, comma
 
       const moved = await movingToken.document.startMovement(plan.id);
       if (!moved) throw new Error("Gather to Me! movement was stopped before completion.");
+      await movingToken.movementAnimationPromise;
       return gatherMovementResult(verdict.code);
     }
   } finally {

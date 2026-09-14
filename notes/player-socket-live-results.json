@@ -1,0 +1,578 @@
+{
+  "environment": {
+    "date": "2026-09-14T12:24:23.453Z",
+    "foundry": "14.367",
+    "pf2e": "8.5.0",
+    "separateBrowserContexts": true,
+    "gm": "le53CqTaKLIQZoFr",
+    "player": "cpo6shl5vtHNZRkB"
+  },
+  "results": [
+    {
+      "name": "player-feat-via-gm-cross-owner",
+      "pass": true,
+      "enemyExcluded": true
+    },
+    {
+      "name": "player-response-owned-actor-gm-card",
+      "pass": true,
+      "effect": [
+        "Effect: Banner Twirl",
+        "Effect: Mountaineering Training"
+      ],
+      "packets": [
+        {
+          "type": "request",
+          "operation": "commander-feat",
+          "requestId": "EMIpKcZC6zfSFrX0",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": true
+        },
+        {
+          "type": "request",
+          "operation": "commander-feat",
+          "requestId": "gxDiYKNlcxZqTWz3",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": true
+        },
+        {
+          "type": "request",
+          "operation": "reserve-response",
+          "requestId": "O44YRhPNviKlj2ub",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        },
+        {
+          "type": "request",
+          "operation": "record-response",
+          "requestId": "7aextUNOB5dONf3N",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        }
+      ]
+    },
+    {
+      "name": "player-issued-tactic-gm-resolution",
+      "pass": true,
+      "results": [
+        {
+          "name": "Socket Enemy",
+          "degree": 2,
+          "degreeLabel": "Success",
+          "applied": "no automated effect"
+        }
+      ],
+      "enemyConditions": []
+    },
+    {
+      "name": "player-guided-transfer-to-unowned-actor",
+      "pass": true,
+      "result": "Healing Potion (Lesser) dropped at Socket Unowned Ally's space (recorded in receiver inventory).",
+      "packets": [
+        {
+          "type": "request",
+          "operation": "resolve-invocation",
+          "requestId": "g14DKU1lJWqFpoC7",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": true
+        },
+        {
+          "type": "request",
+          "operation": "reserve-response",
+          "requestId": "gkYdz3bmyig8Lmp9",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        },
+        {
+          "type": "request",
+          "operation": "guided-tactic",
+          "requestId": "B9xaehrpC0fl3jEd",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": true
+        },
+        {
+          "type": "request",
+          "operation": "record-response",
+          "requestId": "0XCy3hhKAsW30Ob4",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        }
+      ]
+    },
+    {
+      "name": "player-swap-unowned-token-via-gm",
+      "pass": false,
+      "before": [
+        {
+          "x": 600,
+          "y": 500
+        },
+        {
+          "x": 500,
+          "y": 600
+        }
+      ],
+      "after": [
+        {
+          "x": 577.5988571719904,
+          "y": 522.4011428280096
+        },
+        {
+          "x": 522.4011428280096,
+          "y": 577.5988571719904
+        }
+      ],
+      "packets": [
+        {
+          "type": "request",
+          "operation": "release-response",
+          "requestId": "8zxURxaKnqWwiRsg",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        },
+        {
+          "type": "request",
+          "operation": "reserve-response",
+          "requestId": "PetGIKAFI6Md2Gx8",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        },
+        {
+          "type": "request",
+          "operation": "swap-tokens",
+          "requestId": "I0ejRzaxN8WAiML9",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        },
+        {
+          "type": "request",
+          "operation": "record-response",
+          "requestId": "DSPWWbRFt2OdnXJL",
+          "userId": "cpo6shl5vtHNZRkB",
+          "gmRequired": false
+        }
+      ]
+    },
+    {
+      "name": "player-swap-unowned-token-settled",
+      "pass": true,
+      "before": [
+        {
+          "x": 600,
+          "y": 500
+        },
+        {
+          "x": 500,
+          "y": 600
+        }
+      ],
+      "after": [
+        {
+          "x": 500,
+          "y": 600
+        },
+        {
+          "x": 600,
+          "y": 500
+        }
+      ]
+    },
+    {
+      "name": "unowned-direct-requests-rejected",
+      "pass": true,
+      "results": [
+        {
+          "operation": "commander-feat",
+          "rejected": true,
+          "error": "You do not own this commander."
+        },
+        {
+          "operation": "reserve-response",
+          "rejected": true,
+          "error": "Response unavailable."
+        },
+        {
+          "operation": "record-response",
+          "rejected": true,
+          "error": "You do not own this squadmate."
+        }
+      ]
+    },
+    {
+      "name": "remote-error-reaches-player-and-unlocks-button",
+      "pass": true,
+      "result": {
+        "status": "Use Reactive Interference\n\nTarget must be adjacent.",
+        "enabled": true
+      }
+    },
+    {
+      "name": "responder-only-player-drilled-cancel-refund-and-retry",
+      "pass": true,
+      "result": "rolled Unarmed Attack",
+      "drilledUsedBy": "Socket Responder"
+    }
+  ],
+  "requests": [
+    {
+      "type": "request",
+      "operation": "commander-feat",
+      "requestId": "EMIpKcZC6zfSFrX0",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": true
+    },
+    {
+      "type": "request",
+      "operation": "commander-feat",
+      "requestId": "gxDiYKNlcxZqTWz3",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": true
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "O44YRhPNviKlj2ub",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "7aextUNOB5dONf3N",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "P7RH9VyZJI2DBqro",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "PtpuMhYEMMveJbQM",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "dmENm3LCX5iAXXTz",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "d6EDrAb6juptuE3F",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "mxf3VqWRpxnshgml",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "ufBX2Kw0IwLe0QHe",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "38s9tzA4RgXgiWyP",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "resolve-invocation",
+      "requestId": "g14DKU1lJWqFpoC7",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": true
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "gkYdz3bmyig8Lmp9",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "guided-tactic",
+      "requestId": "B9xaehrpC0fl3jEd",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": true
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "0XCy3hhKAsW30Ob4",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "8zxURxaKnqWwiRsg",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "PetGIKAFI6Md2Gx8",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "swap-tokens",
+      "requestId": "I0ejRzaxN8WAiML9",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "DSPWWbRFt2OdnXJL",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "nZmhATseUk4MgeFm",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "commander-feat",
+      "requestId": "xghs1lPOf62fqboF",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": true
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "Z1qefbjK9fDQsmSv",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "Bid2qZ5zR3PNipoy",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "commander-feat",
+      "requestId": "i9VeP6Fq6VNaXTOK",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": true
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "3A3416KsGzVWWral",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "cIvOtknqXCvwMIW8",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "reserve-response",
+      "requestId": "ZIpqySKQbsUhkt4n",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "record-response",
+      "requestId": "qClaqrbN9jQuI2x8",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    },
+    {
+      "type": "request",
+      "operation": "release-response",
+      "requestId": "A7dnmySVhmQsz1er",
+      "userId": "cpo6shl5vtHNZRkB",
+      "gmRequired": false
+    }
+  ],
+  "player": {
+    "isGM": false,
+    "ownsCommander": false,
+    "ownsResponder": true,
+    "packets": [
+      {
+        "type": "response",
+        "requestId": "EMIpKcZC6zfSFrX0",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "gxDiYKNlcxZqTWz3",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "O44YRhPNviKlj2ub",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "7aextUNOB5dONf3N",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "P7RH9VyZJI2DBqro",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "PtpuMhYEMMveJbQM",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "dmENm3LCX5iAXXTz",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "d6EDrAb6juptuE3F",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "mxf3VqWRpxnshgml",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "ufBX2Kw0IwLe0QHe",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "38s9tzA4RgXgiWyP",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "g14DKU1lJWqFpoC7",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "gkYdz3bmyig8Lmp9",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "B9xaehrpC0fl3jEd",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "0XCy3hhKAsW30Ob4",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "8zxURxaKnqWwiRsg",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "PetGIKAFI6Md2Gx8",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "I0ejRzaxN8WAiML9",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "DSPWWbRFt2OdnXJL",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "nZmhATseUk4MgeFm",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "xghs1lPOf62fqboF",
+        "ok": false,
+        "error": "You do not own this commander."
+      },
+      {
+        "type": "response",
+        "requestId": "Z1qefbjK9fDQsmSv",
+        "ok": false,
+        "error": "Response unavailable."
+      },
+      {
+        "type": "response",
+        "requestId": "Bid2qZ5zR3PNipoy",
+        "ok": false,
+        "error": "You do not own this squadmate."
+      },
+      {
+        "type": "response",
+        "requestId": "i9VeP6Fq6VNaXTOK",
+        "ok": false,
+        "error": "Target must be adjacent."
+      },
+      {
+        "type": "response",
+        "requestId": "3A3416KsGzVWWral",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "cIvOtknqXCvwMIW8",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "ZIpqySKQbsUhkt4n",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "qClaqrbN9jQuI2x8",
+        "ok": true
+      },
+      {
+        "type": "response",
+        "requestId": "A7dnmySVhmQsz1er",
+        "ok": true
+      }
+    ],
+    "featCancellation": "Use Banner Twirl: cancelled. Review any steps already completed."
+  }
+}

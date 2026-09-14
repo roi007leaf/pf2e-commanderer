@@ -64,9 +64,10 @@ test("coordinated tactics preserve shared target and exact action constraints", 
   );
 });
 
-test("only cross-owner inventory and source-counteract workflows remain manual", () => {
+test("cross-owner inventory and source-counteract tactics use guided workflows", () => {
   const manualSlugs = Object.entries(TACTICS)
-    .filter(([, definition]) => definition.response.kind === "manual")
+    .filter(([, definition]) => definition.response.kind === "guided")
     .map(([slug]) => slug);
   assert.deepEqual(manualSlugs, ["alley-oop", "for-talmandor-for-freedom"]);
+  assert.equal(Object.values(TACTICS).some((definition) => definition.response.kind === "manual"), false);
 });

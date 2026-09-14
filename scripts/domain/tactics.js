@@ -5,6 +5,7 @@ const manual = (selection, instruction, options = {}) => ({
   response: { kind: "manual", instruction },
   ...options,
 });
+const guided = (selection, instruction, options = {}) => ({ selection, response: { kind: "guided", instruction }, ...options });
 
 const sequence = (selection, instruction, steps, options = {}) => ({
   selection,
@@ -19,7 +20,9 @@ const actionChoice = (choices, label = "Granted action") => ({ kind: "action-cho
 
 export const TACTICS = Object.freeze({
   "defensive-retreat": sequence("all", "Use up to three Steps, finishing farther from at least one observed hostile.", [
-    move(15, { relation: "away-from-enemy" }),
+    move(5, { relation: "away-from-enemy" }),
+    move(5, { relation: "away-from-enemy" }),
+    move(5, { relation: "away-from-enemy" }),
   ], { aura: true }),
   "gather-to-me": {
     selection: "all",
@@ -67,7 +70,7 @@ export const TACTICS = Object.freeze({
     move("half", { target: "enemy", requireAdjacent: true }),
   ], { aura: true, reaction: true, resolve: { save: "reflex", effect: "tactical-takedown", maxTargets: 1, minParticipants: 2, geometry: { adjacentToAll: true } } }),
 
-  "alley-oop": manual("one", "Toss the eligible consumable to another squadmate in the banner aura; the receiver catches and activates it. Item transfer and receiver choice remain confirmed." , { aura: true }),
+  "alley-oop": guided("one", "Choose an eligible consumable and receiver. The GM transfers it; the receiver confirms catching and activates it from the sheet." , { aura: true }),
   "buckle-cut-blitz": sequence("up-to-2", "Stride up to your Speed. After all movement, target every enemy that was adjacent at any point and resolve Reflex saves.", [
     move("full"),
   ], { aura: true, reaction: true, resolve: { save: "reflex", effect: "buckle-cut-blitz" } }),
@@ -102,12 +105,12 @@ export const TACTICS = Object.freeze({
       { kind: "action", slug: "trip", label: "Trip" },
       { kind: "strike", mode: "melee", label: "Melee Strike" },
     ]),
-  ], { aura: true, reaction: true, designatedTarget: "enemy" }),
+  ], { aura: true, reaction: true, designatedTarget: "enemy", resolve: { effect: "bloody-guillotine", maxTargets: 1 } }),
   "corpse-crenellation": sequence("up-to-2", "Target the designated enemy, Stride up to half Speed, then make a Strike.", [
     target("enemy"),
     move("half"),
     strike(),
-  ], { aura: true, reaction: true, designatedTarget: "enemy" }),
+  ], { aura: true, reaction: true, designatedTarget: "enemy", resolve: { effect: "corpse-crenellation", maxTargets: 1 } }),
   "mirrored-wall": {
     selection: "all",
     aura: true,
@@ -143,12 +146,12 @@ export const TACTICS = Object.freeze({
 
   "cry-havoc": sequence("all", "Target the designated enemy and Stride up to twice Speed directly toward it. Resolve adjacent enemies from the rules card.", [
     move("double", { modes: "all", relation: "toward-target", target: "enemy" }),
-  ], { aura: true, reaction: true, designatedTarget: "enemy" }),
+  ], { aura: true, reaction: true, designatedTarget: "enemy", resolve: { effect: "cry-havoc" } }),
   "executioners-volley": sequence("all", "Target the designated enemy and make a ranged Strike. Keep damage unapplied until the volley is combined.", [
     target("enemy"),
     strike("ranged"),
-  ], { aura: true, reaction: true, designatedTarget: "enemy" }),
-  "for-talmandor-for-freedom": manual("all", "Attempt the granted counteract against one eligible effect on each affected squadmate. Choose each effect manually.", { aura: true }),
+  ], { aura: true, reaction: true, designatedTarget: "enemy", resolve: { effect: "executioners-volley", maxTargets: 1 } }),
+  "for-talmandor-for-freedom": guided("all", "Choose an eligible effect and its counteract DC/rank. Roll Warfare Lore and remove the selected source on success.", { aura: true }),
   "insta-ballista": sequence("all", "Stride into a formation where every participant is within 10 feet of every other participant, then verify the custom Strike's target and bonus.", [
     move("full"),
   ], { aura: true, designatedTarget: "enemy", resolve: { effect: "insta-ballista", maxTargets: 1, geometry: { pairwiseWithin: 10, withinCommander: 200 } } }),

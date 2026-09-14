@@ -4,7 +4,7 @@ function titleCase(value) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export const INVOCATION_CARD_VERSION = 4;
+export const INVOCATION_CARD_VERSION = 5;
 
 export function invocationViewModel(invocation = {}) {
   const participants = (invocation.participants ?? []).map((participant, index) => {
@@ -26,11 +26,18 @@ export function invocationViewModel(invocation = {}) {
   });
   const answeredCount = participants.filter((participant) => !participant.pending).length;
   const resolvesDesignatedTarget = Boolean(invocation.designatedTarget && invocation.resolution?.maxTargets === 1);
+  const pendingCount = participants.length - answeredCount;
+  const hasResolution = Boolean(invocation.resolution) && !(invocation.resolutionResults?.length);
 
   return {
     ...invocation,
     cardVersion: INVOCATION_CARD_VERSION,
-    hasResolution: Boolean(invocation.resolution) && !(invocation.resolutionResults?.length),
+    hasResolution,
+    workflowComplete: pendingCount === 0 && !hasResolution,
+    workflowHint: pendingCount > 0
+      ? "Each squadmate must Respond or Decline. If you already handled their action on the sheet, choose Manual to mark it complete."
+      : hasResolution ? "Responses finished. The commander or a GM must resolve the affected targets below, or choose Handle manually."
+        : "Workflow complete. Resolve any damage or table decisions described in the results.",
     participants,
     participantCount: participants.length,
     answeredCount,

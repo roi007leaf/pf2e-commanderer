@@ -1,7 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { gatherDestinationVerdict, gatherMovementModes } from "../scripts/domain/gather-movement.js";
-import { gatherMovementResult, startGatherMovementPlanning } from "../scripts/foundry/gather-movement.js";
+import { gatherMovementResult, movementPlanCost, startGatherMovementPlanning } from "../scripts/foundry/gather-movement.js";
+
+test("native v14 movement includes the origin when measuring a one-segment path", () => {
+  const token = { document: { measureMovementPath: points => ({ cost: points.reduce((total, p, i) => i ? total + Math.abs(p.x - points[i - 1].x) / 20 : total, 0) }) } };
+  const origin = { x: 0, y: 0 };
+  const destination = { x: 100, y: 0 };
+  assert.equal(movementPlanCost(token, { origin, waypoints: [destination], destination }), 5);
+  assert.equal(movementPlanCost(token, { origin, destination }), 5);
+  assert.equal(movementPlanCost(token, { origin, waypoints: [{ x: 100 }, { x: 0 }], destination: origin }), 10);
+  assert.ok(Number.isNaN(movementPlanCost({ document: {} }, { origin, destination })));
+});
 
 test("Gather to Me reads every supported PF2e movement Speed", () => {
   const actor = {

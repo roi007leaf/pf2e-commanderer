@@ -4,6 +4,8 @@ import { activeTokenFor, notify } from "./runtime.js";
 import { performGatherMovement } from "./gather-movement.js";
 import { performTacticMovement, requireTacticTarget } from "./tactic-movement.js";
 import { requestOperation } from "./socket.js";
+import { requestGuidedResponse, GUIDED_RESPONSES } from "./guided-tactics.js";
+import { confirm, select } from "./workflow.js";
 
 function actionBySlug(slug) {
   const collection = game.pf2e.actions;
@@ -62,7 +64,8 @@ async function rollStrike(actor, { mode = "any", title = "Commander Tactic" } = 
     choices: strikes.map((strike, strikeIndex) => ({ value: String(strikeIndex), label: strike.label ?? strike.item?.name ?? `Strike ${strikeIndex + 1}` })),
   });
   if (index == null) return null;
-  await strikes[Number(index)].variants[0].roll({});
+  const roll = await strikes[Number(index)].variants[0].roll({});
+  if (!roll) return null;
   return `rolled ${strikes[Number(index)].label ?? "a Strike"}`;
 }
 
@@ -98,13 +101,13 @@ async function reload(actor, { optional = false } = {}) {
   return `reloaded ${weapon.name}`;
 }
 
-async function maneuverChoice(actor) {
+async function maneuverChoice(actor, slugs = ["grapple", "reposition", "shove", "trip"]) {
   const slug = await choose({
     title: "Commander Tactic",
     label: "Maneuver",
-    choices: ["grapple", "reposition", "shove", "trip"].map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) })),
+    choices: slugs.map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) })),
   });
-  if (!slug) return "Maneuver cancelled";
+  if (!slug) return null;
   await useAction(slug, actor);
   return `used ${slug}`;
 }
@@ -193,6 +196,9 @@ async function performSwap(actor, tokenUuid) {
 
 async function performSeekResponse(context) {
   await useAction("seek", context.actor);
+  if (await confirm(context.item.name, "Did Seek make a creature newly observed? Target it now to receive the next-successful-Strike precision benefit.")) {
+    await requestGuidedResponse(context, "seek-benefit");
+  }
   const followUp = await choose({
     title: context.item?.name ?? "Seek and Destroy",
     label: "Reaction after Seek",
@@ -226,14 +232,25 @@ async function performSlipAndSizzle(actor, item, targetUuid, role) {
     await useAction("trip", actor);
     return `attempted to Trip ${target.name}; the spellcaster responds only on success`;
   }
-  notify("info", `Cast a damaging ranged spell of 2 actions or fewer at ${target.name}. If it uses a slot or Focus Point, apply slowed 1 until the end of your next turn.`);
-  actor.sheet?.render?.(true);
-  return `opened spellcasting for the follow-up against ${target.name}; apply slowed 1 if a slot or Focus Point is spent`;
+  return requestGuidedResponse({ actor, commander: item.actor, item }, "spell-follow-up");
 }
 
 async function performSequence(context, response) {
   const results = [];
+  if (["corpse-crenellation", "executioners-volley", "ready-aim-fire"].includes(context.item.slug)) {
+    const alternative = await select(context.item.name, "Granted attack", [{ value: "normal", label: "Use weapon/movement sequence" },
+      { value: "cantrip", label: "Cast qualifying damaging cantrip (guided)" }]);
+    if (!alternative) return null;
+    if (alternative === "cantrip") {
+      context.actor.sheet.render({ force: true });
+      if (!await confirm(context.item.name, `Cast a damaging cantrip of at most 2 actions at the designated target${context.item.slug === "executioners-volley" ? ", range at least 30 feet; do not apply damage separately" : ""}, then continue.`)) return null;
+      return "Cast qualifying damage cantrip.";
+    }
+  }
   for (const step of response.steps ?? []) {
+    // Let Foundry finish the preceding pointer-up/planner teardown before
+    // starting a second movement (notably Defensive Retreat's three Steps).
+    if (step.kind === "movement" && results.length) await new Promise(resolve => requestAnimationFrame(resolve));
     let result = null;
     if (step.kind === "movement") result = await performTacticMovement({ ...context, step });
     else if (step.kind === "strike") result = await rollStrike(context.actor, { mode: step.mode, title: context.item?.name });
@@ -245,8 +262,8 @@ async function performSequence(context, response) {
     else if (step.kind === "heal") result = await healActor(context.actor, step.amount);
     else if (step.kind === "effect") result = `gained ${await grantCompendiumEffect(context.actor, step.uuid)}`;
     else if (step.kind === "manual") {
-      notify("info", step.instruction);
-      result = step.instruction;
+      if (context.item.slug === "take-the-high-ground") result = await requestGuidedResponse(context, "high-ground");
+      else { notify("info", step.instruction); result = step.instruction; }
     }
     if (step.kind === "target") {
       const target = await requireTacticTarget(context.actor, step.target, context.targetUuid);
@@ -254,6 +271,10 @@ async function performSequence(context, response) {
     }
     if (result == null) return results.length ? `${results.join("; ")}; remaining response skipped` : null;
     results.push(result);
+  }
+  if (["double-team", "protective-screen"].includes(context.item.slug)) {
+    const followUp = await requestGuidedResponse(context);
+    if (followUp) results.push(followUp);
   }
   return results.join("; ");
 }
@@ -267,10 +288,20 @@ async function focusActor(actor) {
 
 export async function performResponse({ actor, commander, item, response, role, tokenUuid, commanderTokenUuid }) {
   await focusActor(actor);
+  if (GUIDED_RESPONSES.has(item.slug)) return requestGuidedResponse({ actor, commander, item });
   switch (response.kind) {
     case "effect":
       return `gained ${await grantCompendiumEffect(actor, response.uuid)}`;
     case "raise-shield": {
+      const mode = await select(item.name, "Defensive action", [{ value: "shield", label: "Raise a Shield" },
+        { value: "parry", label: "Parry (guided)" }, { value: "cantrip", label: "Cast shield cantrip (guided)" }]);
+      if (!mode) return null;
+      if (mode !== "shield") {
+        actor.sheet.render({ force: true });
+        if (!await confirm(item.name, mode === "parry" ? "Use Parry with an eligible wielded weapon and apply its native effect now."
+          : "Cast the shield cantrip from your sheet now, resolving its native effect and any restrictions.")) return null;
+        return mode === "parry" ? "Used Parry." : "Cast shield.";
+      }
       const raise = game.pf2e.actions.raiseAShield;
       if (typeof raise !== "function") throw new Error("PF2e Raise a Shield automation is unavailable.");
       await raise({ actors: actor });
@@ -293,17 +324,22 @@ export async function performResponse({ actor, commander, item, response, role, 
       return maneuverChoice(actor);
     case "effect-and-maneuver":
       await grantCompendiumEffect(actor, response.uuid);
-      return maneuverChoice(actor);
+      return maneuverChoice(actor, ["reposition", "shove", "trip"]);
     case "effect-and-manual":
       await grantCompendiumEffect(actor, response.uuid);
       return "gained the PF2e penalty-choice effect; finish the formation manually";
     case "wait-for-it":
+      if (!await confirm(item.name, "Confirm you are Delaying or Readying. The bonus ends when you act or the tactic's early-ending clause applies.")) return null;
       await grantWaitForIt(actor, commander, item);
-      return "gained the guarded stance effect; remove it early if the tactic says it ends";
+      return "gained guarded stance; use its toggle to end the bonus when acting";
     case "piranha-assault":
       return grantPiranhaAssault(actor, commander, item, response.targetUuid);
-    case "shadows-in-the-moonlight":
-      await grantShadowsInMoonlight(actor, commander, item);
+    case "shadows-in-the-moonlight": {
+      const rank = await select(item.name, "Following the Expert: confirm eligible guide's proficiency", [
+        { value: "2", label: "Expert (+2)" }, { value: "3", label: "Master (+3)" }, { value: "4", label: "Legendary (+4)" },
+      ]);
+      if (!rank) return null;
+      await grantShadowsInMoonlight(actor, commander, item, Number(rank));
       if (role === "hide-sneak") {
         const action = await choose({
           title: item?.name ?? "Shadows in the Moonlight",
@@ -316,6 +352,7 @@ export async function performResponse({ actor, commander, item, response, role, 
         }
       }
       return "tracked formation benefits until the commander's next turn";
+    }
     case "gather-to-me":
       return performGatherMovement({ actor, commander, tokenUuid, commanderTokenUuid });
     case "sequence":

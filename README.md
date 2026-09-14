@@ -20,6 +20,7 @@ High-automation support for Pathfinder Second Edition's **Commander** class. Com
 - Live squad, banner, aura, preparation, and tactic-readiness updates.
 - Displayed, planted, fallen, and enemy-carried banner states on canvas.
 - Plant Banner temporary HP, renewal, hostile removal, and recovery workflows.
+- Plant automatically uses Claim the Field when the commander has the feat and the banner is attached to a thrown weapon under **Plant → Material → Affixed item**. **Map** allows any corner within its first range increment; both map placement and token-corner shortcuts gain the protective Will save. Enemy removal and sourced item damage resolve native incapacitation and one-round fleeing on critical failure. Damage without a source actor prompts for a manual ruling; direct HP edits remain GM adjudication.
 - Expandable tactic rules, responder selection, trait explanations, and readiness checks.
 - Owner-aware chat orders: each player controls their own squadmate.
 - Terrain-aware movement guidance with Speed and formation validation.
@@ -68,7 +69,7 @@ High-automation support for Pathfinder Second Edition's **Commander** class. Com
 - An NPC within unarmed reach has a Token HUD flag control for **Take Banner** or **Pull Down**, and **Pick Up** for a dropped banner. GMs can use these controls regardless of the NPC's alliance; player-controlled actors must be enemies of the commander.
 - **Squad → Limit** lets the GM override each commander's squad capacity. Increase it by one and add the Commander's Companion as a squadmate. Blank restores the normal limit. Lowering capacity keeps the existing roster, allowing the GM to remove excess members explicitly.
 
-The companion option is a squad-capacity workaround; companion reaction grants and mounting the banner on the companion remain manual. Inventory transfers, inventory-item damage, and whether an area effect affects an unattended object remain GM rulings. Enemy removal retains the feat's Interact action; it does not substitute Disarm, Grapple, or Trip. Existing planted overlays can be retrieved and replanted to create their object token.
+Post Commander's Companion to chat to link a companion, configure its banner origin and guide its command/reaction use. Companion progression remains on its sheet. Alley-oop handles its guided inventory transfer; inventory-item damage and whether an area effect affects an unattended object remain GM rulings. Enemy removal retains the feat's Interact action; it does not substitute Disarm, Grapple, or Trip. Existing planted overlays can be retrieved and replanted to create their object token.
 
 ## Documentation
 
@@ -88,12 +89,14 @@ Full documentation lives in the [project wiki](https://github.com/roi007leaf/pf2
 
 All 37 Commander tactics receive shared preparation, frequency, signal, audience, ownership, round-use, chat-card, decline, and override handling.
 
-- **16 automated** tactics perform supported PF2e actions, rolls, effects, or aftermaths.
-- **16 guided** tactics drive choices and movement, then validate supported constraints.
-- **3 tracked** tactics apply rule state or reminders while the table handles the outcome.
-- **2 manual** tactics retain full order tracking without guessing table-dependent mechanics.
+- Existing tactic cards now include guided inventory transfer, counteract checks, spell alternatives, coordinated damage, death/fear aftermaths, cover, and follow-up attacks.
+- Post an owned feat to chat to use its automation button. Guided follow-ups appear on the relevant feat or tactic card; Mercenary Reversal save retries appear on the affected actor's posted effect card.
+- Feat buttons show progress and completion. Follow the open prompts; a GM's prompts stay on that GM's screen. Player requests requiring cross-actor changes go to the active GM.
+- Tactic cards show the next step: every responder must **Respond**, **Decline**, or choose **Manual** after handling the action on their sheet. Then resolve affected targets or choose **Handle manually**. Finished cards show **Complete**.
+- Owned passive feats automatically upgrade the existing reaction allowances, banner radii, preparation and attack workflows. Claim the Field upgrades **Plant** when the configured attachment is a thrown weapon.
+- Guided workflows ask the GM to confirm triggers and choices, then perform supported rolls and document changes. Manual positioning, spell/item activation, knowledge answers, companion progression, and certain early-expiry/one-use toggles remain table-controlled.
 
-See the [complete automation matrix](https://github.com/roi007leaf/pf2e-commanderer/wiki/Automation-Coverage).
+See [local workflow coverage and remaining boundaries](notes/automation-workflows.md) and the [43-feat/37-tactic validation matrix](notes/full-live-audit.md). The published wiki may describe the previous release until these changes ship.
 
 ## Rules references
 

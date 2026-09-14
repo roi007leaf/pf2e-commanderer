@@ -1,6 +1,7 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { bannerRangeToBounds } from "../domain/banner-placement.js";
 import { setBannerActive } from "./runtime.js";
+import { hasFeat, bannerRadius } from "../domain/feat-rules.js";
 
 const BANNER_EFFECT_UUID = "Compendium.pf2e.feat-effects.Item.JZWi6512m9RlMrNO";
 const BANNER_SLUG = "commanders-banner";
@@ -101,7 +102,8 @@ function expectedRecipients(scene) {
     const commander = commanderFor(placement);
     if (!commander) continue;
     for (const token of tokens) {
-      if (!tokenIsAlly(commander, token) || !tokenInside(placement, token, scene)) continue;
+      if ((!tokenIsAlly(commander, token) && !(hasFeat(commander, "glorious-banner") && token.actor?.isEnemyOf?.(commander)))
+        || !tokenInside({ ...placement, radius: bannerRadius(commander, { planted: true }) }, token, scene)) continue;
       let commanders = expected.get(token.actor.uuid);
       if (!commanders) expected.set(token.actor.uuid, commanders = new Map());
       commanders.set(commander.uuid, commander);
@@ -120,6 +122,9 @@ function actorsToInspect() {
 }
 
 async function createBannerEffect(actor, commander, sceneId, baseEffect) {
+  const glorious = hasFeat(commander, "glorious-banner");
+  const enemy = actor.isEnemyOf?.(commander) === true;
+  if (enemy) baseEffect = await fromUuid("Compendium.pf2e.feat-effects.Item.8x5T5e5Gzh3NJ86H");
   const source = baseEffect.toObject();
   delete source._id;
   source.system ??= {};
@@ -134,7 +139,11 @@ async function createBannerEffect(actor, commander, sceneId, baseEffect) {
   source.system.start = effectStart(commander);
   source.flags ??= {};
   source.flags[FLAG_SCOPE] ??= {};
-  source.flags[FLAG_SCOPE][EFFECT_FLAG] = { commanderUuid: commander.uuid, sceneId };
+  source.flags[FLAG_SCOPE][EFFECT_FLAG] = { commanderUuid: commander.uuid, sceneId, glorious, enemy };
+  if (glorious && !enemy) {
+    source.system.traits ??= {};
+    source.system.traits.otherTags = [...new Set([...(source.system.traits.otherTags ?? []), "glorious-banner"])];
+  }
   await actor.createEmbeddedDocuments("Item", [source]);
 }
 
@@ -215,7 +224,11 @@ async function syncPlantedBannerEffectsNow(scene) {
       const origin = managedOrigin(item);
       if (!origin || origin.sceneId !== scene.id) continue;
       if (!wanted.has(origin.commanderUuid) || existingByCommander.has(origin.commanderUuid)) removals.push(item.id);
-      else existingByCommander.set(origin.commanderUuid, item);
+      else {
+        const commander = wanted.get(origin.commanderUuid);
+        if (Boolean(origin.glorious) !== hasFeat(commander, "glorious-banner") || Boolean(origin.enemy) !== (actor.isEnemyOf?.(commander) === true)) removals.push(item.id);
+        else existingByCommander.set(origin.commanderUuid, item);
+      }
     }
 
     if (removals.length) await deleteBannerEffects(actor, removals);

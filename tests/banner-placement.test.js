@@ -28,6 +28,7 @@ test("Commander panel exposes Plant Banner and Retrieve actions", async () => {
   const css = await readFile(new URL("../styles/commanderer.css", import.meta.url), "utf8");
   assert.match(template, /data-action="toggleBannerPlacement"/);
   assert.match(template, /data-action="plantBannerAtCorner"/);
+  assert.doesNotMatch(template, /data-action="claimTheField"/);
   assert.match(template, /data-action="retrieveBanner"/);
   assert.match(template, /bannerRemoved/);
   assert.match(tokenHud, /requestEnemyBannerRemoval/);
@@ -59,6 +60,7 @@ test("Commander ApplicationV2 registers every banner placement action", async ()
     const { CommanderPanel } = await import("../scripts/ui/panel.js");
     assert.equal(typeof CommanderPanel.DEFAULT_OPTIONS.actions.toggleBannerPlacement, "function");
     assert.equal(typeof CommanderPanel.DEFAULT_OPTIONS.actions.plantBannerAtCorner, "function");
+    assert.equal(CommanderPanel.DEFAULT_OPTIONS.actions.claimTheField, undefined);
     assert.equal(typeof CommanderPanel.DEFAULT_OPTIONS.actions.retrieveBanner, "function");
   } finally {
     globalThis.foundry = previousFoundry;

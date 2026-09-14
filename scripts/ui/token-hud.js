@@ -62,6 +62,7 @@ function addRemoveBannerButton(column, token, { commander, placement }) {
     button.disabled = true;
     try {
       const removed = await requestEnemyBannerRemoval(token, placement.actorId, mode);
+      if (!removed) { button.disabled = false; return; }
       button.remove();
       if (column.isConnected) {
         if (mode === "carried") addDropBannerButton(column, token, { commander, placement: removed });

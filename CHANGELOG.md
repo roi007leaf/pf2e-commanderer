@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0
+
+- Style posted feat buttons consistently with tactic cards and show running, cancelled, and completed states. Add explicit next-step and completion guidance to tactic cards.
+- Keep interactive GM workflows on the requesting GM's screen instead of opening their dialogs on another GM's client.
+- Fix live-tested movement path measurement and sequential Steps, Alley-oop item transfers, Desperate Resuscitation's week-long effect duration, Create a Diversion variants, and The Bigger They Are's maneuver choices. Correct companion action tracking outside encounters and reject Brandish while a companion carries the banner.
+- Move active feat controls from the Commander panel onto posted feat chat cards, with guided follow-ups and owner/GM access checks.
+- Fix live-tested Commander workflow integration: preserve dialog stacking during panel refresh, pass native Strike targets/options, use PF2e Note rules, retain noisy-armor benefits, and apply heavy-armor Bulk through supported overrides. Keep adjacency cleanup correct during animated movement.
+- Add active Commander feat workflows, automatic passive upgrades, companion banner integration, and guided reaction/knowledge/attack follow-ups.
+- Extend tactic cards with guided inventory transfers, counteract checks, coordinated damage and aftermaths, defensive alternatives, and source-scoped benefits. Document remaining table-controlled steps.
+- Upgrade Plant Banner automatically for Claim the Field when the configured attachment supports thrown placement.
+- Verify player feat requests, tactic responses, guided transfers, token swaps, target resolution, and Drilled Reaction cancellation/refund across separate player and GM sessions.
+
 ## 1.1.1
 
 - Add GM force retrieval to bypass banner reach and recovery checks, including stale placements with a missing commander token.

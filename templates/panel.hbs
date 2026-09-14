@@ -53,7 +53,7 @@
             data-action="toggleBannerPlacement"
             aria-expanded="{{#if bannerPlacementExpanded}}true{{else}}false{{/if}}"
             {{#unless plantBannerAvailable}}disabled{{/unless}}
-            data-tooltip="{{#if plantBannerAvailable}}Plant the banner in a corner of the Commander's space{{else}}Requires the Plant Banner feat{{/if}}"
+            data-tooltip="{{#if claimTheFieldAvailable}}Plant with Claim the Field within your thrown weapon's first range increment{{else}}{{#if plantBannerAvailable}}Plant the banner in a corner of the Commander's space{{else}}Requires the Plant Banner feat{{/if}}{{/if}}"
           >
             <i class="fa-solid fa-location-pin"></i><span>Plant</span>
           </button>
@@ -65,7 +65,7 @@
 
   {{#if bannerPlacementExpanded}}
     <div class="commanderer-banner-corners" role="group" aria-label="Choose banner corner">
-      <span><i class="fa-solid fa-location-crosshairs"></i> Choose a corner of your token</span>
+      <span><i class="fa-solid fa-location-crosshairs"></i> {{#if claimTheFieldAvailable}}Choose a map corner within your thrown weapon's first range increment{{else}}Choose a corner of your token{{/if}}</span>
       <div>
         <button type="button" data-action="plantBannerOnMap" aria-label="Place banner on map"><i class="fa-solid fa-location-crosshairs"></i> Map</button>
         <button type="button" data-action="configureBanner" aria-label="Configure banner material"><i class="fa-solid fa-gear"></i> Material</button>

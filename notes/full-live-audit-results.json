@@ -1,0 +1,2457 @@
+{
+  "environment": {
+    "date": "2026-09-14T12:12:12.215Z",
+    "foundry": "14.367",
+    "pf2e": "8.5.0",
+    "moduleActive": true
+  },
+  "results": [
+    {
+      "name": "armored-regiment-training",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": []
+    },
+    {
+      "name": "banner-twirl",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Banner Twirl",
+              "rules": [
+                {
+                  "key": "Note",
+                  "selector": [
+                    "ac"
+                  ],
+                  "text": "Banner Twirl: concealed from ranged attacks; DC 5 flat check.",
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "title": null,
+                  "visibility": null,
+                  "outcome": [],
+                  "battleForm": false
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Banner Twirl",
+              "rules": [
+                {
+                  "key": "Note",
+                  "selector": [
+                    "ac"
+                  ],
+                  "text": "Banner Twirl: concealed from ranged attacks; DC 5 flat check.",
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "title": null,
+                  "visibility": null,
+                  "outcome": [],
+                  "battleForm": false
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Banner Twirl",
+              "rules": [
+                {
+                  "key": "Note",
+                  "selector": [
+                    "ac"
+                  ],
+                  "text": "Banner Twirl: concealed from ranged attacks; DC 5 flat check.",
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "title": null,
+                  "visibility": null,
+                  "outcome": [],
+                  "battleForm": false
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Commander Audit, Ally Audit, Second Ally Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "defiant-banner",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Defiant Banner",
+              "rules": [
+                {
+                  "key": "Resistance",
+                  "type": [
+                    "bludgeoning",
+                    "piercing",
+                    "slashing"
+                  ],
+                  "value": "@item.origin.abilities.int.mod",
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "mode": "add",
+                  "exceptions": [],
+                  "override": false,
+                  "doubleVs": []
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Defiant Banner",
+              "rules": [
+                {
+                  "key": "Resistance",
+                  "type": [
+                    "bludgeoning",
+                    "piercing",
+                    "slashing"
+                  ],
+                  "value": "@item.origin.abilities.int.mod",
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "mode": "add",
+                  "exceptions": [],
+                  "override": false,
+                  "doubleVs": []
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Defiant Banner",
+              "rules": [
+                {
+                  "key": "Resistance",
+                  "type": [
+                    "bludgeoning",
+                    "piercing",
+                    "slashing"
+                  ],
+                  "value": "@item.origin.abilities.int.mod",
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "mode": "add",
+                  "exceptions": [],
+                  "override": false,
+                  "doubleVs": []
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Commander Audit, Ally Audit, Second Ally Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "rallying-banner",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 3,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Ally Audit, Second Ally Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "quickening-banner",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [
+            "quickened"
+          ],
+          "effects": []
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [
+            "quickened"
+          ],
+          "effects": []
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Ally Audit, Second Ally Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "pennant-of-victory",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 40,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Pennant of Victory",
+              "rules": [
+                {
+                  "key": "FlatModifier",
+                  "selector": [
+                    "attack-roll",
+                    "damage"
+                  ],
+                  "slug": "pennant-of-victory-attack-damage",
+                  "type": "status",
+                  "value": 4,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "force": false,
+                  "hideIfDisabled": false,
+                  "fromEquipment": true,
+                  "critical": null,
+                  "removeAfterRoll": false,
+                  "battleForm": false
+                },
+                {
+                  "key": "FlatModifier",
+                  "selector": [
+                    "all-speeds"
+                  ],
+                  "slug": "pennant-of-victory-speeds",
+                  "type": "status",
+                  "value": 10,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "force": false,
+                  "hideIfDisabled": false,
+                  "fromEquipment": true,
+                  "critical": null,
+                  "removeAfterRoll": false,
+                  "battleForm": false
+                },
+                {
+                  "key": "TempHP",
+                  "value": 40,
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "events": {
+                    "onCreate": true,
+                    "onTurnStart": false
+                  }
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 62,
+          "temp": 40,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Pennant of Victory",
+              "rules": [
+                {
+                  "key": "FlatModifier",
+                  "selector": [
+                    "attack-roll",
+                    "damage"
+                  ],
+                  "slug": "pennant-of-victory-attack-damage",
+                  "type": "status",
+                  "value": 4,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "force": false,
+                  "hideIfDisabled": false,
+                  "fromEquipment": true,
+                  "critical": null,
+                  "removeAfterRoll": false,
+                  "battleForm": false
+                },
+                {
+                  "key": "FlatModifier",
+                  "selector": [
+                    "all-speeds"
+                  ],
+                  "slug": "pennant-of-victory-speeds",
+                  "type": "status",
+                  "value": 10,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "force": false,
+                  "hideIfDisabled": false,
+                  "fromEquipment": true,
+                  "critical": null,
+                  "removeAfterRoll": false,
+                  "battleForm": false
+                },
+                {
+                  "key": "TempHP",
+                  "value": 40,
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "events": {
+                    "onCreate": true,
+                    "onTurnStart": false
+                  }
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 40,
+          "conditions": [],
+          "effects": [
+            {
+              "name": "Effect: Pennant of Victory",
+              "rules": [
+                {
+                  "key": "FlatModifier",
+                  "selector": [
+                    "attack-roll",
+                    "damage"
+                  ],
+                  "slug": "pennant-of-victory-attack-damage",
+                  "type": "status",
+                  "value": 4,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "force": false,
+                  "hideIfDisabled": false,
+                  "fromEquipment": true,
+                  "critical": null,
+                  "removeAfterRoll": false,
+                  "battleForm": false
+                },
+                {
+                  "key": "FlatModifier",
+                  "selector": [
+                    "all-speeds"
+                  ],
+                  "slug": "pennant-of-victory-speeds",
+                  "type": "status",
+                  "value": 10,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "force": false,
+                  "hideIfDisabled": false,
+                  "fromEquipment": true,
+                  "critical": null,
+                  "removeAfterRoll": false,
+                  "battleForm": false
+                },
+                {
+                  "key": "TempHP",
+                  "value": 40,
+                  "slug": null,
+                  "priority": 100,
+                  "ignored": false,
+                  "predicate": [],
+                  "requiresEquipped": null,
+                  "requiresInvestment": null,
+                  "events": {
+                    "onCreate": true,
+                    "onTurnStart": false
+                  }
+                }
+              ],
+              "invalid": []
+            }
+          ]
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Commander Audit, Ally Audit, Second Ally Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "banners-inspiration",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [
+            "frightened"
+          ],
+          "effects": []
+        },
+        {
+          "name": "Second Ally Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        },
+        {
+          "name": "Enemy Audit",
+          "hp": 62,
+          "temp": 0,
+          "conditions": [],
+          "effects": []
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Ally Audit, Second Ally Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>",
+        "Ally Audit: mental effect to retryNo retry (frightened reduction only)Frightened 1",
+        "Second Ally Audit: mental effect to retryNo retry (frightened reduction only)"
+      ]
+    },
+    {
+      "name": "demand-surrender-critical-failure",
+      "status": "pass",
+      "detail": {
+        "prone": true,
+        "held": 0
+      },
+      "prompts": [
+        "<p>Confirm you outnumber enemies, observe this target, and you or an ally restrained or reduced an opponent to 0 HP since the start of your last turn.</p>"
+      ]
+    },
+    {
+      "name": "confusing-commands-failure",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Effect: Confusing Commands",
+          "duration": {
+            "value": 2,
+            "unit": "rounds",
+            "expiry": "turn-start",
+            "sustained": false
+          }
+        }
+      ],
+      "prompts": [
+        "<p>Affect: Enemy Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "confusing-commands",
+      "status": "pass",
+      "detail": {
+        "result": true,
+        "hp": 62,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Affect: Enemy Audit. Confirm these creatures can perceive the required visual/auditory signal.</p>"
+      ]
+    },
+    {
+      "name": "demand-surrender",
+      "status": "pass",
+      "detail": {
+        "result": true,
+        "hp": 62,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm you outnumber enemies, observe this target, and you or an ally restrained or reduced an opponent to 0 HP since the start of your last turn.</p>"
+      ]
+    },
+    {
+      "name": "reactive-interference",
+      "status": "pass",
+      "detail": {
+        "result": true,
+        "hp": 62,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>"
+      ]
+    },
+    {
+      "name": "defensive-swap",
+      "status": "pass",
+      "detail": {
+        "result": true,
+        "hp": 62,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "<p>Ally Audit is willing; exchange positions and redirect the triggering attack to the other creature?</p>"
+      ]
+    },
+    {
+      "name": "shielded-recovery",
+      "status": "fail",
+      "error": "Error: Wield a shield and target an adjacent ally.\n    at guidedShieldRecovery (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/guided-feats.js:126:91)\n    at runFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:115:44)\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:95:26)\n    at async q.withAnswers (eval at <anonymous> (eval at <anonymous> (eval at evaluate (:311:30))), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:609)\n    at async qa.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs:45:26)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:355)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "shield-warden",
+      "status": "fail",
+      "error": "Error: A usable held shield is required.\n    at guidedReaction (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/guided-feats.js:115:63)\n    at async executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:95:20)\n    at async q.withAnswers (eval at <anonymous> (eval at <anonymous> (eval at evaluate (:311:30))), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:609)\n    at async qa.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs:45:26)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:355)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "<p>Confirm your shield is currently raised.</p>"
+      ]
+    },
+    {
+      "name": "desperate-resuscitation",
+      "status": "fail",
+      "error": "Error: [EffectPF2e] validation errors: SchemaField#_validateRecursive\n  system: SchemaField#_validateRecursive\n    duration: SchemaField#_validateRecursive\n      unit: seconds is not a valid choice\n    at DataModelValidationFailure.asError (https://localhost:30000/scripts/foundry.mjs:8397:12)\n    at EffectPF2e.validate (https://localhost:30000/scripts/foundry.mjs:14070:59)\n    at new DataModel (https://localhost:30000/scripts/foundry.mjs:13552:10)\n    at new Document (https://localhost:30000/scripts/foundry.mjs:14459:1)\n    at new ClientDocumentMixin (https://localhost:30000/scripts/foundry.mjs:36124:7)\n    at new EffectPF2e (https://localhost:30000/systems/pf2e/pf2e.mjs:48838:17)\n    at Object.construct (https://localhost:30000/systems/pf2e/pf2e.mjs:45402:9)\n    at Proxy.createDocuments (https://localhost:30000/systems/pf2e/pf2e.mjs:45235:12)\n    at CharacterPF2e.createEmbeddedDocuments (https://localhost:30000/scripts/foundry.mjs:15283:16)\n    at effect (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/workflow.js:59:16)\n    at guidedRevival (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/guided-feats.js:176:9)\n    at async executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:95:20)\n    at async q.withAnswers (eval at <anonymous> (eval at <anonymous> (eval at evaluate (:311:30))), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:609)\n    at async qa.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs:45:26)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:355)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "<p>GM: confirm target died within 3 rounds, body mostly intact, no death effect, toolkit/free-hand requirements met, and Raise Dead can return this creature.</p>"
+      ]
+    },
+    {
+      "name": "rapid-assessment",
+      "status": "pass",
+      "detail": {
+        "result": true,
+        "hp": 62,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm initiative was just rolled and all chosen creatures are observed. The GM supplies secret knowledge results.</p>",
+        "Number of checks (maximum 6)",
+        "Target for check 1Enemy Audit",
+        "Recall Knowledge about Enemy Audit: choose applicable skillAcrobaticsArcanaAthleticsCraftingDeceptionDiplomacyIntimidationMedicineNatureOccultismPerformanceReligionSocietyStealthSurvivalThieveryBelkzen LoreWarfare Lore",
+        "GM: Recall Knowledge DC (include rarity and repeat-check adjustments)"
+      ]
+    },
+    {
+      "name": "deceptive-tactics",
+      "status": "pass",
+      "detail": {
+        "result": true,
+        "hp": 62,
+        "conditions": []
+      },
+      "prompts": [
+        "Action using Warfare LoreFeintCreate a Diversion"
+      ]
+    },
+    {
+      "name": "shielded-recovery",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "shield-warden",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "desperate-resuscitation",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "combat-assessment",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "set-up-strike",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "unsteadying-strike",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "reactive-strike",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "standard-bearers-sacrifice",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:481)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "shielded-recovery",
+      "status": "pass",
+      "detail": {
+        "hp": 62,
+        "shieldHP": 15,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Use Battle Medicine on this ally now. Resolve its check, healing and immunity normally, then continue.</p>"
+      ]
+    },
+    {
+      "name": "shield-warden",
+      "status": "pass",
+      "detail": {
+        "hp": 57,
+        "shieldHP": 10,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "<p>Confirm your shield is currently raised.</p>",
+        "Incoming physical damage after applicable immunity, weakness and resistance"
+      ]
+    },
+    {
+      "name": "desperate-resuscitation",
+      "status": "pass",
+      "detail": {
+        "hp": 1,
+        "shieldHP": 10,
+        "conditions": [
+          {
+            "slug": "wounded",
+            "value": 1
+          },
+          {
+            "slug": "clumsy",
+            "value": 2
+          },
+          {
+            "slug": "drained",
+            "value": 2
+          },
+          {
+            "slug": "enfeebled",
+            "value": 2
+          }
+        ]
+      },
+      "prompts": [
+        "<p>GM: confirm target died within 3 rounds, body mostly intact, no death effect, toolkit/free-hand requirements met, and Raise Dead can return this creature.</p>",
+        "<p>On the revived creature&#x27;s sheet, expend prepared spells, spell slots, Focus Points and other daily pools as Raise Dead requires. Retain long-term debilitations. Continue after recording them.</p>"
+      ]
+    },
+    {
+      "name": "combat-assessment",
+      "status": "pass",
+      "detail": {
+        "hp": 62,
+        "shieldHP": 10,
+        "conditions": []
+      },
+      "prompts": [
+        "StrikeUnarmed Attack+1 Striking HalberdDagger",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack",
+        "<p>Has you or an ally targeted this creature with a Strike or spell since the start of your last turn (before this Strike)?</p>",
+        "Recall Knowledge about Enemy Audit: choose applicable skillAcrobaticsArcanaAthleticsCraftingDeceptionDiplomacyIntimidationMedicineNatureOccultismPerformanceReligionSocietyStealthSurvivalThieveryBelkzen LoreWarfare Lore",
+        "GM: Recall Knowledge DC (include rarity and repeat-check adjustments)"
+      ]
+    },
+    {
+      "name": "set-up-strike",
+      "status": "fail",
+      "error": "Error: did not finish\n    at Object.eval [as assert] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:1:42)\n    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:688)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:339)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "StrikeShortbowUnarmed Attack+1 Striking HalberdDagger",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack"
+      ]
+    },
+    {
+      "name": "unsteadying-strike",
+      "status": "pass",
+      "detail": {
+        "hp": 62,
+        "shieldHP": 10,
+        "conditions": []
+      },
+      "prompts": [
+        "StrikeUnarmed Attack+1 Striking HalberdDagger",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack"
+      ]
+    },
+    {
+      "name": "reactive-strike",
+      "status": "pass",
+      "detail": {
+        "hp": 62,
+        "shieldHP": 10,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "StrikeUnarmed Attack+1 Striking HalberdDagger"
+      ]
+    },
+    {
+      "name": "standard-bearers-sacrifice",
+      "status": "pass",
+      "detail": {
+        "hp": 62,
+        "shieldHP": 10,
+        "conditions": []
+      },
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "<p>Confirm this enemy targets an ally with a ranged attack, you observe both, and you are also in the attack&#x27;s range.</p>"
+      ]
+    },
+    {
+      "name": "guiding-shot-opening",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:394)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:283)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "set-up-strike-opening",
+      "status": "fail",
+      "error": "Error: Finish the current commander workflow first.\n    at executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:45:36)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:24:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:394)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=1:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:283)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "guiding-shot-opening",
+      "status": "pass",
+      "detail": {
+        "opening": {
+          "targetUuid": "Scene.VJWSvw5V3LxOUabw.Token.ZLVhB5hKoR30WDjp",
+          "itemUuid": "Actor.r3LVo5yoMeIsBEXE.Item.LOUGaqmmIsI4Hl9R",
+          "slug": "guiding-shot",
+          "bonus": 2,
+          "damaged": true,
+          "created": 0
+        },
+        "rulesDuringAttack": []
+      },
+      "prompts": [
+        "StrikeShortbow",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack",
+        "<p>Resolve damage now. Did this Strike actually deal damage after immunity, resistance and other reductions?</p>",
+        "<p>Confirm Commander Regression 1142-1 makes the next eligible attack against Commander Regression 1142-3, no eligible attack has intervened, and the commander&#x27;s next turn has not begun.</p>",
+        "Next attackStrikeSpell or other attack (guided)",
+        "StrikeUnarmed Attack+1 Striking HalberdDagger",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack",
+        "<p>Resolve this attack&#x27;s damage now, then continue to remove the temporary bonuses. The opening has been consumed even if the attack missed.</p>"
+      ]
+    },
+    {
+      "name": "set-up-strike-opening",
+      "status": "pass",
+      "detail": {
+        "opening": {
+          "targetUuid": "Scene.VJWSvw5V3LxOUabw.Token.ZLVhB5hKoR30WDjp",
+          "itemUuid": "Actor.r3LVo5yoMeIsBEXE.Item.RhKSWBJQIY7Bs14L",
+          "slug": "set-up-strike",
+          "bonus": 2,
+          "damaged": true,
+          "created": 0
+        },
+        "rulesDuringAttack": []
+      },
+      "prompts": [
+        "StrikeShortbowUnarmed Attack+1 Striking HalberdDagger",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack",
+        "<p>Resolve damage now. Did this Strike actually deal damage after immunity, resistance and other reductions?</p>",
+        "<p>Confirm Commander Regression 1142-1 makes the next eligible attack against Commander Regression 1142-3, no eligible attack has intervened, and the commander&#x27;s next turn has not begun.</p>",
+        "Next attackStrikeSpell or other attack (guided)",
+        "StrikeUnarmed Attack+1 Striking HalberdDagger",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack",
+        "<p>Resolve this attack&#x27;s damage now, then continue to remove the temporary bonuses. The opening has been consumed even if the attack missed.</p>"
+      ]
+    },
+    {
+      "name": "tactical-takedown-critical-failure",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 0,
+            "degreeLabel": "Critical Failure",
+            "applied": "prone"
+          }
+        ],
+        "conditions": [
+          {
+            "slug": "prone",
+            "value": null
+          },
+          {
+            "slug": "off-guard",
+            "value": null
+          }
+        ],
+        "effects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "tactical-takedown-critical-success",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 3,
+            "degreeLabel": "Critical Success",
+            "applied": "no automated effect"
+          }
+        ],
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "buckle-cut-blitz-critical-failure",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 0,
+            "degreeLabel": "Critical Failure",
+            "applied": "clumsy 2"
+          }
+        ],
+        "conditions": [
+          {
+            "slug": "clumsy",
+            "value": 2
+          }
+        ],
+        "effects": [
+          {
+            "name": "Effect: Buckle-Cut Blitz",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "buckle-cut-blitz-critical-success",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 3,
+            "degreeLabel": "Critical Success",
+            "applied": "no automated effect"
+          }
+        ],
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "stupefying-raid-critical-failure",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 0,
+            "degreeLabel": "Critical Failure",
+            "applied": "stupefied 2"
+          }
+        ],
+        "conditions": [
+          {
+            "slug": "stupefied",
+            "value": 2
+          }
+        ],
+        "effects": [
+          {
+            "name": "Effect: Stupefying Raid",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "stupefying-raid-critical-success",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 3,
+            "degreeLabel": "Critical Success",
+            "applied": "no automated effect"
+          }
+        ],
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "end-it-critical-failure",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 0,
+            "degreeLabel": "Critical Failure",
+            "applied": "fleeing; frightened 2"
+          }
+        ],
+        "conditions": [
+          {
+            "slug": "frightened",
+            "value": 2
+          },
+          {
+            "slug": "fleeing",
+            "value": null
+          }
+        ],
+        "effects": [
+          {
+            "name": "Effect: End It!",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "end-it-critical-success",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 3,
+            "degreeLabel": "Critical Success",
+            "applied": "no automated effect"
+          }
+        ],
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "roaring-charge-critical-failure",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 0,
+            "degreeLabel": "Critical Failure",
+            "applied": "frightened 3; fleeing"
+          }
+        ],
+        "conditions": [
+          {
+            "slug": "frightened",
+            "value": 3
+          },
+          {
+            "slug": "fleeing",
+            "value": null
+          }
+        ],
+        "effects": [
+          {
+            "name": "Effect: Roaring Charge",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "roaring-charge-critical-success",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 3,
+            "degreeLabel": "Critical Success",
+            "applied": "no automated effect"
+          }
+        ],
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "pincer-attack-critical-failure",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 2,
+            "degreeLabel": "Resolved",
+            "applied": "off-guard to responder melee attacks"
+          }
+        ],
+        "conditions": [],
+        "effects": [
+          {
+            "name": "Effect: Pincer Attack",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "pincer-attack-critical-success",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 2,
+            "degreeLabel": "Resolved",
+            "applied": "off-guard to responder melee attacks"
+          }
+        ],
+        "conditions": [],
+        "effects": [
+          {
+            "name": "Effect: Pincer Attack",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "demoralizing-charge-resolution",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Regression 1142-3",
+          "degree": 0,
+          "degreeLabel": "Critical Failure",
+          "applied": "frightened 2"
+        }
+      ],
+      "prompts": []
+    },
+    {
+      "name": "mirrored-wall-resolution",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "Commander Regression 1142-3",
+          "degree": 0,
+          "degreeLabel": "Critical Failure",
+          "applied": "blinded 1 round; dazzled 3 more rounds"
+        }
+      ],
+      "prompts": []
+    },
+    {
+      "name": "sanguine-revitalization-aftermath",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Commander Regression 1142-3",
+            "degree": 0,
+            "degreeLabel": "Critical Failure",
+            "applied": "10 persistent bleed; healed Commander Regression 1142-1, Commander Regression 1142-2 for 10"
+          }
+        ],
+        "enemyHP": 62,
+        "conditions": [
+          {
+            "slug": "persistent-damage",
+            "value": null
+          }
+        ],
+        "allyEffects": []
+      },
+      "prompts": []
+    },
+    {
+      "name": "cry-havoc-aftermath",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Cry Havoc!",
+            "degreeLabel": "Guided resolution",
+            "applied": "Cry Havoc damage, deafened and daily immunity resolved."
+          }
+        ],
+        "enemyHP": 38,
+        "conditions": [
+          {
+            "slug": "deafened",
+            "value": null
+          }
+        ],
+        "allyEffects": []
+      },
+      "prompts": [
+        "<p>Confirm selected enemies were adjacent to a participant at some point along its movement path.</p>"
+      ]
+    },
+    {
+      "name": "corpse-crenellation-aftermath",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Corpse Crenellation",
+            "degreeLabel": "Guided resolution",
+            "applied": "Corpse-cover effects granted with position toggle; use native Take Cover for standard/greater cover."
+          }
+        ],
+        "enemyHP": 0,
+        "conditions": [],
+        "allyEffects": [
+          {
+            "name": "Effect: Corpse Crenellation",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": [
+        "<p>Did the tactic reduce the designated enemy to 0 HP?</p>"
+      ]
+    },
+    {
+      "name": "bloody-guillotine-aftermath",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Bloody Guillotine",
+            "degreeLabel": "Guided resolution",
+            "applied": "Death save and witness sickened saves resolved."
+          }
+        ],
+        "enemyHP": 0,
+        "conditions": [],
+        "allyEffects": []
+      },
+      "prompts": [
+        "<p>Pause on the FIRST Strike that actually damaged the designated prone enemy. Confirm this trigger occurred and no death save has already been made.</p>",
+        "<p>GM: confirm target is susceptible to this death effect and dies now.</p>"
+      ]
+    },
+    {
+      "name": "insta-ballista-aftermath",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Insta-Ballista",
+            "degreeLabel": "Guided resolution",
+            "applied": "Insta-Ballista Strike resolved with +2 item bonus."
+          }
+        ],
+        "enemyHP": 62,
+        "conditions": [],
+        "allyEffects": []
+      },
+      "prompts": [
+        "<p>Confirm these participants were chosen at preparation and carry the ballista&#x27;s total 8 Bulk in whole-Bulk shares.</p>",
+        "StrikeInsta-Ballista",
+        "Multiple attack penaltyFirst attackSecond attackThird or later attack",
+        "<p>Resolve the Insta-Ballista&#x27;s 10d12 piercing damage from its Strike entry now, then continue.</p>"
+      ]
+    },
+    {
+      "name": "executioners-volley-aftermath",
+      "status": "pass",
+      "detail": {
+        "resolution": [
+          {
+            "name": "Executioner's Volley",
+            "degreeLabel": "Guided resolution",
+            "applied": "Combined volley damage applied once."
+          }
+        ],
+        "enemyHP": 50,
+        "conditions": [],
+        "allyEffects": []
+      },
+      "prompts": [
+        "<p>Roll every participant&#x27;s damage without applying it. Combine matching damage types before resistance/weakness. Ready to apply totals once?</p>",
+        "Add a combined damage typepiercingslashingbludgeoningfirecoldelectricityacidsonicforcevitalityvoidmentalpoisonspiritbleeduntypedApply entered totals",
+        "Combined piercing damage",
+        "Add a combined damage typeslashingbludgeoningfirecoldelectricityacidsonicforcevitalityvoidmentalpoisonspiritbleeduntypedApply entered totals",
+        "<p>Did this volley kill the target?</p>"
+      ]
+    },
+    {
+      "name": "alley-oop-guided",
+      "status": "fail",
+      "error": "Error: PF2e System | Only physical items (with quantities) can be transfered between actors\n    at ErrorPF2e (https://localhost:30000/systems/pf2e/pf2e.mjs:191:9)\n    at CharacterPF2e.transferItemToActor (https://localhost:30000/systems/pf2e/pf2e.mjs:32002:86)\n    at alleyOop (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/guided-tactics.js:87:35)\n    at async executeGuidedTactic (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/guided-tactics.js:33:46)\n    at async q.withAnswers (eval at <anonymous> (eval at <anonymous> (eval at evaluate (:311:30))), <anonymous>:25:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:859)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:590)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "Receiver in banner auraCommander Regression 1142-2",
+        "Held/worn consumable with one-action activationOil of PotencySilver SalveHealing Potion (Lesser)",
+        "<p>Confirm Oil of Potency is held/worn and eligible for one-action activation. Toss to Commander Regression 1142-2?</p>",
+        "<p>Commander Regression 1142-2: spend reaction to catch and activate, with a free hand? Declining drops it at the receiver&#x27;s space.</p>"
+      ]
+    },
+    {
+      "name": "for-talmandor-for-freedom-guided",
+      "status": "pass",
+      "detail": {
+        "result": "Frightened 2: counteract succeeded; selected effect removed.",
+        "hp": 62,
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": [
+        "Commander Regression 1142-1: effect to counteractNo eligible effectFrightened 2",
+        "<p>Confirm Frightened 2 is mental or imposes one of the tactic&#x27;s listed conditions.</p>",
+        "Effect counteract DC",
+        "Effect counteract rank",
+        "Commander's counteract rank"
+      ]
+    },
+    {
+      "name": "slip-and-sizzle-guided",
+      "status": "pass",
+      "detail": {
+        "result": "Spell follow-up completed; slowed 1 and next-turn reaction restriction applied.",
+        "hp": 62,
+        "conditions": [
+          "slowed"
+        ],
+        "effects": [
+          {
+            "name": "Effect: Slip and Sizzle",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": [
+        "<p>Confirm the Trip succeeded. Cast a damaging ranged spell of at most 2 actions at/including the designated enemy now.</p>",
+        "Spellcasting resultDid not castCast without spending slot/Focus PointCast and spent spell slot/Focus Point"
+      ]
+    },
+    {
+      "name": "seek-and-destroy-guided",
+      "status": "pass",
+      "detail": {
+        "result": "Target-scoped precision granted; disable its toggle after the first successful Strike's damage.",
+        "hp": 62,
+        "conditions": [],
+        "effects": [
+          {
+            "name": "Effect: Seek and Destroy",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "take-the-high-ground-guided",
+      "status": "pass",
+      "detail": {
+        "result": "Completed guided horizontal Leap.",
+        "hp": 62,
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": [
+        "<p>Confirm you ended adjacent to the assisting squadmate. Spend your reaction to Leap up to 25 feet horizontally or 15 feet vertically?</p>",
+        "LeapHorizontal (25 ft)Vertical (15 ft)",
+        "<p>Move the token to its Leap landing point now, then continue. Maximum 25 feet.</p>"
+      ]
+    },
+    {
+      "name": "double-team-guided",
+      "status": "pass",
+      "detail": {
+        "result": "Commander Regression 1142-2 made the follow-up melee Strike.",
+        "hp": 62,
+        "conditions": [],
+        "effects": []
+      },
+      "prompts": [
+        "<p>Did the initial Shove or Reposition succeed?</p>",
+        "Different adjacent squadmate making reaction StrikeCommander Regression 1142-2",
+        "StrikeUnarmed Attack+1 Striking HalberdDagger"
+      ]
+    },
+    {
+      "name": "protective-screen-guided",
+      "status": "fail",
+      "error": "Error: Target the adjacent ally you are protecting.\n    at executeGuidedTactic (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/guided-tactics.js:51:26)\n    at async q.withAnswers (eval at <anonymous> (eval at <anonymous> (eval at evaluate (:311:30))), <anonymous>:25:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:859)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:590)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "piranha-assault-guided",
+      "status": "pass",
+      "detail": {
+        "result": "Applied 13 damage once, including 5 partial resistance bypass.",
+        "hp": 49,
+        "conditions": [],
+        "effects": [
+          {
+            "name": "Effect: Piranha Assault (Commander Regression 1142-3)",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": [
+        "Active target-linked benefitEffect: Piranha Assault (Commander Regression 1142-3)",
+        "<p>Resolve an attack&#x27;s damage using this guide BEFORE applying it. Enter the normal final damage after IWR, then how much applicable resistance actually prevented. Do not apply the original damage separately.</p>",
+        "Normal final damage after immunity/weakness/resistance",
+        "Number of distinct resisted damage types in this attack",
+        "Damage prevented by resistance for type 1 (exclude immunity)",
+        "<p>Apply 13 total damage to Commander Regression 1142-3 (8 normal + 5 resistance bypass)?</p>"
+      ]
+    },
+    {
+      "name": "mountaineering-training-response",
+      "status": "pass",
+      "detail": {
+        "result": "gained Effect: Mountaineering Training",
+        "effects": [
+          {
+            "name": "Effect: Mountaineering Training",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "naval-training-response",
+      "status": "pass",
+      "detail": {
+        "result": "gained Effect: Naval Training",
+        "effects": [
+          {
+            "name": "Effect: Naval Training",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": []
+    },
+    {
+      "name": "shadows-in-the-moonlight-response",
+      "status": "pass",
+      "detail": {
+        "result": "tracked formation benefits until the commander's next turn",
+        "effects": [
+          {
+            "name": "Effect: Shadows in the Moonlight",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": [
+        "Following the Expert: confirm eligible guide's proficiencyExpert (+2)Master (+3)Legendary (+4)"
+      ]
+    },
+    {
+      "name": "wait-for-it-response",
+      "status": "pass",
+      "detail": {
+        "result": "gained guarded stance; use its toggle to end the bonus when acting",
+        "effects": [
+          {
+            "name": "Effect: Wait For It...",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": [
+        "<p>Confirm you are Delaying or Readying. The bonus ends when you act or the tactic&#x27;s early-ending clause applies.</p>"
+      ]
+    },
+    {
+      "name": "the-bigger-they-are-response",
+      "status": "pass",
+      "detail": {
+        "result": "used grapple",
+        "effects": [
+          {
+            "name": "Effect: The Bigger They Are (Commander) (+1)",
+            "ignored": []
+          }
+        ]
+      },
+      "prompts": [
+        "ManeuverGrappleRepositionShoveTrip"
+      ]
+    },
+    {
+      "name": "shields-up-response",
+      "status": "pass",
+      "detail": {
+        "result": "Cast shield.",
+        "effects": []
+      },
+      "prompts": [
+        "Defensive actionRaise a ShieldParry (guided)Cast shield cantrip (guided)",
+        "<p>Cast the shield cantrip from your sheet now, resolving its native effect and any restrictions.</p>"
+      ]
+    },
+    {
+      "name": "mirrored-wall-response",
+      "status": "pass",
+      "detail": {
+        "result": "Cast shield.",
+        "effects": []
+      },
+      "prompts": [
+        "Defensive actionRaise a ShieldParry (guided)Cast shield cantrip (guided)",
+        "<p>Cast the shield cantrip from your sheet now, resolving its native effect and any restrictions.</p>"
+      ]
+    },
+    {
+      "name": "strike-hard-response",
+      "status": "pass",
+      "detail": {
+        "result": "rolled Unarmed Attack",
+        "effects": []
+      },
+      "prompts": [
+        "StrikeUnarmed Attack+1 Striking HalberdDagger"
+      ]
+    },
+    {
+      "name": "passage-of-lines-response",
+      "status": "pass",
+      "detail": {
+        "result": "swapped positions with Commander Regression 1142-2",
+        "effects": []
+      },
+      "prompts": [
+        "Exchange positions with Commander Regression 1142-2?Confirm that the adjacent ally is willing."
+      ]
+    },
+    {
+      "name": "adaptive-stratagem-contact-with-enemy",
+      "status": "pass",
+      "detail": 37,
+      "prompts": [
+        "<p>Use this free action now because you just rolled initiative?</p>",
+        "Prepared tactic to replaceCoordinating ManeuversGather to Me!Pincer AttackProtective ScreenStrike Hard!Defensive RetreatMountaineering TrainingNaval TrainingPassage of LinesShadows in the MoonlightDouble TeamEnd It!Reload!Shields Up!Tactical TakedownAlley-OopBuckle-Cut BlitzDemoralizing ChargeSeek and DestroySlip and SizzleStupefying RaidTake the High GroundWait For It...Bloody GuillotineCorpse CrenellationMirrored WallPiranha AssaultPop, Drop, and LockReady, Aim, Fire!Roaring ChargeCry Havoc!Executioner's VolleyFor Talmandor! For Freedom!Insta-BallistaSanguine RevitalizationValkyrie's ChargeThe Bigger They Are",
+        "Replacement from folioThe Bigger They Are"
+      ]
+    },
+    {
+      "name": "commanders-companion-done",
+      "status": "pass",
+      "detail": {
+        "link": {
+          "actorUuid": "Actor.hXaEPhNVOcYNkpiY",
+          "tokenUuid": "Scene.VJWSvw5V3LxOUabw.Token.2SUZuDOP2TC1mJhj",
+          "banner": true,
+          "mascot": true
+        }
+      },
+      "prompts": [
+        "<p>Confirm this is the animal companion granted by this feat. Its progression and specialization should be configured on its companion sheet.</p>",
+        "<p>Attach the commander&#x27;s banner to this companion? The module will use its space for banner range.</p>",
+        "<p>Did you select the peerless mascot specialization (rather than another specialization)?</p>",
+        "Companion action (optional)Finish setupCommand an Animal: grant tactic reaction this turnIndependent Stride/Strike: cannot Command later this round"
+      ]
+    },
+    {
+      "name": "commanders-companion-command",
+      "status": "pass",
+      "detail": {
+        "link": {
+          "actorUuid": "Actor.hXaEPhNVOcYNkpiY",
+          "tokenUuid": "Scene.VJWSvw5V3LxOUabw.Token.2SUZuDOP2TC1mJhj",
+          "banner": true,
+          "mascot": true
+        },
+        "action": {
+          "stamp": "undefined:undefined",
+          "mode": "command",
+          "commanderUuid": "Actor.r3LVo5yoMeIsBEXE"
+        }
+      },
+      "prompts": [
+        "<p>Confirm this is the animal companion granted by this feat. Its progression and specialization should be configured on its companion sheet.</p>",
+        "<p>Attach the commander&#x27;s banner to this companion? The module will use its space for banner range.</p>",
+        "<p>Did you select the peerless mascot specialization (rather than another specialization)?</p>",
+        "Companion action (optional)Finish setupCommand an Animal: grant tactic reaction this turnIndependent Stride/Strike: cannot Command later this round",
+        "<p>Spend Command an Animal now and resolve any required check on the sheet, then continue.</p>"
+      ]
+    },
+    {
+      "name": "commanders-companion-independent",
+      "status": "pass",
+      "detail": {
+        "link": {
+          "actorUuid": "Actor.hXaEPhNVOcYNkpiY",
+          "tokenUuid": "Scene.VJWSvw5V3LxOUabw.Token.2SUZuDOP2TC1mJhj",
+          "banner": true,
+          "mascot": true
+        },
+        "action": {
+          "stamp": "undefined:undefined",
+          "mode": "independent",
+          "commanderUuid": "Actor.r3LVo5yoMeIsBEXE"
+        }
+      },
+      "prompts": [
+        "<p>Confirm this is the animal companion granted by this feat. Its progression and specialization should be configured on its companion sheet.</p>",
+        "<p>Attach the commander&#x27;s banner to this companion? The module will use its space for banner range.</p>",
+        "<p>Did you select the peerless mascot specialization (rather than another specialization)?</p>",
+        "Companion action (optional)Finish setupCommand an Animal: grant tactic reaction this turnIndependent Stride/Strike: cannot Command later this round",
+        "<p>Take one Stride or Strike from the companion&#x27;s sheet now. It cannot receive Command an Animal later this round.</p>"
+      ]
+    },
+    {
+      "name": "companion-mascot-glorious-banner-passives",
+      "status": "pass",
+      "detail": {
+        "attachedRadius": 100,
+        "independentRadius": 30,
+        "removed": true
+      },
+      "prompts": []
+    },
+    {
+      "name": "defensive-retreat-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "KFivasi9p8a2ujrl",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "gather-to-me-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "CxZPImdprZBlA4uN",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "mountaineering-training-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "fSZrg9LYfqofgASR",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "naval-training-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "3siULxE1elZ1LSSQ",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "passage-of-lines-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "mPAseaIkL8jblpUf",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "protective-screen-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "EfAZjnWmggsLXdwA",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "shadows-in-the-moonlight-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "M8I9sZu9VzGDGDL3",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "coordinating-maneuvers-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "NqChFzGjAJXKw8V0",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "double-team-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "xdLmtc80QiGpqG8g",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "end-it-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "o1mi36u6i1J3V5QJ",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "pincer-attack-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "mLmR8zICD3T9oBzt",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "reload-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "Cr1vR5n9cjUXe9rr",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "shields-up-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "duCWGA8Pxjf98qeT",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "strike-hard-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "uLpETrlz1bNYKSOg",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "tactical-takedown-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "L3RiIQwBlLLcSvfN",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "alley-oop-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "7e9Y2HHfbKDQPfC8",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "buckle-cut-blitz-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "7s8bKUVb5DVP7Dy2",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "demoralizing-charge-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "mrY6cV7KP5Vaatwf",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "seek-and-destroy-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "qhwlCOKmuqhpNLxn",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "slip-and-sizzle-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "YslhFYv5n3XJk4Ow",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "stupefying-raid-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "HFG49mrOIPxAmC9o",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "take-the-high-ground-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "RJZmOd0wXT2PeOfW",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "the-bigger-they-are-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "n2mI8mtmkH7TROEY",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "wait-for-it-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "BZPVkvvzJFtZgu7a",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "bloody-guillotine-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "nRBLqfen18Zbkr1d",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "corpse-crenellation-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "n0IWAQQGsmtHUYsK",
+        "participants": 2
+      },
+      "prompts": []
+    },
+    {
+      "name": "mirrored-wall-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "pdNbPgIrwIoS8y6S",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "piranha-assault-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "yhUfm6EOWR79UTFl",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "pop-drop-and-lock-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "YnMerQE4xkIv2mjd",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "ready-aim-fire-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "S6IXlDq5fT9uAExJ",
+        "participants": 1
+      },
+      "prompts": []
+    },
+    {
+      "name": "roaring-charge-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "U6crTlHhIGwU4rlP",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "cry-havoc-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "PjQPnTHRhAh4eLvg",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "executioners-volley-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "TTwlZVh5F9op9BHZ",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "for-talmandor-for-freedom-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "qIU7fyyJDgM0UiVD",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "insta-ballista-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "SFIvri3rVD1MiWgm",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "sanguine-revitalization-issue-card",
+      "status": "fail",
+      "error": "Error: No squadmates are within the banner's 30-foot aura.\n    at CommanderEngine.execute (https://localhost:30000/modules/pf2e-commanderer/scripts/engine.js:361:32)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:1122)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:895)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "valkyries-charge-issue-card",
+      "status": "pass",
+      "detail": {
+        "id": "C7tvGpI1Gn8MmcSc",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "sanguine-revitalization-issue-card-equipped",
+      "status": "fail",
+      "error": "Error: No squadmates are within the banner's 30-foot aura.\n    at CommanderEngine.execute (https://localhost:30000/modules/pf2e-commanderer/scripts/engine.js:361:32)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:581)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=3:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:448)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": []
+    },
+    {
+      "name": "sanguine-revitalization-issue-card-ready",
+      "status": "pass",
+      "detail": {
+        "id": "dLLLDtxBSsTc0Kqt",
+        "participants": 3
+      },
+      "prompts": []
+    },
+    {
+      "name": "defensive-retreat-three-native-steps",
+      "status": "pass",
+      "detail": "moved 0 feet (Stride); remaining response skipped",
+      "prompts": []
+    },
+    {
+      "name": "native-Step-measurement",
+      "status": "pass",
+      "detail": null,
+      "prompts": []
+    },
+    {
+      "name": "defensive-retreat-three-native-steps-retest",
+      "status": "fail",
+      "error": "Error: three complete Steps required: moved 5 feet (Stride); remaining response skipped\n    at Object.eval [as assert] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=4:12:103), <anonymous>:1:42)\n    at eval (eval at evaluate (:311:30), <anonymous>:1:676)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=4:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=4:14:48)",
+      "prompts": []
+    },
+    {
+      "name": "defensive-retreat-three-native-steps-final",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); moved 5 feet (Stride); moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "coordinating-maneuvers-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); used Reposition",
+      "prompts": []
+    },
+    {
+      "name": "protective-screen-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); Protected Commander Regression 1142-2 until the end of their next turn or adjacency ends.",
+      "prompts": []
+    },
+    {
+      "name": "tactical-takedown-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "buckle-cut-blitz-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "demoralizing-charge-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); rolled +1 Striking Halberd",
+      "prompts": [
+        "Strike+1 Striking HalberdUnarmed AttackDagger"
+      ]
+    },
+    {
+      "name": "stupefying-raid-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "take-the-high-ground-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); Completed guided horizontal Leap.",
+      "prompts": [
+        "<p>Confirm you ended adjacent to the assisting squadmate. Spend your reaction to Leap up to 25 feet horizontally or 15 feet vertically?</p>",
+        "LeapHorizontal (25 ft)Vertical (15 ft)",
+        "<p>Move the token to its Leap landing point now, then continue. Maximum 25 feet.</p>"
+      ]
+    },
+    {
+      "name": "bloody-guillotine-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); used Trip",
+      "prompts": [
+        "Granted actionTripMelee Strike"
+      ]
+    },
+    {
+      "name": "corpse-crenellation-native-movement-response",
+      "status": "pass",
+      "detail": "targeted Commander Regression 1142-3; moved 5 feet (Stride); rolled +1 Striking Halberd",
+      "prompts": [
+        "Granted attackUse weapon/movement sequenceCast qualifying damaging cantrip (guided)",
+        "Strike+1 Striking HalberdUnarmed AttackDagger"
+      ]
+    },
+    {
+      "name": "roaring-charge-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "cry-havoc-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "insta-ballista-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "sanguine-revitalization-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride); rolled +1 Striking Halberd",
+      "prompts": [
+        "Strike+1 Striking HalberdDagger"
+      ]
+    },
+    {
+      "name": "valkyries-charge-native-movement-response",
+      "status": "pass",
+      "detail": "restored up to 80 HP; moved 5 feet (Stride); rolled +1 Striking Halberd",
+      "prompts": [
+        "Strike+1 Striking HalberdUnarmed AttackDagger"
+      ]
+    },
+    {
+      "name": "end-it-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "pincer-attack-native-movement-response",
+      "status": "pass",
+      "detail": "moved 5 feet (Stride)",
+      "prompts": []
+    },
+    {
+      "name": "alley-oop-native-transfer-retest",
+      "status": "pass",
+      "detail": "Transferred one Oil of Potency; receiver activation guided.",
+      "prompts": [
+        "Receiver in banner auraCommander Regression 1142-2",
+        "Held/worn consumable with one-action activationOil of PotencySilver SalveHealing Potion (Lesser)",
+        "<p>Confirm Oil of Potency is held/worn and eligible for one-action activation. Toss to Commander Regression 1142-2?</p>",
+        "<p>Commander Regression 1142-2: spend reaction to catch and activate, with a free hand? Declining drops it at the receiver&#x27;s space.</p>",
+        "<p>Activate the transferred item once from the receiver&#x27;s sheet. Resolve its native effect and consumption, then continue.</p>"
+      ]
+    },
+    {
+      "name": "alley-oop-declined-catch-separate-stack",
+      "status": "pass",
+      "detail": "Oil of Potency dropped at Commander Regression 1142-2's space (recorded in receiver inventory).",
+      "prompts": [
+        "Receiver in banner auraCommander Regression 1142-2",
+        "Held/worn consumable with one-action activationOil of PotencySilver SalveHealing Potion (Lesser)",
+        "<p>Confirm Oil of Potency is held/worn and eligible for one-action activation. Toss to Commander Regression 1142-2?</p>",
+        "<p>Commander Regression 1142-2: spend reaction to catch and activate, with a free hand? Declining drops it at the receiver&#x27;s space.</p>"
+      ]
+    },
+    {
+      "name": "the-bigger-they-are-legal-maneuvers-retest",
+      "status": "pass",
+      "detail": "used reposition",
+      "prompts": [
+        "ManeuverRepositionShoveTrip"
+      ]
+    },
+    {
+      "name": "mercenary-reversal-control-and-repeat-save",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "<p>Confirm enemies outnumber your side and this target is observed and can hear you.</p>"
+      ]
+    },
+    {
+      "name": "companion-round-action-lock-and-reset",
+      "status": "pass",
+      "detail": "Independent blocks same-round Command; Command succeeds next round",
+      "prompts": [
+        "<p>Confirm this is the animal companion granted by this feat. Its progression and specialization should be configured on its companion sheet.</p>",
+        "<p>Attach the commander&#x27;s banner to this companion? The module will use its space for banner range.</p>",
+        "<p>Did you select the peerless mascot specialization (rather than another specialization)?</p>",
+        "Companion action (optional)Finish setupCommand an Animal: grant tactic reaction this turnIndependent Stride/Strike: cannot Command later this round",
+        "<p>Take one Stride or Strike from the companion&#x27;s sheet now. It cannot receive Command an Animal later this round.</p>",
+        "<p>Confirm this is the animal companion granted by this feat. Its progression and specialization should be configured on its companion sheet.</p>",
+        "<p>Attach the commander&#x27;s banner to this companion? The module will use its space for banner range.</p>",
+        "<p>Did you select the peerless mascot specialization (rather than another specialization)?</p>",
+        "Companion action (optional)Finish setupCommand an Animal: grant tactic reaction this turnIndependent Stride/Strike: cannot Command later this round",
+        "<p>Confirm this is the animal companion granted by this feat. Its progression and specialization should be configured on its companion sheet.</p>",
+        "<p>Attach the commander&#x27;s banner to this companion? The module will use its space for banner range.</p>",
+        "<p>Did you select the peerless mascot specialization (rather than another specialization)?</p>",
+        "Companion action (optional)Finish setupCommand an Animal: grant tactic reaction this turnIndependent Stride/Strike: cannot Command later this round",
+        "<p>Spend Command an Animal now and resolve any required check on the sheet, then continue.</p>"
+      ]
+    },
+    {
+      "name": "gather-native-movement-outside-to-aura",
+      "status": "pass",
+      "detail": "moved inside the banner aura",
+      "prompts": []
+    },
+    {
+      "name": "reload-native-action-retest",
+      "status": "pass",
+      "detail": "reloaded Crossbow",
+      "prompts": []
+    },
+    {
+      "name": "ready-aim-fire-native-action-retest",
+      "status": "pass",
+      "detail": "targeted Commander Regression 1142-3; no reload needed; rolled Crossbow",
+      "prompts": [
+        "Granted attackUse weapon/movement sequenceCast qualifying damaging cantrip (guided)"
+      ]
+    },
+    {
+      "name": "executioners-volley-native-action-retest",
+      "status": "fail",
+      "error": "Error: response completed\n    at Object.eval [as assert] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:12:103), <anonymous>:1:42)\n    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:1296)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:873)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "Granted attackUse weapon/movement sequenceCast qualifying damaging cantrip (guided)"
+      ]
+    },
+    {
+      "name": "pop-drop-and-lock-native-action-retest",
+      "status": "pass",
+      "detail": "targeted Commander Regression 1142-3; rolled +1 Striking Halberd",
+      "prompts": [
+        "Granted actionStrikeTripGrapple",
+        "Strike+1 Striking HalberdCrossbowUnarmed AttackDagger"
+      ]
+    },
+    {
+      "name": "seek-and-destroy-native-action-retest",
+      "status": "pass",
+      "detail": "used Seek, then rolled +1 Striking Halberd",
+      "prompts": [
+        "<p>Did Seek make a creature newly observed? Target it now to receive the next-successful-Strike precision benefit.</p>",
+        "Reaction after SeekPoint OutStride toward an observed enemyStrike an observed enemyFinish after Seek",
+        "Strike+1 Striking HalberdCrossbowUnarmed AttackDagger"
+      ]
+    },
+    {
+      "name": "slip-and-sizzle-native-action-retest",
+      "status": "pass",
+      "detail": "attempted to Trip Commander Regression 1142-3; the spellcaster responds only on success",
+      "prompts": []
+    },
+    {
+      "name": "shields-up-native-action-retest",
+      "status": "pass",
+      "detail": "raised a shield",
+      "prompts": [
+        "Defensive actionRaise a ShieldParry (guided)Cast shield cantrip (guided)"
+      ]
+    },
+    {
+      "name": "executioners-volley-loaded-native-strike",
+      "status": "pass",
+      "detail": "targeted Commander Regression 1142-3; rolled Crossbow",
+      "prompts": [
+        "Granted attackUse weapon/movement sequenceCast qualifying damaging cantrip (guided)"
+      ]
+    },
+    {
+      "name": "deceptive-tactics-alternate-guidance",
+      "status": "fail",
+      "error": "Error: Action 'Create a Diversion' has multiple variants, but no variant was requested.\n    at SingleCheckAction.getDefaultVariant (https://localhost:30000/systems/pf2e/pf2e.mjs:110396:40)\n    at SingleCheckAction.use (https://localhost:30000/systems/pf2e/pf2e.mjs:110408:15)\n    at action (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/workflow.js:92:32)\n    at runFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:126:11)\n    at async executeCommanderFeat (https://localhost:30000/modules/pf2e-commanderer/scripts/foundry/feats.js:97:20)\n    at async Object.eval [as withAnswers] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:12:103), <anonymous>:25:18)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:488)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:395)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "Action using Warfare LoreFeintCreate a Diversion"
+      ]
+    },
+    {
+      "name": "prepared-training-alternate-guidance",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "Action using Warfare Loreclimbswimhidesneak"
+      ]
+    },
+    {
+      "name": "standard-bearers-sacrifice-alternate-guidance",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "<p>Confirm this enemy targets an ally with a ranged attack, you observe both, and you are also in the attack&#x27;s range.</p>",
+        "<p>Redirect the triggering attack to the commander and resolve it now. Continue after that attack.</p>"
+      ]
+    },
+    {
+      "name": "deceptive-tactics-distracting-words-retest",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "Action using Warfare LoreFeintCreate a Diversion",
+        "Diversion methodDistracting wordsGestureTrick"
+      ]
+    },
+    {
+      "name": "deceptive-tactics-gesture-retest",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "Action using Warfare LoreFeintCreate a Diversion",
+        "Diversion methodDistracting wordsGestureTrick"
+      ]
+    },
+    {
+      "name": "deceptive-tactics-trick-retest",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "Action using Warfare LoreFeintCreate a Diversion",
+        "Diversion methodDistracting wordsGestureTrick"
+      ]
+    },
+    {
+      "name": "banners-inspiration-mental-retry",
+      "status": "fail",
+      "error": "Error: source ended by guided selection\n    at Object.eval [as assert] (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:12:103), <anonymous>:1:42)\n    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:719)\n    at async eval (eval at resumeAudit (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:12:103), <anonymous>:3:26)\n    at async q.case (https://localhost:30000/modules/pf2e-commanderer/tests/live-audit.mjs?resume=5:14:48)\n    at async eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:1:253)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:30)\n    at async <anonymous>:337:30",
+      "prompts": [
+        "<p>Affect: Commander Regression 1142-2, Commander Regression 1142-1. Confirm these creatures can perceive the required visual/auditory signal.</p>",
+        "Commander Regression 1142-2: mental effect to retryNo retry (frightened reduction only)",
+        "Commander Regression 1142-1: mental effect to retryNo retry (frightened reduction only)Effect: Commander trainingEffect: Audit mental effect",
+        "<p>Confirm Effect: Audit mental effect is a mental effect allowing a new save. Failure consequences still occur.</p>",
+        "Original saving throwwillfortitudereflex",
+        "Original effect DC",
+        "Apply Effect: Audit mental effect's resultKeep effect; apply its remaining consequences manuallyThis save ends the selected effect"
+      ]
+    },
+    {
+      "name": "reactive-interference-higher-level-attack",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "<p>Confirm the feat&#x27;s trigger is occurring now, before the triggering action resolves, and your reaction is available.</p>",
+        "Strike+1 Striking HalberdShortbowUnarmed AttackDagger"
+      ]
+    },
+    {
+      "name": "resuscitation-failed-save-and-immunity",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "<p>GM: confirm target died within 3 rounds, body mostly intact, no death effect, toolkit/free-hand requirements met, and Raise Dead can return this creature.</p>"
+      ]
+    },
+    {
+      "name": "banners-inspiration-mental-retry-end-source",
+      "status": "pass",
+      "detail": true,
+      "prompts": [
+        "<p>Affect: Commander Regression 1142-2, Commander Regression 1142-1. Confirm these creatures can perceive the required visual/auditory signal.</p>",
+        "Commander Regression 1142-2: mental effect to retryNo retry (frightened reduction only)",
+        "Commander Regression 1142-1: mental effect to retryNo retry (frightened reduction only)Effect: Commander trainingEffect: Audit mental effect",
+        "<p>Confirm Effect: Audit mental effect is a mental effect allowing a new save. Failure consequences still occur.</p>",
+        "Original saving throwwillfortitudereflex",
+        "Original effect DC",
+        "Apply Effect: Audit mental effect's resultKeep effect; apply its remaining consequences manuallyThis save ends the selected effect"
+      ]
+    },
+    {
+      "name": "feat-chat-styled-completed",
+      "status": "pass",
+      "detail": "Commander Regression 1142-0\n11m ago\nAss Gm\nBanner Twirl 1\nBRANDISH\nCOMMANDER\nMANIPULATE\n\nYou spin your banner in an elaborate pattern that your enemies find inscrutable. You and any ally adjacent to you have Concealment from ranged attacks until the start of your next turn.\n\nFeat 4\nUse Banner Twirl\nRanged concealment flat check\n\nUse Banner Twirl: completed."
+    },
+    {
+      "name": "tactic-manual-response-completed",
+      "status": "pass",
+      "detail": "Commander Regression 1142-0\n21m ago\nAss Gm\nTACTICAL ORDER\nThe Bigger They Are\nCommander Regression 1142-0\nVisual signal\nReaction\nRules\nCOMPLETE\n\nWorkflow complete. Resolve any damage or table decisions described in the results.\n\nCOMMAND\n\nGain the tactic bonus, then Reposition, Shove, or Trip the chosen larger enemy; adjacent squadmates may assist.\n\nSQUAD RESPONSES\n1 of 1 answered\n0 PENDING\nCommander Regression 1142-0\nCompleted manually\n\ncompleted manually; automation skipped"
+    },
+    {
+      "name": "tactic-declines-and-manual-resolution",
+      "status": "pass",
+      "detail": "Commander Regression 1142-0\n21m ago\nAss Gm\nTACTICAL ORDER\nTactical Takedown\nCommander Regression 1142-0\nVisual signal\nReaction\nRules\nCOMPLETE\n\nWorkflow complete. Resolve any damage or table decisions described in the results.\n\nCOMMAND\n\nTarget the shared enemy, then Stride up to half Speed and finish adjacent.\n\nSQUAD RESPONSES\n2 of 2 answered\n0 PENDING\nCommander Regression 1142-0\nDeclined\nCommander Regression 1142-1\nDeclined\n\nOverride\nAss Gm handled resolution manually.\n\nRESOLUTION\n\nOrder: Manual — resolved outside Commanderer by Ass Gm; no automated effects applied"
+    }
+  ]
+}

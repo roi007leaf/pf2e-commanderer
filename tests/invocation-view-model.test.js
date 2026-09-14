@@ -15,7 +15,9 @@ test("invocation view model summarizes response progress and presentation metada
   });
 
   assert.equal(view.signalLabel, "Visual signal");
-  assert.equal(view.cardVersion, 4);
+  assert.equal(view.cardVersion, 5);
+  assert.match(view.workflowHint, /Respond or Decline/);
+  assert.equal(view.workflowComplete, false);
   assert.equal(view.responseTypeLabel, "Reaction");
   assert.equal(view.participantCount, 3);
   assert.equal(view.answeredCount, 2);
@@ -35,6 +37,18 @@ test("invocation view model normalizes unknown status and detects completion", (
   assert.equal(view.responseTypeLabel, "Response");
   assert.equal(view.pendingCount, 0);
   assert.equal(view.allAnswered, true);
+  assert.equal(view.workflowComplete, true);
+  assert.match(view.workflowHint, /Workflow complete/);
+});
+
+test("completed responses still require the commander's unresolved aftermath", () => {
+  const invocation = { participants: [{ status: "responded" }], resolution: { save: "reflex" } };
+  const pending = invocationViewModel(invocation);
+  assert.equal(pending.workflowComplete, false);
+  assert.match(pending.workflowHint, /resolve the affected targets/);
+  const resolved = invocationViewModel({ ...invocation, resolutionResults: [{ name: "Target", result: "Resolved manually" }] });
+  assert.equal(resolved.workflowComplete, true);
+  assert.equal(resolved.hasResolution, false);
 });
 
 test("invocation view model exposes assigned roles and hides completed resolution", () => {

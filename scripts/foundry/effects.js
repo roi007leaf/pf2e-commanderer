@@ -1,6 +1,7 @@
 import { CONDITION_UUIDS, MODULE_ID } from "../constants.js";
 import { resolutionGeometryVerdict } from "../domain/tactic-resolution.js";
 import { activeTokenFor, actorLevel, classDC } from "./runtime.js";
+import { GUIDED_AFTERMATHS, guidedAftermath } from "./guided-tactics.js";
 
 function effectStart(commander) {
   const combatant = game.combat?.combatants?.find((entry) => entry.actor?.uuid === commander.uuid);
@@ -60,11 +61,12 @@ export async function grantWaitForIt(actor, commander, item) {
     item,
     name: `Effect: ${item.name}`,
     expiry: "turn-end",
-    rules: [{
+    rules: [{ key: "RollOption", domain: "all", option: "commanderer:waiting", label: "Still Delaying or Readying", toggleable: true, value: true }, {
       key: "FlatModifier",
       selector: ["ac", "saving-throw"],
       type: "circumstance",
       value: 1,
+      predicate: ["commanderer:waiting"],
       label: item.name,
     }],
   });
@@ -88,26 +90,32 @@ export async function grantPiranhaAssault(actor, commander, item, targetUuid) {
     rules: [
       { key: "RollOption", domain: "all", option: `commanderer:piranha-assault:${target.signature}` },
       {
-        key: "RollNote",
+        key: "Note",
         selector: ["damage", "strike-damage", "spell-damage"],
         predicate: [`target:signature:${target.signature}`],
         text: note,
       },
     ],
   });
+  source.flags = { [MODULE_ID]: { workflow: { commanderUuid: commander.uuid, piranhaTarget: targetUuid } } };
   await actor.createEmbeddedDocuments("Item", [source]);
   return `tracked ${item.name} against ${target.name} for 1 minute; resistance bypass ${amount}`;
 }
 
-export async function grantShadowsInMoonlight(actor, commander, item) {
+export async function grantShadowsInMoonlight(actor, commander, item, guideRank = 2) {
   const note = "Count as Following the Expert for Hide and Sneak checks, and ignore the noisy armor trait.";
   const source = effectSource({
     commander,
     item,
     name: `Effect: ${item.name}`,
     description: `<p>${note}</p>`,
-    rules: [{
-      key: "RollNote",
+    expiry: "turn-end",
+    rules: [{ key: "RollOption", domain: "skill-check", option: "armor:ignore-noisy-penalty" },
+        { key: "FlatModifier", selector: "stealth", type: "circumstance", value: guideRank,
+        predicate: [{ or: ["action:hide", "action:sneak"] }] },
+      { key: "FlatModifier", selector: "stealth", type: "proficiency", value: actorLevel(actor),
+        predicate: ["skill:stealth:rank:0", { or: ["action:hide", "action:sneak"] }] }, {
+      key: "Note",
       selector: ["stealth", "skill-check"],
       predicate: [{ or: ["action:hide", "action:sneak"] }],
       text: note,
@@ -286,6 +294,10 @@ export async function resolveTargets({
     gridDistance,
   });
   if (!verdict.valid) throw new Error(verdict.message);
+  if (GUIDED_AFTERMATHS.has(resolution.effect)) {
+    const result = await guidedAftermath({ commander, item, participants, targets: targetTokens, squad });
+    return result ? [{ name: item.name, degreeLabel: "Guided resolution", applied: result }] : [];
+  }
 
   const results = [];
   for (const targetToken of targetTokens) {
@@ -301,10 +313,11 @@ export async function resolveTargets({
         origin: commander,
         item,
         traits: resolution.traits ?? [],
-        extraRollOptions: [`origin:item:slug:${item.slug}`, ...(resolution.options ?? [])],
+        extraRollOptions: [`origin:item:slug:${item.slug}`, ...(resolution.traits ?? []), ...(resolution.options ?? [])],
       });
-      degree = Number(roll.degreeOfSuccess ?? 2);
-      if (resolution.incapacitation && actorLevel(target) > actorLevel(commander)) degree = Math.min(3, degree + 1);
+      if (!roll) continue;
+      if (!Number.isInteger(roll.degreeOfSuccess)) throw new Error("PF2e returned no save result.");
+      degree = roll.degreeOfSuccess;
     }
     const applied = await applyResolution(resolution.effect, target, degree, { commander, item, participants, squad, targetToken });
     results.push({ name: target.name, degree, degreeLabel: resolution.save ? (saveApplies ? degreeLabel(degree) : "Immune to bleed") : "Resolved", applied });

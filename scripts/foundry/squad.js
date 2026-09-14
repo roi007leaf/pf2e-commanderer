@@ -2,6 +2,7 @@ import { FLAG_SCOPE } from "../constants.js";
 import { squadCapacity } from "../domain/rules.js";
 import { rankSquadCandidates } from "../domain/squad-readiness.js";
 import { activeTokenFor, bannerActive, notify } from "./runtime.js";
+import { hasFeat } from "../domain/feat-rules.js";
 import { bannerOrigin, bannerRangeToToken } from "./banner.js";
 
 export function intelligenceModifier(actor) {
@@ -11,7 +12,7 @@ export function intelligenceModifier(actor) {
 export function squadLimit(actor) {
   const override = actor.getFlag?.(FLAG_SCOPE, "squadLimit");
   if (Number.isInteger(override) && override >= 0) return override;
-  return squadCapacity(intelligenceModifier(actor));
+  return squadCapacity(intelligenceModifier(actor)) + (hasFeat(actor, "commanders-companion") && actor.getFlag?.(FLAG_SCOPE, "companion") ? 1 : 0);
 }
 
 export async function setSquadLimit(actor, value) {

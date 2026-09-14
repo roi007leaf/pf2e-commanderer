@@ -1,8 +1,11 @@
 import { FLAG_SCOPE } from "../constants.js";
+import { bannerRadius, hasFeat } from "../domain/feat-rules.js";
 import {
   bannerCorner,
   bannerRangeToBounds,
   hasPlantBanner,
+  hasClaimTheField,
+  claimTheFieldRange,
   plantedBannerRadius,
 } from "../domain/banner-placement.js";
 import { activeTokenFor, setBannerActive } from "./runtime.js";
@@ -10,6 +13,7 @@ import { clearPlantedBannerEffects } from "./banner-effects.js";
 import { registerOperation, requestOperation } from "./socket.js";
 import { bannerBeneficiaries, frightenBannerBeneficiaries } from "./banner-loss.js";
 import { createBannerObject, removeBannerObjectToken, syncBannerObject } from "./banner-object.js";
+import { claimTheFieldAllowsAttempt } from "./claim-the-field.js";
 
 const PLACEMENTS_FLAG = "plantedBanners";
 const PLANT_OPERATION = "plant-banner";
@@ -47,9 +51,10 @@ export function plantedBanner(actor, scene = globalThis.canvas?.scene) {
 
 export function bannerOrigin(actor) {
   const placement = plantedBanner(actor);
-  if (placement) return placement.removed === true || placement.broken === true ? null : { ...placement, planted: true };
-  const token = activeTokenFor(actor);
-  return token ? { token, radius: 30, planted: false } : null;
+  if (placement) return placement.removed === true || placement.broken === true ? null : { ...placement, radius: bannerRadius(actor, { planted: true }), planted: true };
+  const companion = hasFeat(actor, "commanders-companion") ? actor.getFlag?.(FLAG_SCOPE, "companion") : null;
+  const token = companion?.banner ? globalThis.fromUuidSync?.(companion.tokenUuid)?.object : activeTokenFor(actor);
+  return token ? { token, radius: bannerRadius(actor, { companion: companion?.banner, mascot: companion?.mascot }), planted: false } : null;
 }
 
 function commanderForPlacement(placement) {
@@ -179,6 +184,7 @@ export async function removePlantedBannerAsEnemy({ scene, commanderActorId, enem
   const target = removableEnemyBanners(enemyToken, scene, user)
     .find(({ placement }) => placement.actorId === commanderActorId);
   if (!target) throw new Error("This token cannot remove that banner. It must be an adjacent enemy you own.");
+  if (!await claimTheFieldAllowsAttempt(target.commander, enemyToken.actor ?? enemyToken.document?.actor, target.placement)) return false;
 
   const placements = clone(sceneBannerPlacements(scene));
   const current = placements[commanderActorId];
@@ -451,7 +457,7 @@ export function requestEnemyBannerRemoval(enemyToken, commanderActorId, mode, sc
     commanderActorId,
     enemyTokenUuid,
     mode,
-  }, { gmRequired: true });
+  }, { gmRequired: true, timeoutMs: 120_000 });
 }
 
 export function requestCarriedBannerDrop(carrierToken, commanderActorId, scene = globalThis.canvas?.scene) {
@@ -505,7 +511,23 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
   if (!hasPlantBanner(actor)) throw new Error("This commander does not have the Plant Banner feat.");
   if (!scene) throw new Error("Open an active scene before planting the banner.");
   if (!token) throw new Error("Place this commander on the active scene before planting the banner.");
-  const point = bannerCorner(tokenBounds(token), corner);
+  const mapPoint = typeof corner === "object" && corner !== null;
+  const range = hasClaimTheField(actor) ? claimTheFieldRange(actor) : 0;
+  const claimed = range > 0;
+  if (mapPoint && !hasClaimTheField(actor)) throw new Error("This commander does not have Claim the Field.");
+  if (mapPoint && !claimed) throw new Error("Configure the banner's affixed item as a thrown weapon first.");
+  let point;
+  if (claimed) {
+    point = mapPoint ? { x: corner.x, y: corner.y } : bannerCorner(tokenBounds(token), corner);
+    if (![point.x, point.y].every(Number.isFinite)) throw new Error("Choose a valid map corner.");
+    const grid = scene.grid;
+    const snapped = grid.getSnappedPoint(point, { mode: CONST.GRID_SNAPPING_MODES.VERTEX });
+    if (Math.hypot(snapped.x - point.x, snapped.y - point.y) > 0.01) throw new Error("Choose a grid corner.");
+    const bounds = tokenBounds(token);
+    const origin = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+    const distance = grid.measurePath([origin, point]).distance;
+    if (!Number.isFinite(distance) || distance > range) throw new Error(`Place the banner within the weapon's first range increment (${range} feet).`);
+  } else point = bannerCorner(tokenBounds(token), corner);
 
   const placements = clone(sceneBannerPlacements(scene));
   if (placements[actor.id]) throw new Error("Retrieve the existing banner before planting it again.");
@@ -517,7 +539,8 @@ export async function plantBanner(actor, corner, scene = globalThis.canvas?.scen
     y: point.y,
     ...tokenPosition(token),
     radius: plantedBannerRadius(actor),
-    corner,
+    corner: mapPoint ? null : corner,
+    ...(claimed ? { claimTheField: true } : {}),
   };
   placements[actor.id] = placement;
   const suppressNativeAura = actor?.rollOptions?.all?.["commanders-banner"] === true;
