@@ -51,6 +51,25 @@ function setup() {
   globalThis.fromUuid = async () => null;
 }
 
+test("Rapid Assessment sends secret knowledge rolls using Foundry 14 messageMode", async () => {
+  setup();
+  const item = { id: 'assessment', name: 'Rapid Assessment', slug: 'rapid-assessment', system: { traits: { value: [] } } };
+  const items = [item]; items.get = id => items.find(i => i.id === id);
+  let rolled;
+  const actor = { uuid: 'Actor.commander', items, getFlag: () => undefined, skills: { arcana: { label: 'Arcana' } },
+    getStatistic: () => ({ roll: async options => { rolled = options; return { degreeOfSuccess: 2 }; } }) };
+  const target = { uuid: 'Token.enemy', parent: { id: 'scene' }, name: 'Enemy', actor: {} };
+  globalThis.fromUuid = async uuid => uuid === actor.uuid ? actor : target;
+  globalThis.ChatMessage = { getSpeaker: () => ({}), create: async data => data };
+  const answers = [1, target.uuid, 'arcana', 20];
+  foundry.applications.api.DialogV2.confirm = async () => true;
+  foundry.applications.api.DialogV2.wait = async () => ({ value: answers.shift() });
+  assert.equal(await executeCommanderFeat({ actorUuid: actor.uuid, itemId: item.id, targetUuids: [target.uuid] }, 'gm'), true);
+  assert.equal(rolled.messageMode, 'blind');
+  assert.equal(rolled.rollMode, undefined);
+  assert.ok(rolled.extraRollOptions.includes('action:recall-knowledge'));
+});
+
 test("reaction upgrades replace the base allowance instead of stacking", () => {
   assert.equal(drilledReactionLimit(actorWith()), 1);
   assert.equal(drilledReactionLimit(actorWith("drilled-reflexes")), 2);

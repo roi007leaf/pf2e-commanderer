@@ -12,6 +12,7 @@ import {
   rollBannerRecovery,
   RULE_BANNER_RECOVERY_OPERATION,
   bannerRecoveryRollerChoices,
+  chooseBannerRecoveryRuling,
 } from "../scripts/foundry/banner-recovery.js";
 
 function statistic(slug, label, modifier = 0, dc = null) {
@@ -23,6 +24,18 @@ function statistic(slug, label, modifier = 0, dc = null) {
     async roll() {},
   };
 }
+
+test("native DialogV2 cancel action returns no recovery ruling", async () => {
+  const previous = globalThis.foundry;
+  const athletics = statistic("athletics", "Athletics", 12);
+  const commander = { name: "Commander", skills: { athletics }, getStatistic: () => null };
+  const carrier = { actor: { getStatistic: () => null } };
+  try {
+    // Foundry falls back to the action name when a callback returns null.
+    globalThis.foundry = { applications: { api: { DialogV2: { wait: async () => "cancel" } } } };
+    assert.equal(await chooseBannerRecoveryRuling(commander, carrier), null);
+  } finally { globalThis.foundry = previous; }
+});
 
 test("GM recovery controls expose Commander checks and carrier defenses", () => {
   const athletics = statistic("athletics", "Athletics", 12);

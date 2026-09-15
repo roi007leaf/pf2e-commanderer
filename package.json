@@ -1,11 +1,19 @@
 {
   "name": "pf2e-commanderer",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "license": "GPL-3.0-only",
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
+    "test:live": "node tests/live/run.mjs",
+    "test:live:full": "node tests/live/run.mjs --full",
+    "test:live:list": "node tests/live/run.mjs --list",
+    "test:live:cleanup": "node tests/live/run.mjs --cleanup-only",
+    "test:live:harness": "node --test tests/live/*.checks.mjs",
+    "test:live:matrix": "node tests/live/matrix.mjs",
+    "test:live:features": "node tests/live/features.mjs",
+    "test:shipping": "npm run check && npm test && npm run lint && npm run test:live:harness && npm run test:live:matrix --",
     "check": "node --check scripts/main.js && node --check scripts/engine.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -14,8 +22,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@inquirer/prompts": "^8.7.2",
     "eslint": "^10.9.0",
     "globals": "^17.11.0",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "playwright": "^1.63.0"
   }
 }

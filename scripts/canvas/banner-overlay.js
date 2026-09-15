@@ -207,7 +207,8 @@ function syncNativeAuraVisibility(placements) {
 function bannerTokens(placements) {
   const plantedActorIds = new Set(placements.map((placement) => placement.actorId));
   return (globalThis.canvas?.tokens?.placeables ?? [])
-    .filter((token) => token?.isVisible !== false && auraFor(token) && !plantedActorIds.has(token.actor?.id));
+    // Native isVisible performs geometry/detection work. Only banner candidates need it.
+    .filter((token) => auraFor(token) && !plantedActorIds.has(token.actor?.id) && token.isVisible !== false);
 }
 
 function ensureOverlay() {

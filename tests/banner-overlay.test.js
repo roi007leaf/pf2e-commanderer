@@ -49,9 +49,11 @@ test("banner overlay renders identity without canvas text labels", () => {
 
   const stage = new Container();
   stage.scale = { x: 1 };
+  let ordinaryVisibilityReads = 0;
+  let bannerVisibilityReads = 0;
   const token = {
     id: "commander-token",
-    isVisible: true,
+    get isVisible() { bannerVisibilityReads++; return true; },
     controlled: true,
     hover: true,
     center: { x: 100, y: 100 },
@@ -65,13 +67,19 @@ test("banner overlay renders identity without canvas text labels", () => {
   globalThis.canvas = {
     ready: true,
     stage,
-    tokens: { placeables: [token] },
+    tokens: { placeables: [token, ...Array.from({ length: 100 }, (_, index) => ({
+      id: `ordinary-${index}`,
+      get isVisible() { ordinaryVisibilityReads++; return true; },
+    })), { id: "unseen-banner", auras: token.auras, isVisible: false }] },
   };
 
   try {
     renderBannerOverlay();
     assert.equal(stage.children.length, 1);
     assert.equal(textObjects, 0);
+    assert.equal(ordinaryVisibilityReads, 0, "tokens without banners never invoke native visibility testing");
+    assert.equal(bannerVisibilityReads, 1, "eligible banner still checks native visibility");
+    assert.equal(stage.children[0].children.length, 2, "unseen banner remains excluded");
 
     const clearGuidance = showGatherGuidance(token, { id: "commander-id" }, token);
     assert.equal(stage.children[0].children.length, 3, "banner boundary, banner pin, and movement cue render");

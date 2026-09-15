@@ -227,3 +227,8 @@ Bug reports and feature requests: [GitHub issues](https://github.com/roi007leaf/
 ## License
 
 PF2e Commanderer is licensed under the [GNU General Public License version 3](LICENSE).
+
+## Local automated testing
+
+See [live-test setup and coverage](tests/live/README.md) for the Visioner-style
+GM/player browser harness, screenshots, reports, and interruption recovery.

@@ -200,7 +200,7 @@ async function knowledge(actor, item, target, bonus = 0) {
   if (!skill) return false;
   const dc = await numberInput(item.name, "GM: Recall Knowledge DC (include rarity and repeat-check adjustments)", { value: 20 });
   if (dc === null) return false;
-  const roll = await actor.getStatistic(skill).roll({ dc: { value: dc }, rollMode: "blindroll", extraRollOptions: ["action:recall-knowledge"],
+  const roll = await actor.getStatistic(skill).roll({ dc: { value: dc }, messageMode: "blind", extraRollOptions: ["action:recall-knowledge"],
     modifiers: bonus ? [new game.pf2e.Modifier({ label: item.name, modifier: bonus, type: "circumstance" })] : [] });
   if (!roll) return false;
   return true;

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+## 1.3.0
+
+- Add required live-test mappings for every Commander feat and tactic, native GM/player workflow checks, and per-feature evidence reports.
+- Keep Commander Recall Knowledge checks private on Foundry 14 by using the current native message mode.
+
+- Check banner eligibility before native token visibility when rendering the banner overlay. Tokens without a banner no longer run expensive sight/detection checks; visible, hidden and planted banner behavior remains covered by regression tests. Verified alongside Visioner in three fresh-browser 100-token/25-light performance runs.
+
 ## 1.2.0
 
 - Style posted feat buttons consistently with tactic cards and show running, cancelled, and completed states. Add explicit next-step and completion guidance to tactic cards.

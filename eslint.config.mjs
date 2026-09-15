@@ -3,11 +3,11 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['coverage/**', 'node_modules/**'],
+    ignores: ['coverage/**', 'node_modules/**', 'artifacts/**'],
   },
   js.configs.recommended,
   {
-    files: ['**/*.js', 'tests/live-audit.mjs'],
+    files: ['**/*.js', 'tests/**/*.mjs'],
     languageOptions: {
       globals: {
         ...globals.browser,

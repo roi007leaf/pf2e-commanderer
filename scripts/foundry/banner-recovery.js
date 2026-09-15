@@ -210,7 +210,7 @@ export async function chooseBannerRecoveryRuling(commander, carrier, { rollers =
     }),
   ].join("");
 
-  return foundry.applications.api.DialogV2.wait({
+  const result = await foundry.applications.api.DialogV2.wait({
     window: { title: `Rule ${commander.name}'s Banner Retrieval`, icon: "fa-solid fa-scale-balanced" },
     classes: ["pf2e-commanderer-recovery-dialog"],
     modal: true,
@@ -253,6 +253,8 @@ export async function chooseBannerRecoveryRuling(commander, carrier, { rollers =
       callback: () => null,
     }],
   });
+  // Core falls back to the button action when its callback returns null.
+  return result && typeof result === "object" ? result : null;
 }
 
 function recoveryContext(payload, userId) {
