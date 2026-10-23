@@ -258,14 +258,18 @@ function scheduleSync(scene = globalThis.canvas?.scene) {
   }, 0);
 }
 
+function scheduleSyncWhilePlanted() {
+  if (Object.keys(sceneBannerPlacements()).length) scheduleSync();
+}
+
 export function registerPlantedBannerEffects() {
   if (registered) return;
   registered = true;
   globalThis.Hooks?.on?.("canvasReady", () => scheduleSync());
-  globalThis.Hooks?.on?.("updateToken", () => scheduleSync());
-  globalThis.Hooks?.on?.("createToken", () => scheduleSync());
-  globalThis.Hooks?.on?.("deleteToken", () => scheduleSync());
-  globalThis.Hooks?.on?.("updateActor", () => scheduleSync());
+  globalThis.Hooks?.on?.("updateToken", scheduleSyncWhilePlanted);
+  globalThis.Hooks?.on?.("createToken", scheduleSyncWhilePlanted);
+  globalThis.Hooks?.on?.("deleteToken", scheduleSyncWhilePlanted);
+  globalThis.Hooks?.on?.("updateActor", scheduleSyncWhilePlanted);
   globalThis.Hooks?.on?.("updateScene", (scene) => {
     if (scene?.id === globalThis.canvas?.scene?.id) scheduleSync(scene);
   });

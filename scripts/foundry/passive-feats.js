@@ -53,12 +53,14 @@ export async function syncPassiveFeats() {
         if (token) await actor.setFlag(FLAG_SCOPE, "squad", [...squad, { actorUuid: companion.uuid, tokenUuid: token.uuid, name: token.name, img: companion.img }]);
       }
     }
+    let foundPositionalWorkflow = false;
     for (const actor of actors) {
       const grant = companionRules.get(actor.uuid);
       await maintain(actor, "companion-banner", grant?.rules ?? [], grant?.actor ?? actor);
       for (const item of [...actor.items]) {
         const flags = item.getFlag?.(FLAG_SCOPE, "workflow");
         if (!flags) continue;
+        if (flags.adjacentTo || flags.corpseCover) foundPositionalWorkflow = true;
         if (flags.adjacentTo) {
           const origin = fromUuidSync(flags.adjacentTo);
           if (!origin || !adjacent(actor, origin)) await item.delete();
@@ -77,6 +79,7 @@ export async function syncPassiveFeats() {
         }
       }
     }
+    positionalWorkflow = foundPositionalWorkflow;
   } finally { running = false; if (rerun) { rerun = false; schedule(); } }
 }
 
@@ -88,8 +91,33 @@ function schedule() {
   setTimeout(() => { pending = false; syncPassiveFeats().catch((e) => { console.error(e); ui.notifications.error(e.message); }); }, 50);
 }
 
+const POSITION_KEYS = ["x", "y", "elevation"];
+const ACTOR_KEYS = ["actorId", "actorLink", "delta"];
+let positionalWorkflow = null;
+
+function invalidatePositionalWorkflow() {
+  positionalWorkflow = null;
+}
+
+function onTokenUpdate(_token, changes = {}) {
+  if (ACTOR_KEYS.some((key) => key in changes)) {
+    invalidatePositionalWorkflow();
+    schedule();
+    return;
+  }
+  if (POSITION_KEYS.some((key) => key in changes) && positionalWorkflow !== false) schedule();
+}
+
+function onDocumentsChanged() {
+  invalidatePositionalWorkflow();
+  schedule();
+}
+
 export function registerPassiveFeats() {
-  for (const hook of ["canvasReady", "createItem", "updateItem", "deleteItem", "updateActor", "updateToken", "deleteToken", "updateScene", "deleteCombat"]) Hooks.on(hook, schedule);
+  for (const hook of ["canvasReady", "createItem", "updateItem", "deleteItem", "deleteToken"]) Hooks.on(hook, onDocumentsChanged);
+  for (const hook of ["updateActor", "updateScene", "deleteCombat"]) Hooks.on(hook, schedule);
+  Hooks.on("createToken", invalidatePositionalWorkflow);
+  Hooks.on("updateToken", onTokenUpdate);
   Hooks.on("updateCombat", async (combat, changes) => {
     schedule();
     if (!isGM() || !("turn" in changes || "round" in changes)) return;

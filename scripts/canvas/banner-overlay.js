@@ -269,6 +269,22 @@ export function scheduleBannerOverlayRender() {
   else globalThis.setTimeout(render, 0);
 }
 
+function overlayHasContent() {
+  return (overlay?.children?.length ?? 0) > 0;
+}
+
+function sceneHasPlacements() {
+  return Object.keys(sceneBannerPlacements()).length > 0;
+}
+
+function onTokenRefresh(token) {
+  if (guidance || overlayHasContent() || auraFor(token) || sceneHasPlacements()) scheduleBannerOverlayRender();
+}
+
+function onCanvasPan() {
+  if (guidance || overlayHasContent()) scheduleBannerOverlayRender();
+}
+
 export function showGatherGuidance(commanderToken, commanderActor = commanderToken?.actor, movingToken = null) {
   const key = Symbol("gather-guidance");
   guidance = {
@@ -299,7 +315,7 @@ export function registerBannerOverlay() {
   registered = true;
   Hooks.on("canvasReady", renderBannerOverlay);
   Hooks.on("canvasTearDown", destroyOverlay);
-  Hooks.on("refreshToken", scheduleBannerOverlayRender);
+  Hooks.on("refreshToken", onTokenRefresh);
   Hooks.on("updateToken", scheduleBannerOverlayRender);
   Hooks.on("createToken", scheduleBannerOverlayRender);
   Hooks.on("deleteToken", scheduleBannerOverlayRender);
@@ -309,5 +325,5 @@ export function registerBannerOverlay() {
   Hooks.on("deleteItem", scheduleBannerOverlayRender);
   Hooks.on("updateScene", scheduleBannerOverlayRender);
   Hooks.on(`${MODULE_ID}.bannerPlacementChanged`, renderBannerOverlay);
-  Hooks.on("canvasPan", scheduleBannerOverlayRender);
+  Hooks.on("canvasPan", onCanvasPan);
 }
