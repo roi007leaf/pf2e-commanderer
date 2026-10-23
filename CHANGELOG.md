@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.3.1
+
+- Moving or selecting tokens no longer slows down big scenes. The banner overlay used to rebuild itself and check every token on every frame of any move or pan, even with no banners on the scene. Planted-banner effects and passive feats also rescanned every actor's items whenever any token changed. They now only do this work when a banner, a planted banner, or a position-based effect could actually be affected.
+
 ## 1.3.0
 
 - Add required live-test mappings for every Commander feat and tactic, native GM/player workflow checks, and per-feature evidence reports.
